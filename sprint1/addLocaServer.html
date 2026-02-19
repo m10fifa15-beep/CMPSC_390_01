@@ -1,0 +1,98 @@
+<script>
+   const express = require('express');
+const mysql = require('mysql2');
+const bodyParser = require('body-parser');
+
+const app = express();
+const port = 2999;
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(__dirname));
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: 'Agent142!', // use your MySQL password if needed
+  database: 'userDB'
+});
+
+app.get('/hello-user', (req, res) => {
+  const sql = 'SELECT * FROM DATABASEnAME LIMIT 1';
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Database error');
+    }
+
+    if (results.length === 0) {
+      return res.send('No DATABASEnAME found');
+    }
+
+    const user = results[0];
+    res.send(`Hello, ${user.first_name}!`);
+  });
+});
+
+const crypto = require('crypto');
+app.post('/login', (req, res) => {
+const username = req.body.username;
+const hashedPassword = crypto
+.createHash('sha256')
+.update(req.body.password)
+.digest('hex');
+const sql = `
+SELECT * FROM DATABASEnAME
+WHERE name = ? AND type = ?
+`;
+db.query(sql, [username, req.body.password], (err, results) => {
+if (err) {
+console.error(err);
+return res.status(500).send('Server error');
+}
+if (results.length > 0) {
+res.send(`Welcome back, ${results[0].first_name}!`);
+} else {
+res.send('Invalid entry.');
+}
+});
+});
+
+app.post('/addLocation', (req, res) => {
+  const username = req.body.username;
+  const hashedPassword = crypto
+  .createHash('sha256')
+  .update(req.body.password)
+  .digest('hex');
+  const sql = `
+
+
+  INSERT INTO <-- DATABASE NAMEHERE --> (name, address, type)
+  
+  
+  VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [username, req.body.password, req.body.first_name, req.body.last_name, req.body.birthday], (err, results) => {
+  if (err) {
+  console.error(err);
+  return res.status(500).send('Server error');
+  }
+  if (results.affectedRows == 1) {
+  res.send(`User: ${results[0].username} with name: ${results[0].first_name} has been created!`);
+  } else {
+  res.send('User Not Created');
+  }
+  });
+  });
+
+
+app.use((req, res) => {
+  res.status(404).send('User Not Created');
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
+    </script>
