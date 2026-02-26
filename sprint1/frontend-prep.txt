@@ -1,0 +1,18 @@
+Front-End Trello Cards
+1) Create a home page
+o I need create the layout of the home page using HTML and CSS for each page.
+o There is a top navigation panel that holds the logo, search bar, search button, and links to other pages
+o There is a huge welcome prompt
+o A bottom navigation panel that displays three quick steps for how the application works.
+o perhaps there are images included
+
+
+2) Create a Search Page
+
+o a navigation panel with a search input
+o images included
+
+3) Create a Login/Sign up page
+o create a login in and sign up page
+
+4) I need the backend and database from my teachers.
