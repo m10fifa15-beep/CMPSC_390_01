@@ -17,7 +17,7 @@ const db = mysql.createConnection({
 });
 
 app.get('/hello-user', (req, res) => {
-  const sql = 'SELECT * FROM DATABASEnAME LIMIT 1';
+  const sql = 'SELECT * FROM <-- DATABASE NAMEHERE --> LIMIT 1';
 
   db.query(sql, (err, results) => {
     if (err) {
@@ -26,7 +26,7 @@ app.get('/hello-user', (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.send('No DATABASEnAME found');
+      return res.send('No <-- DATABASE NAMEHERE --> found');
     }
 
     const user = results[0];
@@ -42,7 +42,7 @@ const hashedPassword = crypto
 .update(req.body.password)
 .digest('hex');
 const sql = `
-SELECT * FROM DATABASEnAME
+SELECT * FROM <-- DATABASE NAMEHERE -->
 WHERE name = ? AND type = ?
 `;
 db.query(sql, [username, req.body.password], (err, results) => {
@@ -68,8 +68,6 @@ app.post('/addLocation', (req, res) => {
 
 
   INSERT INTO <-- DATABASE NAMEHERE --> (name, address, type)
-  
-  
   VALUES (?, ?, ?)
   `;
 
