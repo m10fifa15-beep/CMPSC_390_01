@@ -1,0 +1,53 @@
+CREATE TABLE PRODUCT
+(
+  ProdType INT NOT NULL,
+  ProdName INT NOT NULL,
+  ProductID INT NOT NULL,
+  ProdPrice INT NOT NULL,
+  PRIMARY KEY (ProductID)
+);
+
+CREATE TABLE CUSTOMER
+(
+  CustomID INT NOT NULL,
+  FirstName INT NOT NULL,
+  MiddleName INT NOT NULL,
+  LastName INT NOT NULL,
+  Street INT NOT NULL,
+  City INT NOT NULL,
+  PRIMARY KEY (CustomID)
+);
+
+CREATE TABLE ORDER
+(
+  TotalPrice INT NOT NULL,
+  OrderDate INT NOT NULL,
+  ShipmentDate INT NOT NULL,
+  DeliveryDate INT NOT NULL,
+  OrderID INT NOT NULL,
+  CustomID INT NOT NULL,
+  PRIMARY KEY (OrderID),
+  FOREIGN KEY (CustomID) REFERENCES CUSTOMER(CustomID)
+);
+
+CREATE TABLE ORDERITEM
+(
+  ProductID INT NOT NULL,
+  OrderItemID INT NOT NULL,
+  ProductID INT NOT NULL,
+  OrderID INT NOT NULL,
+  PRIMARY KEY (OrderItemID),
+  FOREIGN KEY (ProductID) REFERENCES PRODUCT(ProductID),
+  FOREIGN KEY (OrderID) REFERENCES ORDER(OrderID)
+);
+
+CREATE TABLE STORE
+(
+  StoreID INT NOT NULL,
+  Culture INT NOT NULL,
+  StoreType INT NOT NULL,
+  StoreName INT NOT NULL,
+  Location INT NOT NULL,
+  PRIMARY KEY (Culture, StoreType),
+  UNIQUE (StoreID)
+);
