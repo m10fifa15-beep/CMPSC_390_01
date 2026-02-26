@@ -1,0 +1,17 @@
+. Problem Statement
+What problem does this solve?
+2. User Flow
+Step by step from start to finish
+3. Technical Plan
+Frontend changes
+Backend routes
+Database changes
+Files expected to be created or modified
+4. API Changes
+New routes
+Modified routes
+Request and response structure
+5. Database Changes
+New tables
+Schema updates
+New fields
