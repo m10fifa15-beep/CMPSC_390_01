@@ -1,17 +1,13 @@
-. Problem Statement
-What problem does this solve?
+1. Problem Statement
+We want businesses to be able to add their information into the website, but only if they have a business account. We want the page to be interactive for both customers and business owners.  
+
 2. User Flow
-Step by step from start to finish
+I will start by working on the front end, creating the page itself and adding the buttons and make sure that when clicked they work. Then I will create the database with a few "fake" accounts just to make sure that it is workoing. Lastly, I will work on the backend since I will be able to see exactly what I have to make work. I will also make a pseudocode to know exaclt what steps I have to take to approach this because I need to have a plan, and research how to get the backend running on the frontend. 
+
 3. Technical Plan
-Frontend changes
-Backend routes
-Database changes
-Files expected to be created or modified
-4. API Changes
-New routes
-Modified routes
-Request and response structure
-5. Database Changes
-New tables
-Schema updates
-New fields
+Frontend changes - There will be 2 options, a login tab and a sign up tab. If the user decides to create an account, they will be asked if they are creating a business account, if the user clicks yes, it will display Business name, email and a password. If the user clicks no, the page will display first name, last name, email and password. Once they click "login" or "create account" they will both be directed to the dashboard. 
+Backend routes - Be able to pull in data from the database and update it with new information, con
+Database changes - I will have to add a column to the Customers database, where it will display "true" if the user is a business and "false" if the user is not a business (boolean). I will also be working with the restaurants database, since we will be allowing the business to include their information. 
+Files expected to be created or modified - file that will be modified is the Customers database and the restaurants database.
+
+6. The user will be able to login or create an account and have access to the dashboard or home page, business will have a button that allows them to add their restaurants information. 
