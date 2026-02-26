@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Location Matcher</title>
+  <link rel="stylesheet" href="home.css" />
+</head>
+
+
+<body>
+  <!--Divider for background-->
+  <div class="background">
+
+
+    <!-- Top Navigation -->
+    <header class="top_nav">
+      <div class="topnav__inner">
+        <div class="logo">
+          <a href = "____.html">
+          <!--FIX LOGO LATER-->
+          <img src = "lmm_logo.png" alt = "Image of Logo" width = "50px" height = "50px">
+          </a>
+        </div>
+
+
+        <nav class="topnav">
+          <a href="____.html">Home</a>
+          <a href="____.html">Explore</a>
+          <a href="____.html">Dashboard</a>
+          <a href="____.html">Login/SignUp</a>
+        </nav>
+      </div>
+    </header>
+
+
+    <!-- Welcome Box -->
+    <main class="content">
+      <section class = "welcome">
+        <h1>Welcome to Our Site</h1>
+        <p class="welcome__subtitle">Find Your Ideal Spot!</p>
+        <button id="joinBtn" class="btn" type="button">Join Today</button>
+
+
+        <!--NEW-->
+        <p id="result"></p>
+      </section>
+
+
+      <!-- Exploring Your Neighborhood [CARDS] -->
+      <section class="explorations">
+        <h3 class="explorations__title"> Exploring Your Neighborhood</h3>
+
+
+        <div class="cardgrid">
+          <article class="card" id="restaurantCard">
+            <h3>Restaurant</h3>
+            <p>Browse Dining Options</p>
+          </article>
+
+
+          <article class="card" id="retailCard">
+            <h3>Retail</h3>
+            <p>Explore Shopping Locations</p>
+          </article>
+
+
+          <article class="card" id = "parksCard">
+            <h3>Parks &amp; More</h3>
+            <p>Discover Outdoor Spots</p>
+          </article>
+        </div>
+      </section>
+
+
+      <!-- How It Works -->
+      <section class="section">
+        <h2 class="section__title">How it Works</h2>
+
+
+        <div class="cardgrid">
+           <article class="card">
+            <h3>Step 1</h3>
+            <p>Enter Preferences</p>
+          </article>
+
+
+           <article class="card">
+            <h3>Step 2</h3>
+            <p>Receive Matches</p>
+          </article>
+
+
+           <article class="card">
+            <h3>Step 3</h3>
+            <p>View User Dashboard </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+
+  </div>
+
+
+
+
+<!--JAVASCRIPT FOR JOIN BUTTON-->
+<script>
+  document.getElementById("joinBtn").addEventListener("click", function() {
+    window.location.href = "signup.html";
+  });
+</script>
+
+
+
+
+<!--JAVASCRIPT FOR EXPLORIATION CARDS-->  
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+
+    const restaurant = document.getElementById("restaurantCard");
+    const retail = document.getElementById("retailCard");
+    const parks = document.getElementById("parksCard");
+
+
+    restaurant.addEventListener("click", function() {
+      window.location.href = "explore.html?category=restaurant";
+    });
+
+
+    retail.addEventListener("click", function() {
+      window.location.href = "explore.html?category=retail";
+    });
+
+
+    parks.addEventListener("click", function() {
+      window.location.href = "explore.html?category=parks";
+    });
+
+
+  });
+</script>
+
+
+
+
+</body>
+</html>
+
+
+
