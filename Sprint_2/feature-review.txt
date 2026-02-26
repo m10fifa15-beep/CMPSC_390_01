@@ -1,0 +1,27 @@
+//Problem Statement
+What problem does this solve?
+
+Gives users a opportunity to give subjective assessments of locations to give other users an idea of what they can expect at said locations prior to their visit.
+
+User Flow
+Step by step from start to finish
+
+Making a review system in the backend. Making it submit and retrieve information from the database.
+Reviewing DB to make sure the reviews are being added and stored correctly.
+
+Technical Plan
+Frontend changes
+Backend routes
+Database changes
+Files expected to be created or modified
+
+Work on backend to add a way to retrieve and store reviews, take reviews from one locaation and sum them, then get their average to show on the page.
+Backend implimentation of "review" and "calc_review" methods.
+Frontend page to let users leave reviews.
+Adding a review table to store page to leave independent reviews.
+
+Acceptance Criteria
+Clear definition of done
+Must be testable
+
+Able to make reviews, as well as see reviews from the customer side, on the unique store page.
