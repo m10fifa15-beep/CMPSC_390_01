@@ -1,40 +1,47 @@
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require("cors");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
+// MySQL connection
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'restaurant_db'
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "store_db"
 });
 
-// Get restaurant by ID
-app.get('/restaurant/:id', (req, res) => {
-  const id = req.params.id;
+db.connect(err => {
+  if (err) throw err;
+  console.log("MySQL Connected");
+});
 
-  const query = `
-    SELECT * FROM restaurants WHERE id = ?;
-  `;
-
-  db.query(query, [id], (err, result) => {
-    if (err) return res.status(500).send(err);
-
-    const restaurant = result[0];
-
-    db.query("SELECT * FROM reviews WHERE restaurant_id = ?", [id], (err, reviews) => {
-      if (err) return res.status(500).send(err);
-
-      restaurant.reviews = reviews;
-      res.json(restaurant);
-    });
+// Get reviews
+app.get("/reviews", (req, res) => {
+  db.query("SELECT * FROM reviews ORDER BY id DESC", (err, result) => {
+    if (err) throw err;
+    res.json(result);
   });
 });
 
+// Add review
+app.post("/reviews", (req, res) => {
+  const { rating, review } = req.body;
+
+  db.query(
+    "INSERT INTO reviews (rating, review) VALUES (?, ?)",
+    [rating, review],
+    (err, result) => {
+      if (err) throw err;
+      res.json({ success: true });
+    }
+  );
+});
+
 app.listen(3000, () => {
-  console.log('Server running on port 3000');
+  console.log("Server running on port 3000");
 });

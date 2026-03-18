@@ -1,54 +1,113 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Store Page</title>
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
 
-    <!-- RESTAURANT CONTENT -->
-    <main class="store">
-      <section class="store__header">
-        <h1 id="name">Restaurant Name</h1>
-        <p id="category">Cuisine Type</p>
-      </section>
+    .stars span {
+      font-size: 25px;
+      cursor: pointer;
+      color: gray;
+    }
 
-      <section class="store__info">
-        <div class="store__image">
-          <img id="image" src="" alt="Restaurant Image">
-        </div>
+    .stars span.active {
+      color: gold;
+    }
 
-        <div class="store__details">
-          <p id="description">Description here...</p>
-          <p><strong>Location:</strong> <span id="location"></span></p>
-          <p><strong>Rating:</strong> <span id="rating"></span></p>
-        </div>
-      </section>
+    .review {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+  </style>
+</head>
+<body>
 
-      <section class="store__reviews">
-        <h2>User Reviews</h2>
-        <div id="reviews"></div>
-      </section>
-    </main>
+<h1>Product Name</h1>
 
-  </div>
+<h2>Leave a Review</h2>
+
+<div class="stars" id="starContainer">
+  <span data-value="1">★</span>
+  <span data-value="2">★</span>
+  <span data-value="3">★</span>
+  <span data-value="4">★</span>
+  <span data-value="5">★</span>
+</div>
+
+<textarea id="reviewText" placeholder="Write your review..."></textarea><br><br>
+<button onclick="submitReview()">Submit</button>
+
+<h2>Reviews</h2>
+<div id="reviews"></div>
 
 <script>
-// Fetch restaurant data dynamically
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+let selectedRating = 0;
 
-fetch(`http://localhost:3000/restaurant/${id}`)
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("name").textContent = data.name;
-    document.getElementById("category").textContent = data.category;
-    document.getElementById("description").textContent = data.description;
-    document.getElementById("location").textContent = data.location;
-    document.getElementById("rating").textContent = data.rating;
-    document.getElementById("image").src = data.image;
+// Star selection
+document.querySelectorAll("#starContainer span").forEach(star => {
+  star.addEventListener("click", () => {
+    selectedRating = star.dataset.value;
 
-    const reviewsDiv = document.getElementById("reviews");
-    data.reviews.forEach(r => {
-      const p = document.createElement("p");
-      p.textContent = r.comment;
-      reviewsDiv.appendChild(p);
+    document.querySelectorAll("#starContainer span").forEach(s => {
+      s.classList.remove("active");
     });
+
+    for (let i = 0; i < selectedRating; i++) {
+      document.querySelectorAll("#starContainer span")[i].classList.add("active");
+    }
   });
+});
+
+// Submit review
+function submitReview() {
+  const text = document.getElementById("reviewText").value;
+
+  fetch("http://localhost:3000/reviews", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      rating: selectedRating,
+      review: text
+    })
+  })
+  .then(res => res.json())
+  .then(() => {
+    loadReviews();
+  });
+}
+
+// Load reviews
+function loadReviews() {
+  fetch("http://localhost:3000/reviews")
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById("reviews");
+      container.innerHTML = "";
+
+      data.forEach(r => {
+        const div = document.createElement("div");
+        div.classList.add("review");
+
+        div.innerHTML = `
+          <strong>${"★".repeat(r.rating)}</strong>
+          <p>${r.review}</p>
+        `;
+
+        container.appendChild(div);
+      });
+    });
+}
+
+loadReviews();
 </script>
 
 </body>

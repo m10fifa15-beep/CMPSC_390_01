@@ -1,17 +1,6 @@
-<style>
 body {
   margin: 0;
   font-family: Arial;
-  color: white;
-}
-
-.background {
-  background: linear-gradient(135deg, #1e1e2f, #2b2b45);
-  min-height: 100vh;
-}
-
-.top_nav {
-  padding: 10px 20px;
 }
 
 .topnav__inner {
@@ -22,41 +11,56 @@ body {
 
 .topnav a {
   margin: 0 10px;
-  color: white;
   text-decoration: none;
+  color: black;
 }
 
-.store {
+.content {
   padding: 40px;
 }
 
-.store__header h1 {
-  font-size: 2.5em;
+/* HERO BOX */
+.store-hero {
+  background: #dcdcdc;
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 40px;
+  border-radius: 5px;
 }
 
-.store__info {
+.subtitle {
+  font-size: 18px;
+}
+
+/* GRID */
+.store-grid {
   display: flex;
   gap: 30px;
-  margin-top: 20px;
+  justify-content: center;
 }
 
-.store__image img {
-  width: 300px;
-  border-radius: 10px;
+/* CARDS (match homepage style) */
+.card {
+  background: #dcdcdc;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  min-width: 250px;
 }
 
-.store__details {
-  max-width: 500px;
+.card img {
+  width: 100%;
+  border-radius: 5px;
 }
 
-.store__reviews {
-  margin-top: 40px;
+/* REVIEWS */
+.section__title {
+  text-align: center;
 }
 
-#reviews p {
-  background: rgba(255,255,255,0.1);
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+.cardgrid {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
-</style>
