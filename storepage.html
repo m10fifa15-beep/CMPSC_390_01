@@ -1,59 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Store Page</title>
-  <style>
-    body {
-      font-family: Arial;
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .stars span {
-      font-size: 25px;
-      cursor: pointer;
-      color: gray;
-    }
-
-    .stars span.active {
-      color: gold;
-    }
-
-    .review {
-      border-bottom: 1px solid #ccc;
-      padding: 10px 0;
-    }
-  </style>
+  <title>Restaurant</title>
+  <link rel="stylesheet" href="storepage.css">
 </head>
 <body>
 
-<h1>Product Name</h1>
-
-<h2>Leave a Review</h2>
-
-<div class="stars" id="starContainer">
-  <span data-value="1">★</span>
-  <span data-value="2">★</span>
-  <span data-value="3">★</span>
-  <span data-value="4">★</span>
-  <span data-value="5">★</span>
+<div class="store-hero">
+  <h1>Sunny Bites ☀️</h1>
+  <p class="subtitle">Fresh food. Bright flavors.</p>
+  <h2 id="avgRating">⭐ 0.0</h2>
 </div>
 
-<textarea id="reviewText" placeholder="Write your review..."></textarea><br><br>
-<button onclick="submitReview()">Submit</button>
+<div class="store-grid">
+  <div class="card">Burger - $8.99</div>
+  <div class="card">Fries - $3.99</div>
+  <div class="card">Lemonade - $2.99</div>
+</div>
 
-<h2>Reviews</h2>
-<div id="reviews"></div>
+<!-- REVIEW FORM -->
+<div class="review-box">
+  <input id="username" placeholder="Your name">
+
+  <div class="stars" id="starContainer">
+    <span data-value="1">★</span>
+    <span data-value="2">★</span>
+    <span data-value="3">★</span>
+    <span data-value="4">★</span>
+    <span data-value="5">★</span>
+  </div>
+
+  <textarea id="reviewText" placeholder="Write review..."></textarea>
+
+  <button onclick="submitReview()">Submit</button>
+
+  <select id="sortSelect" onchange="loadReviews()">
+    <option value="newest">Newest</option>
+    <option value="highest">Highest Rated</option>
+  </select>
+</div>
+
+<h2 style="text-align:center;">Reviews</h2>
+<div id="reviews" class="cardgrid"></div>
 
 <script>
 let selectedRating = 0;
 
-// Star selection
+// STARS
 document.querySelectorAll("#starContainer span").forEach(star => {
   star.addEventListener("click", () => {
-    selectedRating = star.dataset.value;
+    selectedRating = Number(star.dataset.value);
 
     document.querySelectorAll("#starContainer span").forEach(s => {
       s.classList.remove("active");
@@ -65,29 +61,36 @@ document.querySelectorAll("#starContainer span").forEach(star => {
   });
 });
 
-// Submit review
+// SUBMIT
 function submitReview() {
-  const text = document.getElementById("reviewText").value;
+  const username = document.getElementById("username").value.trim();
+  const review = document.getElementById("reviewText").value.trim();
+
+  if (!username || !review || !selectedRating) {
+    alert("Fill everything out");
+    return;
+  }
 
   fetch("http://localhost:3000/reviews", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      rating: selectedRating,
-      review: text
-    })
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ username, rating: selectedRating, review })
   })
-  .then(res => res.json())
   .then(() => {
+    document.getElementById("username").value = "";
+    document.getElementById("reviewText").value = "";
+    selectedRating = 0;
+
     loadReviews();
+    loadAverage();
   });
 }
 
-// Load reviews
+// LOAD REVIEWS
 function loadReviews() {
-  fetch("http://localhost:3000/reviews")
+  const sort = document.getElementById("sortSelect").value;
+
+  fetch(`http://localhost:3000/reviews?sort=${sort}`)
     .then(res => res.json())
     .then(data => {
       const container = document.getElementById("reviews");
@@ -95,11 +98,13 @@ function loadReviews() {
 
       data.forEach(r => {
         const div = document.createElement("div");
-        div.classList.add("review");
+        div.classList.add("card");
 
         div.innerHTML = `
-          <strong>${"★".repeat(r.rating)}</strong>
+          <strong>${r.username}</strong>
+          <div class="stars-display">${"★".repeat(r.rating)}</div>
           <p>${r.review}</p>
+          <button class="delete-btn" onclick="deleteReview(${r.id})">Delete</button>
         `;
 
         container.appendChild(div);
@@ -107,7 +112,29 @@ function loadReviews() {
     });
 }
 
+// DELETE
+function deleteReview(id) {
+  fetch(`http://localhost:3000/reviews/${id}`, {
+    method: "DELETE"
+  })
+  .then(() => {
+    loadReviews();
+    loadAverage();
+  });
+}
+
+// AVG
+function loadAverage() {
+  fetch("http://localhost:3000/reviews/average")
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("avgRating").innerText =
+        "⭐ " + Number(data.average || 0).toFixed(1);
+    });
+}
+
 loadReviews();
+loadAverage();
 </script>
 
 </body>

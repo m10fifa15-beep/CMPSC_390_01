@@ -1,31 +1,16 @@
 body {
   margin: 0;
   font-family: Arial;
+  background: #fffdf5;
 }
 
-.topnav__inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.topnav a {
-  margin: 0 10px;
-  text-decoration: none;
-  color: black;
-}
-
-.content {
-  padding: 40px;
-}
-
-/* HERO BOX */
+/* HERO */
 .store-hero {
-  background: #dcdcdc;
+  background: #ffd54f;
   padding: 30px;
   text-align: center;
+  border-radius: 8px;
   margin-bottom: 40px;
-  border-radius: 5px;
 }
 
 .subtitle {
@@ -37,30 +22,72 @@ body {
   display: flex;
   gap: 30px;
   justify-content: center;
+  margin-bottom: 40px;
 }
 
-/* CARDS (match homepage style) */
+/* CARDS */
 .card {
-  background: #dcdcdc;
+  background: #fff8dc;
   padding: 20px;
-  border-radius: 5px;
+  border-radius: 8px;
+  min-width: 220px;
   text-align: center;
-  min-width: 250px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.card img {
+/* REVIEW FORM */
+.review-box {
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+}
+
+input, textarea, select {
   width: 100%;
+  margin-top: 10px;
+  padding: 10px;
   border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
-/* REVIEWS */
-.section__title {
-  text-align: center;
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #ffca28;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
+button:hover {
+  background: #ffc107;
+}
+
+/* STARS */
+.stars span {
+  font-size: 28px;
+  cursor: pointer;
+  color: gray;
+}
+
+.stars span.active {
+  color: gold;
+}
+
+.stars-display {
+  color: gold;
+}
+
+/* REVIEW GRID */
 .cardgrid {
   display: flex;
   gap: 20px;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.delete-btn {
+  background: #ff6b6b;
+  color: white;
+  margin-top: 10px;
 }
