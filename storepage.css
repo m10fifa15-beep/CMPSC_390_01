@@ -91,3 +91,13 @@ button:hover {
   color: white;
   margin-top: 10px;
 }
+
+.auth-box {
+  max-width: 300px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.auth-box input {
+  margin-bottom: 10px;
+}

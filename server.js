@@ -3,11 +3,9 @@ const mysql = require("mysql2");
 const cors = require("cors");
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-// DB CONNECTION
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -21,12 +19,56 @@ db.connect(err => {
 });
 
 /* =========================
-   GET REVIEWS (WITH SORT)
+   REGISTER
+========================= */
+app.post("/register", (req, res) => {
+  const { username, password } = req.body;
+
+  db.query(
+    "INSERT INTO users (username, password) VALUES (?, ?)",
+    [username, password],
+    (err) => {
+      if (err) {
+        return res.status(400).json({ error: "Username taken" });
+      }
+      res.json({ success: true });
+    }
+  );
+});
+
+/* =========================
+   LOGIN
+========================= */
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
+
+  db.query(
+    "SELECT * FROM users WHERE username = ? AND password = ?",
+    [username, password],
+    (err, result) => {
+      if (result.length === 0) {
+        return res.status(401).json({ error: "Invalid login" });
+      }
+
+      res.json({
+        userId: result[0].id,
+        username: result[0].username
+      });
+    }
+  );
+});
+
+/* =========================
+   GET REVIEWS
 ========================= */
 app.get("/reviews", (req, res) => {
   const sort = req.query.sort;
 
-  let query = "SELECT * FROM reviews";
+  let query = `
+    SELECT reviews.*, users.username 
+    FROM reviews
+    JOIN users ON reviews.user_id = users.id
+  `;
 
   if (sort === "highest") {
     query += " ORDER BY rating DESC";
@@ -44,15 +86,11 @@ app.get("/reviews", (req, res) => {
    ADD REVIEW
 ========================= */
 app.post("/reviews", (req, res) => {
-  const { username, rating, review } = req.body;
-
-  if (!username || !rating || !review) {
-    return res.status(400).json({ error: "Missing fields" });
-  }
+  const { userId, rating, review } = req.body;
 
   db.query(
-    "INSERT INTO reviews (username, rating, review) VALUES (?, ?, ?)",
-    [username, rating, review],
+    "INSERT INTO reviews (user_id, rating, review) VALUES (?, ?, ?)",
+    [userId, rating, review],
     (err) => {
       if (err) throw err;
       res.json({ success: true });
@@ -61,27 +99,31 @@ app.post("/reviews", (req, res) => {
 });
 
 /* =========================
-   DELETE REVIEW
+   DELETE (ONLY AUTHOR)
 ========================= */
 app.delete("/reviews/:id", (req, res) => {
-  const id = req.params.id;
+  const reviewId = req.params.id;
+  const userId = req.body.userId;
 
-  db.query("DELETE FROM reviews WHERE id = ?", [id], (err) => {
-    if (err) throw err;
-    res.json({ success: true });
-  });
+  db.query(
+    "DELETE FROM reviews WHERE id = ? AND user_id = ?",
+    [reviewId, userId],
+    (err, result) => {
+      if (result.affectedRows === 0) {
+        return res.status(403).json({ error: "Not allowed" });
+      }
+      res.json({ success: true });
+    }
+  );
 });
 
 /* =========================
-   AVERAGE RATING
+   AVG RATING
 ========================= */
 app.get("/reviews/average", (req, res) => {
   db.query("SELECT AVG(rating) as avg FROM reviews", (err, result) => {
-    if (err) throw err;
     res.json({ average: result[0].avg || 0 });
   });
 });
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+app.listen(3000, () => console.log("Server running on port 3000"));
