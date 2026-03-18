@@ -1,108 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Store Page</title>
+  <title>Store</title>
   <style>
-    body {
-      font-family: Arial;
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    .stars span {
-      font-size: 25px;
-      cursor: pointer;
-      color: gray;
-    }
-
-    .stars span.active {
-      color: gold;
-    }
-
-    .review {
-      border-bottom: 1px solid #ccc;
-      padding: 10px 0;
-    }
+    body { font-family: Arial; max-width: 600px; margin: auto; }
+    .stars span { font-size: 25px; cursor: pointer; color: gray; }
+    .active { color: gold; }
   </style>
 </head>
 <body>
 
-<h1>Product Name</h1>
+<h1>Store Page</h1>
 
-<h2>Leave a Review</h2>
+<h2 id="avgRating">Average: 0</h2>
 
-<div class="stars" id="starContainer">
-  <span data-value="1">★</span>
-  <span data-value="2">★</span>
-  <span data-value="3">★</span>
-  <span data-value="4">★</span>
-  <span data-value="5">★</span>
+<!-- AUTH -->
+<h3>Register</h3>
+<input id="regUser" placeholder="username">
+<input id="regPass" type="password" placeholder="password">
+<button onclick="register()">Register</button>
+
+<h3>Login</h3>
+<input id="logUser" placeholder="username">
+<input id="logPass" type="password" placeholder="password">
+<button onclick="login()">Login</button>
+
+<button onclick="logout()">Logout</button>
+
+<hr>
+
+<!-- REVIEW -->
+<h2>Leave Review</h2>
+
+<div class="stars" id="stars">
+  <span data-v="1">★</span>
+  <span data-v="2">★</span>
+  <span data-v="3">★</span>
+  <span data-v="4">★</span>
+  <span data-v="5">★</span>
 </div>
 
-<textarea id="reviewText" placeholder="Write your review..."></textarea><br><br>
+<textarea id="review"></textarea><br>
 <button onclick="submitReview()">Submit</button>
 
 <h2>Reviews</h2>
 <div id="reviews"></div>
 
 <script>
-let selectedRating = 0;
+let rating = 0;
 
-// Star selection
-document.querySelectorAll("#starContainer span").forEach(star => {
-  star.addEventListener("click", () => {
-    selectedRating = star.dataset.value;
+document.querySelectorAll("#stars span").forEach(star => {
+  star.onclick = () => {
+    rating = star.dataset.v;
 
-    document.querySelectorAll("#starContainer span").forEach(s => {
-      s.classList.remove("active");
-    });
-
-    for (let i = 0; i < selectedRating; i++) {
-      document.querySelectorAll("#starContainer span")[i].classList.add("active");
+    document.querySelectorAll("#stars span").forEach(s => s.classList.remove("active"));
+    for (let i = 0; i < rating; i++) {
+      document.querySelectorAll("#stars span")[i].classList.add("active");
     }
-  });
+  };
 });
 
-// Submit review
-function submitReview() {
-  const text = document.getElementById("reviewText").value;
-
-  fetch("http://localhost:3000/reviews", {
+// AUTH
+function register() {
+  fetch("http://localhost:3000/register", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
-      rating: selectedRating,
-      review: text
+      username: regUser.value,
+      password: regPass.value
     })
-  })
-  .then(res => res.json())
-  .then(() => {
-    loadReviews();
   });
 }
 
-// Load reviews
+function login() {
+  fetch("http://localhost:3000/login", {
+    method: "POST",
+    credentials: "include",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: logUser.value,
+      password: logPass.value
+    })
+  });
+}
+
+function logout() {
+  fetch("http://localhost:3000/logout", {
+    credentials: "include"
+  });
+}
+
+// REVIEWS
+function submitReview() {
+  fetch("http://localhost:3000/reviews", {
+    method: "POST",
+    credentials: "include",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      rating,
+      review: review.value
+    })
+  }).then(loadReviews);
+}
+
 function loadReviews() {
   fetch("http://localhost:3000/reviews")
     .then(res => res.json())
     .then(data => {
-      const container = document.getElementById("reviews");
-      container.innerHTML = "";
+      avgRating.innerText = "Average: " + Number(data.average).toFixed(1);
 
-      data.forEach(r => {
-        const div = document.createElement("div");
-        div.classList.add("review");
+      reviews.innerHTML = "";
 
-        div.innerHTML = `
-          <strong>${"★".repeat(r.rating)}</strong>
-          <p>${r.review}</p>
+      data.reviews.forEach(r => {
+        reviews.innerHTML += `
+          <div>
+            <strong>${r.username}</strong>
+            <div>${"★".repeat(r.rating)}</div>
+            <p>${r.review}</p>
+          </div>
         `;
-
-        container.appendChild(div);
       });
     });
 }
