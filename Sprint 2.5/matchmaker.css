@@ -26,19 +26,49 @@ hr {
   position: relative;
 }
 
-/* Top Navigation bar */
+/* Top bar */
 .top_nav {
   border-bottom: 1px solid #cfcfcf;
-  background: #efefef;
+  background: #f7f7f7;
 }
 
-/* Layout for nav inner content */
 .topnav__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 12px 18px;
 }
+
+.logo {
+  border: 1px solid #bdbdbd;
+  padding: 6px 10px;
+  min-width: 70px;
+  text-align: left;
+  font-weight: 600;
+  background: #fff;
+}
+
+.logo img:hover {
+  background: #ff0000;
+}
+
+.topnav {
+  display: flex;
+  gap: 18px;
+}
+
+.topnav a {
+  text-decoration: none;
+  color: #222;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.topnav a:hover {
+  background: #eaeaea;
+}
+
+/* ----- */
 
 /* Page title text */
 .page_title {
