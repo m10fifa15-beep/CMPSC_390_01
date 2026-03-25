@@ -37,26 +37,38 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// Routes
+// Get all posts
 app.get("/posts", (req, res) => {
   db.query(
     "SELECT restaurant_name, caption, image_path FROM Posts ORDER BY created_at DESC",
     (err, results) => {
-      if (err) return res.status(500).json(err);
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "DB error" });
+      }
       res.json(results);
     }
   );
 });
 
+// Create post
 app.post("/create-post", upload.single("image"), (req, res) => {
   const { restaurant_name, caption } = req.body;
+
+  if (!restaurant_name || !caption || !req.file) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
   const imagePath = `uploads/${req.file.filename}`;
 
   db.query(
     "INSERT INTO Posts (restaurant_name, caption, image_path) VALUES (?, ?, ?)",
     [restaurant_name, caption, imagePath],
     (err) => {
-      if (err) return res.status(500).json(err);
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Insert failed" });
+      }
       res.json({ success: true });
     }
   );
