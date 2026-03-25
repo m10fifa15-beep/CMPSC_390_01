@@ -1,129 +1,80 @@
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 
+// MySQL connection
 const db = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "password",
-  database: "store_db"
+  password: "micheelcanelo",
+  database: "RestaurantFeed",
 });
 
-db.connect(err => {
-  if (err) throw err;
-  console.log("MySQL Connected");
-});
-
-/* =========================
-   REGISTER
-========================= */
-app.post("/register", (req, res) => {
-  const { username, password } = req.body;
-
-  db.query(
-    "INSERT INTO users (username, password) VALUES (?, ?)",
-    [username, password],
-    (err) => {
-      if (err) {
-        return res.status(400).json({ error: "Username taken" });
-      }
-      res.json({ success: true });
-    }
-  );
-});
-
-/* =========================
-   LOGIN
-========================= */
-app.post("/login", (req, res) => {
-  const { username, password } = req.body;
-
-  db.query(
-    "SELECT * FROM users WHERE username = ? AND password = ?",
-    [username, password],
-    (err, result) => {
-      if (result.length === 0) {
-        return res.status(401).json({ error: "Invalid login" });
-      }
-
-      res.json({
-        userId: result[0].id,
-        username: result[0].username
-      });
-    }
-  );
-});
-
-/* =========================
-   GET REVIEWS
-========================= */
-app.get("/reviews", (req, res) => {
-  const sort = req.query.sort;
-
-  let query = `
-    SELECT reviews.*, users.username 
-    FROM reviews
-    JOIN users ON reviews.user_id = users.id
-  `;
-
-  if (sort === "highest") {
-    query += " ORDER BY rating DESC";
+db.connect((err) => {
+  if (err) {
+    console.error("DB connection failed:", err);
   } else {
-    query += " ORDER BY created_at DESC";
+    console.log("Connected to MySQL");
+  }
+});
+
+// Image upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
+// Get all posts
+app.get("/posts", (req, res) => {
+  db.query(
+    "SELECT restaurant_name, caption, image_path FROM Posts ORDER BY created_at DESC",
+    (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "DB error" });
+      }
+      res.json(results);
+    }
+  );
+});
+
+// Create post
+app.post("/create-post", upload.single("image"), (req, res) => {
+  const { restaurant_name, caption } = req.body;
+
+  if (!restaurant_name || !caption || !req.file) {
+    return res.status(400).json({ error: "Missing required fields" });
   }
 
-  db.query(query, (err, result) => {
-    if (err) throw err;
-    res.json(result);
-  });
-});
-
-/* =========================
-   ADD REVIEW
-========================= */
-app.post("/reviews", (req, res) => {
-  const { userId, rating, review } = req.body;
+  const imagePath = `uploads/${req.file.filename}`;
 
   db.query(
-    "INSERT INTO reviews (user_id, rating, review) VALUES (?, ?, ?)",
-    [userId, rating, review],
+    "INSERT INTO Posts (restaurant_name, caption, image_path) VALUES (?, ?, ?)",
+    [restaurant_name, caption, imagePath],
     (err) => {
-      if (err) throw err;
-      res.json({ success: true });
-    }
-  );
-});
-
-/* =========================
-   DELETE (ONLY AUTHOR)
-========================= */
-app.delete("/reviews/:id", (req, res) => {
-  const reviewId = req.params.id;
-  const userId = req.body.userId;
-
-  db.query(
-    "DELETE FROM reviews WHERE id = ? AND user_id = ?",
-    [reviewId, userId],
-    (err, result) => {
-      if (result.affectedRows === 0) {
-        return res.status(403).json({ error: "Not allowed" });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Insert failed" });
       }
       res.json({ success: true });
     }
   );
 });
 
-/* =========================
-   AVG RATING
-========================= */
-app.get("/reviews/average", (req, res) => {
-  db.query("SELECT AVG(rating) as avg FROM reviews", (err, result) => {
-    res.json({ average: result[0].avg || 0 });
-  });
+// Start server
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
 });
-
-app.listen(3000, () => console.log("Server running on port 3000"));
