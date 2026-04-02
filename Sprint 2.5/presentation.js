@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const mysql = require("mysql2");
-const cors = require("cors");
+const bodyParser = require("body-parser");
 const path = require("path");
 const fs = require("fs");
 const multer = require("multer");
@@ -13,28 +13,33 @@ const PORT = process.env.PORT || 3000;
 /* =========================
    MIDDLEWARE
 ========================= */
-app.use(cors());
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(__dirname));
 
 /* =========================
-   UPLOADS FOLDER
+   ENSURE uploads FOLDER EXISTS
 ========================= */
 const uploadsDir = path.join(__dirname, "uploads");
-
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
+/* =========================
+   SERVE UPLOADED IMAGES
+========================= */
 app.use("/uploads", express.static(uploadsDir));
 
+/* =========================
+   MULTER SETUP
+========================= */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
+    const uniqueName =
+      Date.now() + "-" + file.originalname.replace(/\s+/g, "_");
     cb(null, uniqueName);
   }
 });
@@ -42,7 +47,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* =========================
-   ONE DATABASE CONNECTION
+   MYSQL CONNECTION
 ========================= */
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -56,11 +61,11 @@ db.connect((err) => {
     console.error("Database connection failed:", err);
     return;
   }
-  console.log(`Connected to ${process.env.DB_NAME} database`);
+  console.log("Connected to MySQL database");
 });
 
 /* =========================
-   HELPERS FOR MATCHMAKER
+   HELPERS
 ========================= */
 function normalize(str) {
   return String(str || "").toLowerCase().trim();
@@ -95,69 +100,14 @@ function scorePlace(place, prefs) {
 }
 
 /* =========================
-   PAGE ROUTES
+   HOME ROUTE
 ========================= */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "home.html"));
 });
 
-app.get("/home", (req, res) => {
-  res.sendFile(path.join(__dirname, "home.html"));
-});
-
-app.get("/add-location", (req, res) => {
-  res.sendFile(path.join(__dirname, "addLocation.html"));
-});
-
-app.get("/matchmaker", (req, res) => {
-  res.sendFile(path.join(__dirname, "matchmaker.html"));
-});
-
-app.get("/store", (req, res) => {
-  res.sendFile(path.join(__dirname, "storepage.html"));
-});
-
-app.get("/social-feed", (req, res) => {
-  res.sendFile(path.join(__dirname, "social_feed.html"));
-});
-
-app.get("/auth", (req, res) => {
-  res.sendFile(path.join(__dirname, "auth.html"));
-});
-
-app.get("/signup", (req, res) => {
-  res.sendFile(path.join(__dirname, "signup.html"));
-});
-
 /* =========================
-   ADD LOCATION PAGE
-   table: place
-========================= */
-app.post("/addLocation", (req, res) => {
-  const { PlaceType, PlaceName, PlaceAddress } = req.body;
-
-  const sql = `
-    INSERT INTO place (PlaceType, PlaceName, PlaceAddress)
-    VALUES (?, ?, ?)
-  `;
-
-  db.query(sql, [PlaceType, PlaceName, PlaceAddress], (err, results) => {
-    if (err) {
-      console.error("Add location error:", err);
-      return res.status(500).send("Server Error");
-    }
-
-    if (results.affectedRows === 1) {
-      return res.send(`${PlaceType}: has been created!`);
-    }
-
-    res.send("Location Not Created");
-  });
-});
-
-/* =========================
-   MATCHMAKER PAGE
-   table: locations
+   MATCH API
 ========================= */
 app.post("/api/match", (req, res) => {
   const prefs = req.body;
@@ -178,7 +128,7 @@ app.post("/api/match", (req, res) => {
 
   db.query(sql, (err, results) => {
     if (err) {
-      console.error("Matchmaker error:", err);
+      console.error("Match query error:", err);
       return res.status(500).send("Database error");
     }
 
@@ -204,49 +154,107 @@ app.post("/api/match", (req, res) => {
       website: r.website_url,
       reviews: r.number_of_reviews,
       rating: r.average_rating,
-      matchScore: r.matchScore
+      matchScore: r.matchScore,
+      description: ""
     }));
 
     res.json({ results: response });
   });
 });
 
-app.get("/hello-place", (req, res) => {
-  const sql = "SELECT * FROM locations LIMIT 1";
+/* =========================
+   ADD LOCATION
+========================= */
+app.post("/addLocation", upload.single("ImageFile"), (req, res) => {
+  const {
+    PlaceType,
+    PlaceName,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    zip,
+    country
+  } = req.body;
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("Hello-place error:", err);
-      return res.status(500).send("Database error");
+  const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+  const sql = `
+    INSERT INTO place
+    (
+      placeType,
+      placeName,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      zip,
+      country,
+      placeImage
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(
+    sql,
+    [
+      PlaceType,
+      PlaceName,
+      addressLine1,
+      addressLine2 || null,
+      city,
+      state,
+      zip,
+      country,
+      imagePath
+    ],
+    (err, results) => {
+      if (err) {
+        console.error("Add location error:", err);
+        return res.status(500).send("Server Error");
+      }
+
+      if (results.affectedRows === 1) {
+        return res.send(`${PlaceName} has been created!`);
+      }
+
+      res.send("Location Not Created");
     }
-
-    if (results.length === 0) {
-      return res.send("No places found");
-    }
-
-    res.send(`First place: ${results[0].name}`);
-  });
+  );
 });
 
 /* =========================
    STORE PAGE AUTH
-   table: js_users
+   TABLE: js_users
 ========================= */
 app.post("/register", (req, res) => {
   const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: "Username and password required" });
+  }
 
   const sql = `
     INSERT INTO js_users (username, password)
     VALUES (?, ?)
   `;
 
-  db.query(sql, [username, password], (err) => {
+  db.query(sql, [username, password], (err, result) => {
     if (err) {
       console.error("Register error:", err);
-      return res.status(400).json({ error: "Username taken" });
+
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(400).json({ error: "Username already exists" });
+      }
+
+      return res.status(500).json({ error: "Database error" });
     }
 
-    res.json({ success: true });
+    res.json({
+      success: true,
+      userId: result.insertId,
+      username
+    });
   });
 });
 
@@ -254,125 +262,180 @@ app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
   const sql = `
-    SELECT * FROM js_users
+    SELECT id, username
+    FROM js_users
     WHERE username = ? AND password = ?
+    LIMIT 1
   `;
 
-  db.query(sql, [username, password], (err, result) => {
+  db.query(sql, [username, password], (err, results) => {
     if (err) {
       console.error("Login error:", err);
-      return res.status(500).json({ error: "Server error" });
+      return res.status(500).json({ error: "Database error" });
     }
 
-    if (!result || result.length === 0) {
+    if (results.length === 0) {
       return res.status(401).json({ error: "Invalid login" });
     }
 
     res.json({
-      userId: result[0].id,
-      username: result[0].username
+      userId: results[0].id,
+      username: results[0].username
     });
   });
 });
 
 /* =========================
    STORE PAGE REVIEWS
-   table: js_reviews
+   TABLE: js_reviews
+   Using location_id = 1 for this page
 ========================= */
-app.get("/reviews", (req, res) => {
-  const sort = req.query.sort;
+app.post("/reviews", (req, res) => {
+  const { userId, rating, review } = req.body;
+  const locationId = 1;
 
-  let query = `
-    SELECT js_reviews.*, js_users.username
-    FROM js_reviews
-    JOIN js_users ON js_reviews.user_id = js_users.id
-  `;
-
-  if (sort === "highest") {
-    query += " ORDER BY js_reviews.rating DESC";
-  } else {
-    query += " ORDER BY js_reviews.created_at DESC";
+  if (!userId) {
+    return res.status(400).json({ error: "Login required" });
   }
 
-  db.query(query, (err, result) => {
+  if (!rating || rating < 1 || rating > 5) {
+    return res.status(400).json({ error: "Rating must be 1 to 5" });
+  }
+
+  const sql = `
+    INSERT INTO js_reviews (user_id, location_id, rating, review)
+    VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(sql, [userId, locationId, rating, review || ""], (err, result) => {
     if (err) {
-      console.error("Get reviews error:", err);
-      return res.status(500).json({ error: "Server error" });
+      console.error("Create review error:", err);
+      return res.status(500).json({ error: "Database error" });
     }
 
-    res.json(result);
+    res.json({
+      success: true,
+      reviewId: result.insertId
+    });
   });
 });
 
-app.post("/reviews", (req, res) => {
-  const { userId, rating, review } = req.body;
+app.get("/reviews", (req, res) => {
+  const sort = req.query.sort === "highest" ? "highest" : "newest";
+  const locationId = 1;
+
+  let orderBy = "r.created_at DESC";
+  if (sort === "highest") {
+    orderBy = "r.rating DESC, r.created_at DESC";
+  }
 
   const sql = `
-    INSERT INTO js_reviews (user_id, rating, review)
-    VALUES (?, ?, ?)
+    SELECT
+      r.id,
+      r.user_id,
+      r.location_id,
+      r.rating,
+      r.review,
+      r.created_at,
+      u.username
+    FROM js_reviews r
+    JOIN js_users u ON r.user_id = u.id
+    WHERE r.location_id = ?
+    ORDER BY ${orderBy}
   `;
 
-  db.query(sql, [userId, rating, review], (err) => {
+  db.query(sql, [locationId], (err, results) => {
     if (err) {
-      console.error("Add review error:", err);
-      return res.status(500).json({ error: "Server error" });
+      console.error("Load reviews error:", err);
+      return res.status(500).json({ error: "Database error" });
     }
 
-    res.json({ success: true });
+    res.json(results);
   });
 });
 
 app.delete("/reviews/:id", (req, res) => {
   const reviewId = req.params.id;
-  const userId = req.body.userId;
+  const { userId } = req.body;
 
-  const sql = `
-    DELETE FROM js_reviews
-    WHERE id = ? AND user_id = ?
+  if (!userId) {
+    return res.status(400).json({ error: "Login required" });
+  }
+
+  const checkSql = `
+    SELECT id, user_id
+    FROM js_reviews
+    WHERE id = ?
+    LIMIT 1
   `;
 
-  db.query(sql, [reviewId, userId], (err, result) => {
+  db.query(checkSql, [reviewId], (err, results) => {
     if (err) {
-      console.error("Delete review error:", err);
-      return res.status(500).json({ error: "Server error" });
+      console.error("Review ownership check error:", err);
+      return res.status(500).json({ error: "Database error" });
     }
 
-    if (!result || result.affectedRows === 0) {
-      return res.status(403).json({ error: "Not allowed" });
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Review not found" });
     }
 
-    res.json({ success: true });
+    if (Number(results[0].user_id) !== Number(userId)) {
+      return res.status(403).json({ error: "Not allowed to delete this review" });
+    }
+
+    const deleteSql = `DELETE FROM js_reviews WHERE id = ?`;
+
+    db.query(deleteSql, [reviewId], (deleteErr) => {
+      if (deleteErr) {
+        console.error("Delete review error:", deleteErr);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      res.json({ success: true });
+    });
   });
 });
 
 app.get("/reviews/average", (req, res) => {
-  const sql = "SELECT AVG(rating) AS avg FROM js_reviews";
+  const locationId = 1;
 
-  db.query(sql, (err, result) => {
+  const sql = `
+    SELECT AVG(rating) AS average
+    FROM js_reviews
+    WHERE location_id = ?
+  `;
+
+  db.query(sql, [locationId], (err, results) => {
     if (err) {
-      console.error("Average rating error:", err);
-      return res.status(500).json({ error: "Server error" });
+      console.error("Average review error:", err);
+      return res.status(500).json({ error: "Database error" });
     }
 
-    res.json({ average: result[0].avg || 0 });
+    const average = results[0]?.average ?? 0;
+    res.json({ average: Number(average) || 0 });
   });
 });
 
 /* =========================
-   SOCIAL FEED PAGE
-   table: Posts
+   SOCIAL FEED POSTS
+   TABLE: Posts
 ========================= */
 app.get("/posts", (req, res) => {
   const sql = `
-    SELECT post_id, restaurant_name, caption, image_path, created_at
+    SELECT
+      post_id,
+      restaurant_name,
+      caption,
+      image_path,
+      created_at
     FROM Posts
-    ORDER BY post_id DESC
+    ORDER BY created_at DESC, post_id DESC
   `;
 
   db.query(sql, (err, results) => {
     if (err) {
-      console.error("Get posts error:", err);
-      return res.status(500).json({ error: "Failed to load posts" });
+      console.error("Load posts error:", err);
+      return res.status(500).json({ error: "Database error" });
     }
 
     res.json(results);
@@ -382,11 +445,21 @@ app.get("/posts", (req, res) => {
 app.post("/create-post", upload.single("image"), (req, res) => {
   const { restaurant_name, caption } = req.body;
 
-  if (!req.file) {
-    return res.status(400).json({ success: false, error: "No image uploaded" });
+  if (!restaurant_name || !caption) {
+    return res.status(400).json({
+      success: false,
+      error: "Restaurant name and caption are required"
+    });
   }
 
-  const imagePath = `uploads/${req.file.filename}`;
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      error: "Image file is required"
+    });
+  }
+
+  const imagePath = `/uploads/${req.file.filename}`;
 
   const sql = `
     INSERT INTO Posts (restaurant_name, caption, image_path)
@@ -396,10 +469,36 @@ app.post("/create-post", upload.single("image"), (req, res) => {
   db.query(sql, [restaurant_name, caption, imagePath], (err, result) => {
     if (err) {
       console.error("Create post error:", err);
-      return res.status(500).json({ success: false, error: "Database error" });
+      return res.status(500).json({
+        success: false,
+        error: "Database error"
+      });
     }
 
-    res.json({ success: true, postId: result.insertId });
+    res.json({
+      success: true,
+      postId: result.insertId
+    });
+  });
+});
+
+/* =========================
+   TEST ROUTE
+========================= */
+app.get("/hello-place", (req, res) => {
+  const sql = "SELECT * FROM locations LIMIT 1";
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Hello-place query error:", err);
+      return res.status(500).send("Database error");
+    }
+
+    if (results.length === 0) {
+      return res.send("No places found");
+    }
+
+    res.send(`First place: ${results[0].name}`);
   });
 });
 
