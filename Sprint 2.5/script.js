@@ -1,4 +1,4 @@
-fetch("http://localhost:3000/posts")
+fetch("/posts")
   .then(res => res.json())
   .then(data => {
     const feed = document.getElementById("feed");
