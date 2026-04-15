@@ -59,11 +59,3 @@ CREATE TABLE IF NOT EXISTS Posts (
   image_path VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- Insert some dummy data into `locations` to make sure /api/match returns results!
-INSERT INTO locations (name, number_of_reviews, average_rating, food_category, price_range, city, state)
-VALUES 
-  ('The Burger Joint', 150, 4.5, 'American', '$$', 'Chicago', 'IL'),
-  ('Pizza Planet', 85, 4.2, 'Italian', '$', 'Chicago', 'IL'),
-  ('Sushi Station', 300, 4.8, 'Japanese', '$$$', 'Chicago', 'IL')
-ON DUPLICATE KEY UPDATE name=name;
