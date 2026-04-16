@@ -1,4 +1,4 @@
-fetch("http://localhost:3000/posts")
+fetch("/posts")
   .then(res => res.json())
   .then(data => {
     const feed = document.getElementById("feed");
@@ -9,7 +9,7 @@ fetch("http://localhost:3000/posts")
       div.className = "post";
 
       div.innerHTML = `
-        <img src="http://localhost:3000/${post.image_path}" />
+        <img src="${post.image_path}" />
         <h3>${post.restaurant_name}</h3>
         <p>${post.caption}</p>
       `;
@@ -27,7 +27,7 @@ if (form) {
     const formData = new FormData(form);
 
     try {
-      const res = await fetch("http://localhost:3000/create-post", {
+      const res = await fetch("/create-post", {
         method: "POST",
         body: formData,
       });
