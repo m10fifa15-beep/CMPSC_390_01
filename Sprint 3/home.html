@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <title>Location Matcher</title>
+  <title>Location Test Matcher</title>
   <link rel="stylesheet" href="home.css" />
 </head>
 
@@ -18,14 +19,14 @@
         <div class="logo">
           <!--<a href = "____.html" -->
           <!--FIX LOGO LATER-->
-          <img src = "lmm_logo.png" alt = "Image of Logo" width = "50px" height = "50px">
+          <img src="lmm_logo.png" alt="Image of Logo" width="50px" height="50px">
           </a>
         </div>
 
 
         <nav class="topnav">
           <a href="home.html">Home</a>
-            <a href="addLocation.html">Add Location</a>
+          <a href="addLocation.html">Add Location</a>
           <a href="matchmaker.html">MatchMaker</a>
           <a href="storepage.html">Leave a Location Rating</a>
           <a href="social_feed.html">Photo Album</a>
@@ -37,7 +38,7 @@
 
     <!-- Welcome Box -->
     <main class="content">
-      <section class = "welcome">
+      <section class="welcome">
         <h1>Welcome to Our Site</h1>
         <p class="welcome__subtitle">Find Your Ideal Spot!</p>
         <button id="joinBtn" class="btn" type="button">Join Today</button>
@@ -56,19 +57,19 @@
 
 
         <div class="cardgrid">
-           <article class="card">
+          <article class="card">
             <h3>Step 1</h3>
             <p>Enter Preferences</p>
           </article>
 
 
-           <article class="card">
+          <article class="card">
             <h3>Step 2</h3>
             <p>Receive Matches</p>
           </article>
 
 
-           <article class="card">
+          <article class="card">
             <h3>Step 3</h3>
             <p>View User Dashboard </p>
           </article>
@@ -82,8 +83,8 @@
 
 
 
-<!--JAVASCRIPT FOR JOIN BUTTON-->
-<!--
+  <!--JAVASCRIPT FOR JOIN BUTTON-->
+  <!--
 <script>
   document.getElementById("joinBtn").addEventListener("click", function() {
     window.location.href = "signup.html";
@@ -93,36 +94,37 @@
 
 
 
-<!--JAVASCRIPT FOR EXPLORIATION CARDS-->  
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
+  <!--JAVASCRIPT FOR EXPLORIATION CARDS-->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
 
 
-    const restaurant = document.getElementById("restaurantCard");
-    const retail = document.getElementById("retailCard");
-    const parks = document.getElementById("parksCard");
+      const restaurant = document.getElementById("restaurantCard");
+      const retail = document.getElementById("retailCard");
+      const parks = document.getElementById("parksCard");
 
 
-    restaurant.addEventListener("click", function() {
-      window.location.href = "explore.html?category=restaurant";
+      restaurant.addEventListener("click", function () {
+        window.location.href = "explore.html?category=restaurant";
+      });
+
+
+      retail.addEventListener("click", function () {
+        window.location.href = "explore.html?category=retail";
+      });
+
+
+      parks.addEventListener("click", function () {
+        window.location.href = "explore.html?category=parks";
+      });
+
+
     });
-
-
-    retail.addEventListener("click", function() {
-      window.location.href = "explore.html?category=retail";
-    });
-
-
-    parks.addEventListener("click", function() {
-      window.location.href = "explore.html?category=parks";
-    });
-
-
-  });
-</script>
+  </script>
 
 
 
 
 </body>
+
 </html>
