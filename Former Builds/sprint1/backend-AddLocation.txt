@@ -1,0 +1,9 @@
+Responsible for Implimenting Code on backend level
+
+Needs: Database connection, Directions/code to implement, review feature
+
+Plan: Make code that can push a location to the database, then focus on allowing users to add locations.
+
+When finished: user will be able to add a location and details to the page, then view locations on the main page
+
+Risks: complications in making addition show up in main pa

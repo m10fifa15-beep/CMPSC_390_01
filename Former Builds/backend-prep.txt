@@ -1,0 +1,17 @@
+1. Trello cards I am in charge of:
+	Create Account
+	Login Feature
+
+2. I will begin by creating code that the user will see, such as "enter email" and "enter password." I will also set the restrictions for the emails and the password such as the length and what characters are allowed
+Then I will continue with the database and checking whether an email already exists or not, and from there either loging in or creating the account
+
+3. This is what done looks like:
+	Create Account:
+		-if the user doesn’t have an account, they should be able to register and create an account using- their name, email and a password
+		-if they are trying to register but the email already exists, the system should let the user know they have to log in
+	
+	Login Feature:
+		- user should insert email and password and login
+		- if email is not registered, the system should let the user know they need to create an account
+
+4. I will need to have a database that holds the information of the users, such as their name, email, and passwords- I have to work with Jason on this so when he has this ready next week I can start connecting them 

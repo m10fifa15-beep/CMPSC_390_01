@@ -9,7 +9,11 @@ fetch("/posts")
       div.className = "post";
 
       div.innerHTML = `
+<<<<<<< HEAD
         <img src="${post.image_path}" />
+=======
+        <img src="/${post.image_path}" />
+>>>>>>> master
         <h3>${post.restaurant_name}</h3>
         <p>${post.caption}</p>
       `;
