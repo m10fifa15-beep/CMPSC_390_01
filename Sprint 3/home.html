@@ -2,28 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Location Matcher</title>
   <link rel="stylesheet" href="home.css" />
 </head>
 
+
 <body>
+  <!--Divider for background-->
   <div class="background">
+
 
     <!-- Top Navigation -->
     <header class="top_nav">
       <div class="topnav__inner">
         <div class="logo">
-          <img src="lmm_logo.png" alt="Image of Logo" width="50" height="50">
           <!--<a href = "____.html" -->
           <!--FIX LOGO LATER-->
           <img src = "lmm_logo.png" alt = "Image of Logo" width = "50px" height = "50px">
           </a>
         </div>
 
+
         <nav class="topnav">
-          <a href="home.html" class="active">Home</a>
-          <a href="addLocation.html">Add Location</a>
+          <a href="home.html">Home</a>
+            <a href="addLocation.html">Add Location</a>
           <a href="matchmaker.html">MatchMaker</a>
           <a href="storepage.html">Leave a Location Rating</a>
           <a href="social_feed.html">Photo Album</a>
@@ -32,180 +34,54 @@
       </div>
     </header>
 
+
+    <!-- Welcome Box -->
     <main class="content">
+      <section class = "welcome">
+        <h1>Welcome to Our Site</h1>
+        <p class="welcome__subtitle">Find Your Ideal Spot!</p>
+        <button id="joinBtn" class="btn" type="button">Join Today</button>
 
-      <!-- Hero / Welcome -->
-      <section class="welcome">
-        <div class="welcome__text">
-          <p class="eyebrow">DISCOVER YOUR NEXT DINING SPOT</p>
-          <h1>Welcome to Our Site</h1>
-          <p class="welcome__subtitle">
-            Our Mission is to Match You With The Food You Love.
-          </p>
 
-          <div class="hero-buttons">
-            <a href="matchmaker.html" class="btn">Start Matching</a>
-            <a href="auth.html" class="btn btn--secondary">Join Our Service</a>
-          </div>
-        </div>
+        <!--NEW-->
+        <p id="result"></p>
       </section>
 
 
-       <img src="food_table.png" alt="Image of Logo" class="featured-img">
-
-<!-- Demo Video Section -->
-<section class="section video-section">
-  <div class="section-heading">
-    <h2 class="section__title">Watch Our Website Demo</h2>
-    <p class="section__subtitle">
-      See how TasteMatch works through this short screen-recorded walkthrough.
-    </p>
-  </div>
 
 
-</section>
-
-<!--END VIDEO SECTION-->
-
-
-      <!-- Quick Intro Templates -->
+      <!-- How It Works -->
       <section class="section">
-        <div class="section-heading">
-          <h2 class="section__title">Masters Behind The Matches</h2>
-          <p class="section__subtitle">
-            Get to Know the Software Engineering Geniuses Who Created <b>MatchMaker</b>
-          </p>
-        </div>
+        <h2 class="section__title">How it Works</h2>
 
-        <div class="info-grid">
-          <article class="info-card">
-            <h3>About This Project</h3>
-            <p>
-Finding your next go‑to food spot shouldn’t feel like a chore. Whether you’re planning a date, celebrating a milestone, or just grabbing a bite with friends, TasteMatch has you covered.  
 
-TasteMatch is a web application built to serve the community by offering personalized recommendations based on your preferences, personality, and curiosity. Founded by four university students, our mission is simple: make discovering your next favorite place fast, fun, and effortless.  
-
-We proudly spotlight small Chicagoland businesses alongside the restaurant brands you already love. Craving sushi, tacos, boba, coffee, falafel, or fine dining? We’ve got you. Need an impressive spot for a first date? We’ve got you. Want something quick and casual? Still got you.  
-
-Wherever your appetite leads, TasteMatch helps you get there—quickly and confidently.
-</p>
+        <div class="cardgrid">
+           <article class="card">
+            <h3>Step 1</h3>
+            <p>Enter Preferences</p>
           </article>
 
-          <article class="info-card">
-            <h3>Why Use It?</h3>
-            <p>TasteMatch takes the guesswork out of choosing where to eat. Instead of scrolling endlessly through reviews, menus, and maps, you get fast, personalized recommendations that actually match what you’re craving.
 
-Here’s what makes it worth using:
-<ul>
-
-<li>Personalized to you — Your preferences, personality, and curiosity shape every recommendation. No generic lists. No random picks.</li>
-<br>
-
-<li>Fast and effortless — Tell us what you’re in the mood for, and we’ll handle the rest.</li>
-<br>
-<li>Supports local businesses — We highlight small Chicagoland restaurants alongside the big names you already know.</li>
-<br>
-<li>Perfect for any occasion — First dates, late‑night cravings, quick bites, celebrations, or spontaneous adventures.</li>
-<br>
-<li>Discover hidden gems — Explore spots you might never find on your own, curated just for your taste.</li>
-<br>
-<li>TasteMatch makes finding your next food spot feel simple, fun, and surprisingly accurate. It’s your shortcut to great eats.</li>
-</ul>
+           <article class="card">
+            <h3>Step 2</h3>
+            <p>Receive Matches</p>
           </article>
 
-          <article class="info-card">
-            <h3>Team Message</h3>
-            <p>[ Developer Diego ~ "Try out my custom built <a href="matchmaker.html">MatchMaker</a> Page. It'll give you recommendations based on your personality, selected trends, and what you're in the mood for"]</p>
-            <br>
-            <p>[ Developer Jason ~ "Enjoyed your visit and want to leave a review on your experience? Head to my <a href="storepage.html">Leave a Review</a> Page. Rank your experience with Stars and your review might show up on our website!"]</p>
-            <br>
-            <p>[ Developer Micheel ~ "Is Social Media your vibe? Is scrolling through pictures of food the move? Head to my <a href="social_feed.html">Social Feed</a>"]</p>
-            <br>
-            <p>[ Developer Anthony ~ "Know of a good place in Chicago that you want more people to know exists? Enter your place in our <a href="addLocation.html">Database</a> and have matchMaker will work it's magic to have it show up on people's feed."]</p>
+
+           <article class="card">
+            <h3>Step 3</h3>
+            <p>View User Dashboard </p>
           </article>
         </div>
       </section>
+    </main>
 
-      <!-- Main Navigation Cards -->
-      <section class="section" id="featureSection">
-        <div class="section-heading">
-          <h2 class="section__title">Explore Website Features</h2>
-          <p class="section__subtitle">
-            Hover over each box, then click to visit that page.
-          </p>
-        </div>
 
-        <div class="feature-grid">
-          <a class="feature-card" href="matchmaker.html">
-            <span class="feature-tag">Interactive</span>
-            <h3>MatchMaker</h3>
-            <p>[ Enter your personality, favorite trends, and mood to be food matched. ].</p>
-          </a>
-
-          <!-- MatchMaker Demo Section -->
-<section class="section matchmaker-demo-section">
-  <div class="section-heading">
-    <h2 class="section__title">Try Our MatchMaker Demo</h2>
-    <p class="section__subtitle">
-      Pick a few preferences and preview the kind of restaurant matches our system can recommend.
-    </p>
   </div>
 
-  <div class="matchmaker-demo-layout">
-    <div class="matchmaker-demo-form-card">
-      <h3>Build your vibe</h3>
-      <p class="demo-copy">
-        Choose a few sample preferences below, then press the button to preview your matches.
-      </p>
 
-      <div class="demo-pref-group">
-        <label class="demo-group-label">Likes</label>
-        <div class="demo-button-group" data-group="likes">
-          <button type="button" class="demo-pref-btn">Spicy</button>
-          <button type="button" class="demo-pref-btn">Sweet</button>
-          <button type="button" class="demo-pref-btn">Brunch</button>
-          <button type="button" class="demo-pref-btn">Healthy</button>
-          <button type="button" class="demo-pref-btn">Outdoor</button>
-          <button type="button" class="demo-pref-btn">Comfort Food</button>
-        </div>
-      </div>
 
-      <div class="demo-pref-group">
-        <label class="demo-group-label">Personality</label>
-        <div class="demo-button-group" data-group="personality">
-          <button type="button" class="demo-pref-btn">Romantic</button>
-          <button type="button" class="demo-pref-btn">Foodie</button>
-          <button type="button" class="demo-pref-btn">Chill</button>
-          <button type="button" class="demo-pref-btn">Social</button>
-          <button type="button" class="demo-pref-btn">Adventurous</button>
-        </div>
-      </div>
 
-      <div class="demo-pref-group">
-        <label class="demo-group-label">Cuisine / Culture</label>
-        <div class="demo-button-group" data-group="culture">
-          <button type="button" class="demo-pref-btn">Mexican</button>
-          <button type="button" class="demo-pref-btn">Japanese</button>
-          <button type="button" class="demo-pref-btn">Italian</button>
-          <button type="button" class="demo-pref-btn">Korean</button>
-          <button type="button" class="demo-pref-btn">Burgers</button>
-        </div>
-      </div>
-
-      <div class="demo-pref-group">
-        <label class="demo-group-label">Trends</label>
-        <div class="demo-button-group" data-group="trends">
-          <button type="button" class="demo-pref-btn">Matcha</button>
-          <button type="button" class="demo-pref-btn">Street Food</button>
-          <button type="button" class="demo-pref-btn">Smoothies</button>
-          <button type="button" class="demo-pref-btn">Protein</button>
-        </div>
-      </div>
-
-      <div class="demo-match-actions">
-        <button type="button" class="demo-match-btn" id="demoFindMatchesBtn">Find Demo Matches</button>
-        <button type="button" class="demo-clear-btn" id="demoClearMatchesBtn">Clear</button>
-      </div>
 <!--JAVASCRIPT FOR JOIN BUTTON-->
 <!--
 <script>
@@ -215,273 +91,38 @@ Here’s what makes it worth using:
 </script>
 -->
 
-      <a href="matchmaker.html" class="btn btn--secondary">Go To Real MatchMaker</a>
-    </div>
-
-    <div class="matchmaker-demo-results-card">
-      <h3>What You Could be Matched With</h3>
-      <p class="demo-copy">Previewed restaurant matches will appear here.</p>
-
-      <div id="demoMatchResults" class="demo-match-list">
-        <img src="food_table.png" alt="Sample Match Result" width = 200;, height = 200;>
-      </div>
-      <p>Sushipoloza</p>
-      <p>1111 W Street, Chicago IL</p>
-      <p>Average Rating: 4.2/5</p>
-      <p>Price Range: $$</p>
-    </div>
-  </div>
-</section>
-
-          <a class="feature-card" href="addLocation.html">
-            <span class="feature-tag">Database</span>
-            <h3>Add Location</h3>
-            <p>[ Add a Location to our database and have it be recommended to others. ]</p>
-          </a>
-
-<!-- Add Location Demo Section -->
-<section class="section add-demo-section">
-  <div class="section-heading">
-    <h2 class="section__title">Try Our Add Location Demo</h2>
-    <p class="section__subtitle">
-      Want to see how easy it is to contribute a new spot? Test this interactive demo below,
-      then head to the real Add Location page to actually submit your location.
-    </p>
-  </div>
-
-  <div class="add-demo-layout">
-    <div class="add-demo-copy">
-      <h3>How it works</h3>
-      <p>
-        This demo lets you preview the Add Location experience before using the real feature.
-        Fill in the fields, press the button, and see how a submission would look. *Entered Data Not Actually Stored*
-      </p>
-
-      <ul class="demo-benefits">
-        <li>Simple and beginner-friendly</li>
-        <li>Shows the kind of information users can enter</li>
-        <li>Builds trust before visiting the real page</li>
-        <li>Encourages users to contribute restaurants to the database</li>
-      </ul>
-
-      <a href="addLocation.html" class="btn">Go To Real Add Location Page</a>
-    </div>
-
-    <div class="add-demo-card">
-      <form id="homeDemoForm" class="demo-form">
-        <div class="demo-grid">
-          <div class="demo-field demo-field-full">
-            <label for="demoImage">Restaurant Photo</label>
-            <input type="file" id="demoImage" name="demoImage">
-          </div>
-
-          <div class="demo-field">
-            <label for="demoType">Establishment Type</label>
-            <select id="demoType" name="demoType">
-              <option value="">Select one</option>
-              <option>Restaurant</option>
-              <option>Cafe</option>
-              <option>Outdoor Spot</option>
-              <option>Dessert Shop</option>
-              <option>Fast Casual</option>
-            </select>
-          </div>
-
-          <div class="demo-field">
-            <label for="demoName">Location Name</label>
-            <input type="text" id="demoName" name="demoName" placeholder="Example: Chicago Burger House">
-          </div>
-
-          <div class="demo-field demo-field-full">
-            <label for="demoAddress1">Address Line 1</label>
-            <input type="text" id="demoAddress1" name="demoAddress1" placeholder="123 Main Street">
-          </div>
-
-          <div class="demo-field demo-field-full">
-            <label for="demoAddress2">Address Line 2</label>
-            <input type="text" id="demoAddress2" name="demoAddress2" placeholder="Suite, floor, or optional details">
-          </div>
-
-          <div class="demo-field">
-            <label for="demoCity">City</label>
-            <input type="text" id="demoCity" name="demoCity" placeholder="Chicago">
-          </div>
-
-          <div class="demo-field">
-            <label for="demoState">State</label>
-            <input type="text" id="demoState" name="demoState" placeholder="IL">
-          </div>
-
-          <div class="demo-field">
-            <label for="demoZip">Zip Code</label>
-            <input type="text" id="demoZip" name="demoZip" placeholder="60601">
-          </div>
-
-          <div class="demo-field">
-            <label for="demoCountry">Country</label>
-            <input type="text" id="demoCountry" name="demoCountry" placeholder="United States">
-          </div>
-        </div>
-
-        <button type="submit" class="demo-submit-btn">Preview Add Location</button>
-      </form>
-
-      <div id="demoResultBox" class="demo-result-box hidden">
-        <h3>Demo Submission Preview</h3>
-        <p id="demoResultText"></p>
-        <a href="addLocation.html" class="btn btn--secondary">Submit A Real Location</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-          <a class="feature-card" href="storepage.html">
-            <span class="feature-tag">Reviews</span>
-            <h3>Leave a Rating</h3>
-            <p>[ Love a Place leave it a 5 star reivew! Hate a place leave 1 star! ]</p>
-          </a>
-
-<!-- Review Demo Section -->
-<section class="section review-demo-section">
-  <div class="section-heading">
-    <h2 class="section__title">Try Our Review Feature Demo</h2>
-    <p class="section__subtitle">
-      Leave a sample rating and preview how reviews appear before visiting the real review page.
-    </p>
-  </div>
-
-  <div class="review-demo-layout">
-    <div class="review-demo-info">
-      <h3>Preview the rating system</h3>
-      <p>
-        This demo shows how users can rate a restaurant, write a review, and instantly see their feedback appear.
-        To leave a real review, head to the full page.
-      </p>
-
-      <div class="review-demo-hero">
-        <h3>Sunny Bites</h3>
-        <h4 id="demoAvgRating">⭐ 4.5</h4>
-      </div>
-
-      <a href="storepage.html" class="btn">Go To Real Review Page</a>
-    </div>
-
-    <div class="review-demo-card">
-      <form id="demoReviewForm">
-        <label class="demo-label">Your Rating</label>
-        <div class="demo-stars" id="demoStarContainer">
-          <span data-value="1">★</span>
-          <span data-value="2">★</span>
-          <span data-value="3">★</span>
-          <span data-value="4">★</span>
-          <span data-value="5">★</span>
-        </div>
-
-        <label class="demo-label" for="demoReviewerName">Your Name</label>
-        <input type="text" id="demoReviewerName" placeholder="Example: John Doe">
-
-        <label class="demo-label" for="demoReviewText">Your Review</label>
-        <textarea id="demoReviewText" placeholder="Write a short review..."></textarea>
-
-        <button type="submit" class="demo-review-btn">Preview Review</button>
-      </form>
-
-      <div class="demo-sort-row">
-        <label for="demoSortSelect">Sort Reviews</label>
-        <select id="demoSortSelect">
-          <option value="newest">Newest</option>
-          <option value="highest">Highest</option>
-        </select>
-      </div>
-
-      <div id="demoReviews" class="demo-review-grid">
-        <div class="demo-review-post" data-rating="5">
-          <strong>Maria</strong>
-          <div class="demo-stars-display">★★★★★</div>
-          <p>Loved the atmosphere and the food came out really fast.</p>
-        </div>
-
-        <div class="demo-review-post" data-rating="4">
-          <strong>James</strong>
-          <div class="demo-stars-display">★★★★</div>
-          <p>Great casual spot with solid portions and nice service.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-          <a class="feature-card" href="social_feed.html">
-            <span class="feature-tag">Community</span>
-            <h3>Photo Album</h3>
-            <p>[ Add image posts, captions, and community sharing to our Social Feed. ]</p>
-          </a>
-        </div>
-      </section>
-
-      <!-- Social Feed Demo Section -->
-<section class="section social-demo-section">
-  <div class="section-heading">
-    <h2 class="section__title">Try Our Photo Demo</h2>
-    <p class="section__subtitle">
-      Share food photos, write captions, and explore what others are posting.
-      Try it below, then visit the full feed! Kind like our own Pinterest!
-    </p>
-  </div>
-
-  <div class="social-demo-layout">
-
-    <!-- LEFT: FORM -->
-    <div class="social-demo-form-card">
-      <h3>Create a Demo Post</h3>
-
-      <form id="demoPostForm">
-        <label>Restaurant Name</label>
-        <input type="text" id="demoRestaurant" placeholder="Example: Burger Spot">
-
-        <label>Caption</label>
-        <textarea id="demoCaption" placeholder="This place was amazing..."></textarea>
-
-        <label>Upload Image</label>
-        <input type="file" id="demoImageFile">
-
-        <button type="submit">Preview Post</button>
-      </form>
-
-      <a href="social_feed.html" class="btn btn--secondary">
-        Go To Real Social Feed
-      </a>
-    </div>
-
-    <!-- RIGHT: FEED PREVIEW -->
-    <div class="social-demo-feed" id="demoFeed">
-
-      <!-- Sample posts -->
-      <div class="demo-post">
-        <img src="food_table.png">
-        <h4>Sample Restaurant</h4>
-        <p>This is what posts will look like in the real feed.</p>
-      </div>
-
-    </div>
-
-  </div>
-</section> 
 
 
-    
-
-      <!-- Call To Action -->
-      <section class="section callout">
-        <h2>Ready to get started?</h2>
-        <p>Start Using our Features!</p>
-        <a href="matchmaker.html" class="btn">Go to MatchMaker</a>
-      </section>
-
-    </main>
-  </div>
+<!--JAVASCRIPT FOR EXPLORIATION CARDS-->  
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
 
 
-  
+    const restaurant = document.getElementById("restaurantCard");
+    const retail = document.getElementById("retailCard");
+    const parks = document.getElementById("parksCard");
+
+
+    restaurant.addEventListener("click", function() {
+      window.location.href = "explore.html?category=restaurant";
+    });
+
+
+    retail.addEventListener("click", function() {
+      window.location.href = "explore.html?category=retail";
+    });
+
+
+    parks.addEventListener("click", function() {
+      window.location.href = "explore.html?category=parks";
+    });
+
+
+  });
+</script>
+
+
+
+
 </body>
 </html>
