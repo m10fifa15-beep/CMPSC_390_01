@@ -481,6 +481,282 @@ Here’s what makes it worth using:
     </main>
   </div>
 
+//add location deso JS script
+<script>
+  const homeDemoForm = document.getElementById("homeDemoForm");
+  const demoResultBox = document.getElementById("demoResultBox");
+  const demoResultText = document.getElementById("demoResultText");
+
+  homeDemoForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const type = document.getElementById("demoType").value || "Restaurant";
+    const name = document.getElementById("demoName").value || "Your Location";
+    const city = document.getElementById("demoCity").value || "Chicago";
+    const state = document.getElementById("demoState").value || "IL";
+
+    demoResultText.textContent =
+      `"${name}" was successfully prepared as a demo ${type} submission for ${city}, ${state}. To officially add it to our database, continue to the real Add Location page.`;
+
+    demoResultBox.classList.remove("hidden");
+    demoResultBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  });
+</script>
+
+//social feed demo JS script
+
+<script>
+const demoPostForm = document.getElementById("demoPostForm");
+const demoFeed = document.getElementById("demoFeed");
+
+demoPostForm.addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("demoRestaurant").value || "New Restaurant";
+  const caption = document.getElementById("demoCaption").value || "No caption provided";
+  const fileInput = document.getElementById("demoImageFile");
+
+  let imageURL = "food_table.png";
+
+  if (fileInput.files && fileInput.files[0]) {
+    imageURL = URL.createObjectURL(fileInput.files[0]);
+  }
+
+  const post = document.createElement("div");
+  post.classList.add("demo-post");
+
+  post.innerHTML = `
+    <img src="${imageURL}">
+    <h4>${name}</h4>
+    <p>${caption}</p>
+  `;
+
+  demoFeed.prepend(post);
+
+  demoPostForm.reset();
+});
+</script>
+
+//add a review JS script
+<script>
+  let demoSelectedRating = 0;
+  let demoRatings = [5, 4];
+
+  const demoStarContainer = document.getElementById("demoStarContainer");
+  const demoStars = document.querySelectorAll("#demoStarContainer span");
+  const demoReviewForm = document.getElementById("demoReviewForm");
+  const demoReviews = document.getElementById("demoReviews");
+  const demoAvgRating = document.getElementById("demoAvgRating");
+  const demoSortSelect = document.getElementById("demoSortSelect");
+
+  demoStars.forEach((star) => {
+    star.addEventListener("click", () => {
+      demoSelectedRating = Number(star.dataset.value);
+
+      demoStars.forEach((s) => s.classList.remove("active"));
+
+      for (let i = 0; i < demoSelectedRating; i++) {
+        demoStars[i].classList.add("active");
+      }
+    });
+  });
+
+  function updateDemoAverage() {
+    const total = demoRatings.reduce((sum, num) => sum + num, 0);
+    const avg = total / demoRatings.length;
+    demoAvgRating.textContent = "⭐ " + avg.toFixed(1);
+  }
+
+  function sortDemoReviews() {
+    const cards = Array.from(demoReviews.querySelectorAll(".demo-review-post"));
+    const sortValue = demoSortSelect.value;
+
+    if (sortValue === "highest") {
+      cards.sort((a, b) => Number(b.dataset.rating) - Number(a.dataset.rating));
+    } else {
+      cards.reverse();
+    }
+
+    demoReviews.innerHTML = "";
+    cards.forEach((card) => demoReviews.appendChild(card));
+  }
+
+  demoReviewForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("demoReviewerName").value.trim() || "Guest User";
+    const text = document.getElementById("demoReviewText").value.trim() || "This place was really good.";
+    const rating = demoSelectedRating || 5;
+
+    const card = document.createElement("div");
+    card.className = "demo-review-post";
+    card.dataset.rating = rating;
+
+    card.innerHTML = `
+      <strong>${name}</strong>
+      <div class="demo-stars-display">${"★".repeat(rating)}</div>
+      <p>${text}</p>
+    `;
+
+    demoReviews.prepend(card);
+    demoRatings.push(rating);
+    updateDemoAverage();
+    sortDemoReviews();
+
+    demoReviewForm.reset();
+    demoSelectedRating = 0;
+    demoStars.forEach((s) => s.classList.remove("active"));
+  });
+
+  demoSortSelect.addEventListener("change", sortDemoReviews);
+  updateDemoAverage();
+</script>
+
+//matchmaker demo JS script
+<script>
+  const demoPrefButtons = document.querySelectorAll(".demo-pref-btn");
+  const demoFindMatchesBtn = document.getElementById("demoFindMatchesBtn");
+  const demoClearMatchesBtn = document.getElementById("demoClearMatchesBtn");
+  const demoMatchResults = document.getElementById("demoMatchResults");
+
+  const demoPlaces = [
+    {
+      name: "Spice Route Kitchen",
+      price: "$$",
+      meta: "Spicy • Chicago",
+      desc: "A bold choice for users who like heat, adventurous flavors, and lively meals.",
+      tags: ["Spicy", "Foodie", "Night Out"]
+    },
+    {
+      name: "Matcha Garden Cafe",
+      price: "$$",
+      meta: "Matcha • Chicago",
+      desc: "A calm and trendy cafe with drinks, sweets, and a relaxed atmosphere.",
+      tags: ["Matcha", "Chill", "Sweet"]
+    },
+    {
+      name: "Brunch & Bloom",
+      price: "$$$",
+      meta: "Brunch • Chicago",
+      desc: "Perfect for daytime outings, aesthetic plates, and social weekend plans.",
+      tags: ["Brunch", "Social", "Outdoor"]
+    },
+    {
+      name: "Seoul Table Grill",
+      price: "$$",
+      meta: "Korean • Chicago",
+      desc: "A fun and flavorful choice for adventurous diners looking for something memorable.",
+      tags: ["Korean", "Adventurous", "Foodie"]
+    },
+    {
+      name: "Comfort Corner",
+      price: "$",
+      meta: "Comfort Food • Chicago",
+      desc: "A cozy, satisfying pick for easy meals and laid-back moods.",
+      tags: ["Comfort Food", "Chill", "Cheap"]
+    },
+    {
+      name: "Sunrise Smoothie Bar",
+      price: "$",
+      meta: "Smoothies • Chicago",
+      desc: "A light and refreshing option for health-conscious users on the go.",
+      tags: ["Smoothies", "Healthy", "In a Rush"]
+    },
+    {
+      name: "Candlelight Bistro",
+      price: "$$$",
+      meta: "Romantic • Chicago",
+      desc: "An intimate restaurant for dates, celebrations, and elegant evenings.",
+      tags: ["Romantic", "Dates", "Fine Dining"]
+    },
+    {
+      name: "Burger District",
+      price: "$$",
+      meta: "Burgers • Chicago",
+      desc: "A casual spot with crowd-pleasing favorites and an easygoing vibe.",
+      tags: ["Burgers", "Social", "Comfort Food"]
+    }
+  ];
+
+  demoPrefButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      btn.classList.toggle("selected");
+    });
+  });
+
+  function renderDemoMatches(matches) {
+    demoMatchResults.innerHTML = "";
+
+    if (matches.length === 0) {
+      demoMatchResults.innerHTML = `
+        <div class="demo-empty-state">
+          No demo matches found. Try choosing different preferences.
+        </div>
+      `;
+      return;
+    }
+
+    matches.forEach((place) => {
+      const card = document.createElement("div");
+      card.className = "demo-result-card";
+
+      card.innerHTML = `
+        <div class="demo-result-top">
+          <h4 class="demo-result-name">${place.name}</h4>
+          <span class="demo-pill">${place.price}</span>
+        </div>
+        <div class="demo-result-meta">${place.meta}</div>
+        <p class="demo-result-desc">${place.desc}</p>
+        <div class="demo-tag-row">
+          ${place.tags.map(tag => `<span class="demo-tag">${tag}</span>`).join("")}
+        </div>
+      `;
+
+      demoMatchResults.appendChild(card);
+    });
+  }
+
+  demoFindMatchesBtn.addEventListener("click", () => {
+    const selectedPrefs = Array.from(document.querySelectorAll(".demo-pref-btn.selected"))
+      .map(btn => btn.textContent.toLowerCase());
+
+    let scoredMatches = demoPlaces.map(place => {
+      let score = 0;
+
+      selectedPrefs.forEach(pref => {
+        const textBlob = (
+          place.name + " " +
+          place.meta + " " +
+          place.desc + " " +
+          place.tags.join(" ")
+        ).toLowerCase();
+
+        if (textBlob.includes(pref)) {
+          score += 1;
+        }
+      });
+
+      return { ...place, score };
+    });
+
+    scoredMatches.sort((a, b) => b.score - a.score);
+
+    const filtered = selectedPrefs.length === 0
+      ? demoPlaces.slice(0, 3)
+      : scoredMatches.filter(place => place.score > 0).slice(0, 4);
+
+    renderDemoMatches(filtered);
+  });
+
+  demoClearMatchesBtn.addEventListener("click", () => {
+    demoPrefButtons.forEach(btn => btn.classList.remove("selected"));
+    demoMatchResults.innerHTML = `
+      <div class="demo-empty-state">
+        Choose a few preferences and click <strong>Find Demo Matches</strong>.
+      </div>
+    `;
+  });
+</script>
 
   
 </body>
