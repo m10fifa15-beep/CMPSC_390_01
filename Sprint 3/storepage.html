@@ -9,7 +9,7 @@
 <!-- TOP NAV -->
 <div class="topnav">
   <div class="topnav__inner">
-    <h2 class="logo">Sunny Bites ☀️</h2>
+    <h2 class="logo" id="storeLogo">Restaurant</h2>
 
     <div class="auth-inline">
       <input id="authUsername" placeholder="Username">
@@ -22,8 +22,8 @@
 
 <!-- HERO -->
 <div class="store-hero">
-  <h1>Sunny Bites</h1>
-  <p class="subtitle">Fresh food. Bright flavors.</p>
+  <h1 id="storeName">Restaurant</h1>
+  <p class="subtitle" id="storeSubtitle">Loading restaurant details...</p>
   <h2 id="avgRating">⭐ 0.0</h2>
   <p id="currentUser"></p>
 </div>
@@ -55,8 +55,19 @@
 <div id="reviews" class="cardgrid"></div>
 
 <script>
+const params = new URLSearchParams(window.location.search);
+const locationId = params.get("locationId");
 let selectedRating = 0;
 let currentUser = null;
+
+// Load user from localStorage on page load
+window.addEventListener('load', () => {
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    currentUser = JSON.parse(storedUser);
+    document.getElementById("currentUser").innerText = "Logged in as: " + currentUser.username;
+  }
+});
 
 // STARS
 document.querySelectorAll("#starContainer span").forEach(star => {
@@ -72,6 +83,37 @@ document.querySelectorAll("#starContainer span").forEach(star => {
     }
   });
 });
+
+//load restaurant
+function loadRestaurant() {
+  if (!locationId) {
+    document.getElementById("storeName").innerText = "Restaurant not found";
+    document.getElementById("storeSubtitle").innerText = "No restaurant selected.";
+    document.getElementById("storeLogo").innerText = "Restaurant";
+    return;
+  }
+
+  fetch(`http://localhost:3000/location/${locationId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById("storeName").innerText = "Restaurant not found";
+        document.getElementById("storeSubtitle").innerText = data.error;
+        document.getElementById("storeLogo").innerText = "Restaurant";
+        return;
+      }
+
+      document.getElementById("storeName").innerText = data.name;
+      document.getElementById("storeSubtitle").innerText =
+        `${data.category || "Restaurant"} • ${data.city || ""}${data.state ? ", " + data.state : ""}`;
+      document.getElementById("storeLogo").innerText = data.name;
+    })
+    .catch(() => {
+      document.getElementById("storeName").innerText = "Restaurant not found";
+      document.getElementById("storeSubtitle").innerText = "Could not load restaurant details.";
+      document.getElementById("storeLogo").innerText = "Restaurant";
+    });
+}
 
 // AUTH
 function register() {
@@ -99,6 +141,7 @@ function login() {
     if (data.error) return alert("Login failed");
 
     currentUser = data;
+    localStorage.setItem('currentUser', JSON.stringify(data));
     document.getElementById("currentUser").innerText =
       "Logged in as: " + data.username;
   });
@@ -107,16 +150,23 @@ function login() {
 // REVIEW
 function submitReview() {
   if (!currentUser) return alert("Login first");
+  if (!locationId) return alert("No restaurant selected");
+  if (!selectedRating) return alert("Please select a rating");
 
   fetch("http://localhost:3000/reviews", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
       userId: currentUser.userId,
+      locationId: Number(locationId),
       rating: selectedRating,
       review: reviewText.value
     })
-  }).then(() => {
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) return alert(data.error);
+
     reviewText.value = "";
     loadReviews();
     loadAverage();
@@ -125,7 +175,9 @@ function submitReview() {
 
 // LOAD REVIEWS
 function loadReviews() {
-  fetch(`http://localhost:3000/reviews?sort=${sortSelect.value}`)
+  if (!locationId) return;
+
+  fetch(`http://localhost:3000/reviews?locationId=${locationId}&sort=${sortSelect.value}`)
     .then(res => res.json())
     .then(data => {
       reviews.innerHTML = "";
@@ -134,7 +186,7 @@ function loadReviews() {
         const div = document.createElement("div");
         div.classList.add("card");
 
-        const isOwner = currentUser && currentUser.userId === r.user_id;
+        const isOwner = currentUser && Number(currentUser.userId) === Number(r.user_id);
 
         div.innerHTML = `
           <div class="review-header">
@@ -147,6 +199,10 @@ function loadReviews() {
 
         reviews.appendChild(div);
       });
+
+      if (data.length === 0) {
+        reviews.innerHTML = `<p>No reviews yet for this restaurant.</p>`;
+      }
     });
 }
 
@@ -166,15 +222,18 @@ function deleteReview(id) {
 
 // AVG
 function loadAverage() {
-  fetch("http://localhost:3000/reviews/average")
+  if (!locationId) return;
+
+  fetch(`http://localhost:3000/reviews/average?locationId=${locationId}`)
     .then(res => res.json())
     .then(data => {
-      avgRating.innerText = "⭐ " + Number(data.average).toFixed(1);
+      avgRating.innerText = "⭐ " + Number(data.average || 0).toFixed(1);
     });
 }
 
 loadReviews();
 loadAverage();
+loadRestaurant();
 </script>
 
 </body>

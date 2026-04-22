@@ -34,6 +34,15 @@ let current = null;
 //STORES LATEST RESULTS
 let lastResults = [];
 
+let currentUser = null;
+
+window.addEventListener('load', () => {
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    currentUser = JSON.parse(storedUser);
+  }
+});
+
 function getSaved() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -190,24 +199,42 @@ form.addEventListener("submit", async (e) => {
   prefs.category = categoryEl ? categoryEl.value : "";
   prefs.price = priceEl ? priceEl.value : "";
 
-  try {
-    const results = await fetchMatches(prefs);
-
-    lastResults = results;
-    matchQueue = results.filter(r => !alreadySaved(r.id));
-
-    renderMatches(results);
-
-    if (matchQueue.length === 0) {
-      alert("No unsaved matches found.");
-      return;
-    }
-
-    showNextMatch();
-  } catch (err) {
-    console.error(err);
+  // Save preferences if logged in
+  if (currentUser) {
+    fetch("/save-preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        likes: prefs.likes,
+        personality: prefs.personality,
+        culture: prefs.culture,
+        trends: prefs.trends
+      })
+    }).catch(err => console.error("Save prefs error:", err));
   }
+
+  try {
+  const results = await fetchMatches(prefs);
+
+  lastResults = results;
+
+  const unsavedMatches = results.filter(r => !alreadySaved(r.id));
+  matchQueue = unsavedMatches.length > 0 ? unsavedMatches : results;
+
+  renderMatches(results);
+
+  if (results.length === 0) {
+    alert("No matches found.");
+    return;
+  }
+
+  showNextMatch();
+} catch (err) {
+  console.error(err);
+}
 });
+
 
 
 // SECOND HALF
@@ -227,6 +254,17 @@ btnCloseModal.addEventListener("click", closeModal);
 modalOverlay.addEventListener("click", closeModal);
 
 btnPass.addEventListener("click", () => {
+  if (current && currentUser) {
+    fetch("/user-history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        locationId: current.id,
+        action: "passed"
+      })
+    }).catch(err => console.error("Log history error:", err));
+  }
   showNextMatch();
 });
 
@@ -244,6 +282,28 @@ btnLike.addEventListener("click", () => {
       description: current.description
     });
     setSaved(saved);
+
+    // Save to DB if logged in
+    if (currentUser) {
+      fetch("/save-location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id
+        })
+      }).catch(err => console.error("Save location error:", err));
+
+      fetch("/user-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id,
+          action: "liked"
+        })
+      }).catch(err => console.error("Log history error:", err));
+    }
   }
 
   showNextMatch();
@@ -265,13 +325,31 @@ function renderMatches(results) {
 
   resultsList.innerHTML = results.map(place => `
     <div class="resultCard">
+      ${place.image ? `
+        <div class="resultCard__imageWrap">
+          <img
+            src="${escapeHtml(place.image)}"
+            alt="${escapeHtml(place.name)}"
+            class="resultCard__image"
+          />
+        </div>
+      ` : ""}
+
       <div class="resultCard__top">
-        <h3 class="resultCard__name">${escapeHtml(place.name)}</h3>
+        <h3 class="resultCard__name">
+          <a href="storepage.html?locationId=${encodeURIComponent(place.id)}" class="restaurant-link">
+            ${escapeHtml(place.name)}
+          </a>
+        </h3>
         <span class="pill">${escapeHtml(place.price || "")}</span>
       </div>
 
       <div class="resultCard__meta">
         ${escapeHtml(place.category || "")} • ${escapeHtml(place.city || "")}
+      </div>
+
+      <div class="resultCard__rating">
+        ⭐ ${Number(place.rating || 0).toFixed(1)} (${place.reviews || 0})
       </div>
 
       <div class="resultCard__desc">
@@ -284,7 +362,7 @@ function renderMatches(results) {
       </div>
 
       <div class="resultCard__actions">
-        <button class="btn btn--ghost" type="button" onclick="saveMatch(${place.id})">
+        <button class="btn btn--ghost" type="button" onclick="saveMatch('${escapeHtml(String(place.id))}')">
           Save
         </button>
       </div>
@@ -314,4 +392,3 @@ function saveMatch(placeId) {
     alert("That place is already saved.");
   }
 }
-
