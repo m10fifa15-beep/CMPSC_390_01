@@ -26,11 +26,31 @@ const resultsPanel = document.getElementById("resultsPanel");
 const resultsList = document.getElementById("resultsList");
 
 const STORAGE_KEY = "location_matchmaker_saved_v1";
+const USER_STORAGE_KEY = "currentUser";
 
 // Queue of matches to “swipe”
 let matchQueue = [];
 let current = null;
 let lastResults = [];
+let currentUser = null;
+
+/* =========================
+   INIT
+========================= */
+window.addEventListener("load", () => {
+  try {
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY);
+    if (storedUser) {
+      currentUser = JSON.parse(storedUser);
+    }
+  } catch (err) {
+    console.error("Could not load current user:", err);
+    currentUser = null;
+  }
+
+  renderSaved();
+  showMatchView();
+});
 
 /* =========================
    HELPERS
@@ -46,7 +66,7 @@ function escapeHtml(str) {
 
 function cleanPrefText(text) {
   return String(text || "")
-    .replace(/[^\p{L}\p{N}\s/&-]/gu, "") // removes emoji/symbols
+    .replace(/[^\p{L}\p{N}\s/&-]/gu, "") // remove emojis/symbols
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -100,6 +120,32 @@ function buildPrefsFromForm() {
   prefs.price = priceEl ? priceEl.value.trim() : "";
 
   return prefs;
+}
+
+async function safePostJson(url, payload) {
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      console.warn(`Request to ${url} failed:`, text || res.status);
+      return null;
+    }
+
+    const contentType = res.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      return await res.json();
+    }
+
+    return await res.text();
+  } catch (err) {
+    console.warn(`Request to ${url} failed:`, err);
+    return null;
+  }
 }
 
 /* =========================
@@ -171,9 +217,15 @@ function showNextMatch() {
 
   if (placeName) placeName.textContent = current.name || "Unknown Place";
   if (placePrice) placePrice.textContent = current.price || "";
-  if (placeMeta) placeMeta.textContent = `${current.category || "Unknown Category"} • ${current.city || "Unknown City"}`;
-  if (placeDesc) placeDesc.textContent = current.description || "No description available.";
-  if (matchScore) matchScore.textContent = String(current.matchScore ?? 0);
+  if (placeMeta) {
+    placeMeta.textContent = `${current.category || "Unknown Category"} • ${current.city || "Unknown City"}`;
+  }
+  if (placeDesc) {
+    placeDesc.textContent = current.description || "No description available.";
+  }
+  if (matchScore) {
+    matchScore.textContent = String(current.matchScore ?? 0);
+  }
 
   renderModalTags(current);
   openModal();
@@ -196,6 +248,37 @@ async function fetchMatches(prefs) {
 
   const data = await res.json();
   return Array.isArray(data.results) ? data.results : [];
+}
+
+async function savePreferencesToDb(prefs) {
+  if (!currentUser) return;
+
+  await safePostJson("/save-preferences", {
+    userId: currentUser.userId,
+    likes: prefs.likes,
+    personality: prefs.personality,
+    culture: prefs.culture,
+    trends: prefs.trends
+  });
+}
+
+async function saveLocationToDb(place) {
+  if (!currentUser || !place) return;
+
+  await safePostJson("/save-location", {
+    userId: currentUser.userId,
+    locationId: place.id
+  });
+}
+
+async function logUserHistory(place, action) {
+  if (!currentUser || !place) return;
+
+  await safePostJson("/user-history", {
+    userId: currentUser.userId,
+    locationId: place.id,
+    action
+  });
 }
 
 /* =========================
@@ -257,7 +340,7 @@ function renderMatches(results) {
 /* =========================
    SAVE ACTION
 ========================= */
-function saveMatch(placeId) {
+async function saveMatch(placeId) {
   const place =
     matchQueue.find((p) => Number(p.id) === Number(placeId)) ||
     lastResults.find((p) => Number(p.id) === Number(placeId));
@@ -278,6 +361,8 @@ function saveMatch(placeId) {
 
     setSaved(saved);
     alert("Place saved!");
+
+    await saveLocationToDb(place);
   } else {
     alert("That place is already saved.");
   }
@@ -322,6 +407,8 @@ if (form) {
     e.preventDefault();
 
     const prefs = buildPrefsFromForm();
+
+    await savePreferencesToDb(prefs);
 
     try {
       const results = await fetchMatches(prefs);
@@ -385,13 +472,16 @@ if (modalOverlay) {
 }
 
 if (btnPass) {
-  btnPass.addEventListener("click", () => {
+  btnPass.addEventListener("click", async () => {
+    if (current) {
+      await logUserHistory(current, "passed");
+    }
     showNextMatch();
   });
 }
 
 if (btnLike) {
-  btnLike.addEventListener("click", () => {
+  btnLike.addEventListener("click", async () => {
     if (!current) return;
 
     const saved = getSaved();
@@ -408,6 +498,9 @@ if (btnLike) {
       setSaved(saved);
     }
 
+    await saveLocationToDb(current);
+    await logUserHistory(current, "liked");
+
     renderSaved();
     showNextMatch();
   });
@@ -419,9 +512,3 @@ document.querySelectorAll(".pref-btn").forEach((button) => {
     button.classList.toggle("selected");
   });
 });
-
-/* =========================
-   INITIAL STATE
-========================= */
-renderSaved();
-showMatchView();
