@@ -34,10 +34,23 @@ let current = null;
 let lastResults = [];
 let currentUser = null;
 
+<<<<<<< HEAD
 /* =========================
    INIT
 ========================= */
 window.addEventListener("load", () => {
+=======
+let currentUser = null;
+
+window.addEventListener('load', () => {
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    currentUser = JSON.parse(storedUser);
+  }
+});
+
+function getSaved() {
+>>>>>>> c43eea6bf5528df02884911c20ce90022ff4074b
   try {
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
     if (storedUser) {
@@ -297,9 +310,168 @@ function showSavedView() {
   renderSaved();
 }
 
+<<<<<<< HEAD
 /* =========================
    RESULT RENDERING
 ========================= */
+=======
+// Nav
+if (navMatch) {
+  navMatch.addEventListener("click", (e) => {
+    e.preventDefault();
+    showMatchView();
+  });
+}
+
+if (navSaved) {
+  navSaved.addEventListener("click", (e) => {
+    e.preventDefault();
+    showSavedView();
+  });
+}
+
+btnClearSaved.addEventListener("click", () => {
+  if (confirm("Clear all saved places?")) {
+    setSaved([]);
+    renderSaved();
+  }
+});
+
+// SUBMIT HANDLER
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const prefs = {};
+
+  document.querySelectorAll(".button-group").forEach(group => {
+    const name = group.dataset.name;
+    const selected = [...group.querySelectorAll(".pref-btn.selected")]
+      .map(btn => btn.textContent.trim());
+    prefs[name] = selected.join(" ");
+  });
+
+  // keep dropdowns if you have them (category/price)
+  const categoryEl = form.querySelector('[name="category"]');
+  const priceEl = form.querySelector('[name="price"]');
+  prefs.category = categoryEl ? categoryEl.value : "";
+  prefs.price = priceEl ? priceEl.value : "";
+
+  // Save preferences if logged in
+  if (currentUser) {
+    fetch("/save-preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        likes: prefs.likes,
+        personality: prefs.personality,
+        culture: prefs.culture,
+        trends: prefs.trends
+      })
+    }).catch(err => console.error("Save prefs error:", err));
+  }
+
+  try {
+    const results = await fetchMatches(prefs);
+
+    lastResults = results;
+    matchQueue = results.filter(r => !alreadySaved(r.id));
+
+    renderMatches(results);
+
+    if (matchQueue.length === 0) {
+      alert("No unsaved matches found.");
+      return;
+    }
+
+    showNextMatch();
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+
+// SECOND HALF
+//clear button function
+if (btnClear) {
+  btnClear.addEventListener("click", () => {
+    document.querySelectorAll(".pref-btn.selected").forEach((btn) => {
+      btn.classList.remove("selected");
+    });
+
+    resultsList.innerHTML = "";
+  });
+}
+
+//modal controls
+btnCloseModal.addEventListener("click", closeModal);
+modalOverlay.addEventListener("click", closeModal);
+
+btnPass.addEventListener("click", () => {
+  if (current && currentUser) {
+    fetch("/user-history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        locationId: current.id,
+        action: "passed"
+      })
+    }).catch(err => console.error("Log history error:", err));
+  }
+  showNextMatch();
+});
+
+btnLike.addEventListener("click", () => {
+  if (!current) return;
+
+  const saved = getSaved();
+  if (!saved.some(p => p.id === current.id)) {
+    saved.unshift({
+      id: current.id,
+      name: current.name,
+      category: current.category,
+      price: current.price,
+      city: current.city,
+      description: current.description
+    });
+    setSaved(saved);
+
+    // Save to DB if logged in
+    if (currentUser) {
+      fetch("/save-location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id
+        })
+      }).catch(err => console.error("Save location error:", err));
+
+      fetch("/user-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id,
+          action: "liked"
+        })
+      }).catch(err => console.error("Log history error:", err));
+    }
+  }
+
+  showNextMatch();
+});
+
+//preference button color toggling
+document.querySelectorAll(".pref-btn").forEach((button) => {
+  button.addEventListener("click", () => {
+    button.classList.toggle("selected");
+  });
+});
+
+//render matches on page
+>>>>>>> c43eea6bf5528df02884911c20ce90022ff4074b
 function renderMatches(results) {
   if (!resultsList) return;
 

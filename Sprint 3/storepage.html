@@ -6,22 +6,32 @@
 </head>
 <body>
 
-<div class="store-hero">
-  <h1>Sunny Bites</h1>
-  <h2 id="avgRating">⭐ 0.0</h2>
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="topnav__inner">
+    <h2 class="logo">Sunny Bites ☀️</h2>
+
+    <div class="auth-inline">
+      <input id="authUsername" placeholder="Username">
+      <input id="authPassword" type="password" placeholder="Password">
+      <button onclick="login()">Login</button>
+      <button onclick="register()">Register</button>
+    </div>
+  </div>
 </div>
 
-<!-- LOGIN / REGISTER -->
-<div class="auth-box">
-  <input id="authUsername" placeholder="Username">
-  <input id="authPassword" type="password" placeholder="Password">
-  <button onclick="register()">Register</button>
-  <button onclick="login()">Login</button>
+<!-- HERO -->
+<div class="store-hero">
+  <h1>Sunny Bites</h1>
+  <p class="subtitle">Fresh food. Bright flavors.</p>
+  <h2 id="avgRating">⭐ 0.0</h2>
   <p id="currentUser"></p>
 </div>
 
-<!-- REVIEW FORM -->
+<!-- REVIEW SECTION -->
 <div class="review-box">
+  <h3>Leave a Review</h3>
+
   <div class="stars" id="starContainer">
     <span data-value="1">★</span>
     <span data-value="2">★</span>
@@ -30,15 +40,18 @@
     <span data-value="5">★</span>
   </div>
 
-  <textarea id="reviewText" placeholder="Write review..."></textarea>
-  <button onclick="submitReview()">Submit</button>
+  <textarea id="reviewText" placeholder="Write your review..."></textarea>
+
+  <button onclick="submitReview()">Submit Review</button>
 
   <select id="sortSelect" onchange="loadReviews()">
     <option value="newest">Newest</option>
-    <option value="highest">Highest</option>
+    <option value="highest">Highest Rated</option>
   </select>
 </div>
 
+<!-- REVIEWS -->
+<h2 class="section-title">Customer Reviews</h2>
 <div id="reviews" class="cardgrid"></div>
 
 <script>
@@ -60,9 +73,7 @@ document.querySelectorAll("#starContainer span").forEach(star => {
   });
 });
 
-/* =========================
-   AUTH
-========================= */
+// AUTH
 function register() {
   fetch("http://localhost:3000/register", {
     method: "POST",
@@ -93,9 +104,7 @@ function login() {
   });
 }
 
-/* =========================
-   REVIEW
-========================= */
+// REVIEW
 function submitReview() {
   if (!currentUser) return alert("Login first");
 
@@ -108,14 +117,13 @@ function submitReview() {
       review: reviewText.value
     })
   }).then(() => {
+    reviewText.value = "";
     loadReviews();
     loadAverage();
   });
 }
 
-/* =========================
-   LOAD REVIEWS
-========================= */
+// LOAD REVIEWS
 function loadReviews() {
   fetch(`http://localhost:3000/reviews?sort=${sortSelect.value}`)
     .then(res => res.json())
@@ -129,10 +137,12 @@ function loadReviews() {
         const isOwner = currentUser && currentUser.userId === r.user_id;
 
         div.innerHTML = `
-          <strong>${r.username}</strong>
-          <div>${"★".repeat(r.rating)}</div>
+          <div class="review-header">
+            <strong>${r.username}</strong>
+            <span class="stars-display">${"★".repeat(r.rating)}</span>
+          </div>
           <p>${r.review}</p>
-          ${isOwner ? `<button onclick="deleteReview(${r.id})">Delete</button>` : ""}
+          ${isOwner ? `<button class="delete-btn" onclick="deleteReview(${r.id})">Delete</button>` : ""}
         `;
 
         reviews.appendChild(div);
@@ -140,9 +150,7 @@ function loadReviews() {
     });
 }
 
-/* =========================
-   DELETE
-========================= */
+// DELETE
 function deleteReview(id) {
   fetch(`http://localhost:3000/reviews/${id}`, {
     method: "DELETE",
@@ -156,9 +164,7 @@ function deleteReview(id) {
   });
 }
 
-/* =========================
-   AVG
-========================= */
+// AVG
 function loadAverage() {
   fetch("http://localhost:3000/reviews/average")
     .then(res => res.json())
