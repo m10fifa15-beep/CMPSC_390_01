@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Location Matchmaker</title>
+  <link rel="stylesheet" href="matchmaker.css" />
+</head>
+<body>
+  <div class="background">
+    <header class="top_nav">
+  <div class="topnav__inner">
+    <div class="logo">
+      <a href="home.html">
+        <img src="lmm_logo.png" alt="Image of Logo" width="50px" height="50px">
+      </a>
+    </div>
+
+    <nav class="topnav">
+      <a href="home.html">Home</a>
+      <a href="addLocation.html">Add Location</a>
+      <a href="matchmaker.html">MatchMaker</a>
+      <a href="storepage.html">Leave a Location Rating</a>
+      <a href="social_feed.html">Photo Album</a>
+      <a href="auth.html">Login/SignUp</a>
+        <a class="topnav__link" href="#" id="navMatch">Match</a>
+          <a class="topnav__link" href="#" id="navSaved">Saved</a>
+    </nav>
+  </div>
+</header> 
+
+   
+
+
+    <main class="content">
+
+      <!-- Preferences Form Card -->
+      <section class="card">
+        <h2 class="card__title">Tell us your Vibe</h2>
+        <p class="muted">
+        Add your preferences and we’ll “match” you with places.
+        </p>
+
+<!--User Preferences Form Card -->
+    <form id="prefsForm" class="form">
+
+
+
+<div class="form__row">
+<label class="label">Trends</label>
+<div class="button-group" data-name="trends"><!-- Likes -->
+<div class="form__row">
+  <label class="label">Likes</label>
+  <div class="button-group" data-name="likes">
+    <button type="button" class="pref-btn">🍣 Sushi</button>
+    <button type="button" class="pref-btn">🌶️ Spicy</button>
+    <button type="button" class="pref-btn">🍭 Sweet</button>
+    <button type="button" class="pref-btn">🤫 Quiet</button>
+    <button type="button" class="pref-btn">🌳 Outdoor</button>
+    <button type="button" class="pref-btn">🔊 Loud</button>
+    <button type="button" class="pref-btn">🏠 Indoor</button>
+    <button type="button" class="pref-btn">🍲 Comfort Food</button>
+    <button type="button" class="pref-btn">🥞 Brunch</button>
+    <button type="button" class="pref-btn">☕ Coffee</button>
+    <button type="button" class="pref-btn">🍰 Cafe</button>
+    <button type="button" class="pref-btn">🕛 24/7</button>
+    <button type="button" class="pref-btn">🥗 Healthy</button>
+    <button type="button" class="pref-btn">💵 Budget-Friendly</button>
+    <button type="button" class="pref-btn">👨‍👩‍👧‍👦 Family Friendly</button>
+    <button type="button" class="pref-btn">💕 Dates</button>
+    <button type="button" class="pref-btn">🍸 Bars</button>
+    <button type="button" class="pref-btn">🌃 Night Out</button>
+    <button type="button" class="pref-btn">🍽️ Fine Dining</button>
+    <button type="button" class="pref-btn">🍺 Pub</button>
+  </div>
+</div>
+
+<!-- Personality -->
+<div class="form__row">
+  <label class="label">Personality</label>
+  <div class="button-group" data-name="personality">
+    <button type="button" class="pref-btn">🌹 Romantic</button>
+    <button type="button" class="pref-btn">😋 Foodie</button>
+    <button type="button" class="pref-btn">🙋 Single</button>
+    <button type="button" class="pref-btn">🧭 Adventurous</button>
+    <button type="button" class="pref-btn">😌 Chill</button>
+    <button type="button" class="pref-btn">💳 Spender</button>
+    <button type="button" class="pref-btn">🪙 Cheap</button>
+    <button type="button" class="pref-btn">💚 Health Conscious</button>
+    <button type="button" class="pref-btn">🏃 In a rush</button>
+    <button type="button" class="pref-btn">🌅 Early Bird</button>
+    <button type="button" class="pref-btn">🥳 Social</button>
+    <button type="button" class="pref-btn">🎉 Celebrating</button>
+  </div>
+</div>
+
+<!-- Cuisine / Culture -->
+<div class="form__row">
+  <label class="label">Cuisine / Culture</label>
+  <div class="button-group" data-name="culture">
+    <button type="button" class="pref-btn">🌮 Mexican</button>
+    <button type="button" class="pref-btn">🍔 American</button>
+    <button type="button" class="pref-btn">🥡 Chinese</button>
+    <button type="button" class="pref-btn">🍝 Italian</button>
+    <button type="button" class="pref-btn">🍣 Japanese</button>
+    <button type="button" class="pref-btn">🥙 Middle Eastern</button>
+    <button type="button" class="pref-btn">🍗 Korean</button>
+    <button type="button" class="pref-btn">🫒 Greek</button>
+    <button type="button" class="pref-btn">🌍 Other</button>
+    <button type="button" class="pref-btn">🥩 Steakhouse</button>
+    <button type="button" class="pref-btn">🦞 Seafood</button>
+    <button type="button" class="pref-btn">🥬 Vegetarian</button>
+    <button type="button" class="pref-btn">🍕 Pizza</button>
+    <button type="button" class="pref-btn">🍗 Wings</button>
+    <button type="button" class="pref-btn">🍔 Burgers</button>
+    <button type="button" class="pref-btn">🍳 Breakfast</button>
+  </div>
+</div>
+
+<!-- Trends -->
+<div class="form__row">
+  <label class="label">Trends</label>
+  <div class="button-group" data-name="trends">
+    <button type="button" class="pref-btn">🍵 Matcha</button>
+    <button type="button" class="pref-btn">🥬 Vegetarian</button>
+    <button type="button" class="pref-btn">🌶️ Spicy</button>
+    <button type="button" class="pref-btn">🚚 Street Food</button>
+    <button type="button" class="pref-btn">🥤 Smoothies</button>
+    <button type="button" class="pref-btn">💪 Protein</button>
+  </div>
+</div>
+
+
+
+
+
+</div>
+</div>
+
+<!-- Form Action Buttons -->
+<div class="actions">
+  <button class="btn" type="submit">Find Matches</button>
+  <button class="btn btn--ghost" type="button" id="btnClear">Clear</button>
+</div>
+
+</form>
+</section>
+
+<!-- Saved Places Panel (Hidden by Default) -->
+      <section class="card" id="savedPanel" style="display:none;">
+        <h2 class="card__title">Your Saved Places</h2>
+        <p class="muted">Likes are saved on this browser (localStorage).</p>
+
+        <!-- List of Saved Places -->
+        <div id="savedList" class="list"></div>
+
+        <!-- Clear Saved Button -->
+        <div class="actions">
+          <button class="btn btn--danger" id="btnClearSaved" type="button">Clear Saved</button>
+        </div>
+      </section>
+    </main>
+
+
+    <!-- Match Result Modal / "Swipe" Popup -->
+    <div class="modal" id="matchModal" aria-hidden="true">
+
+      <!-- Background Overlay -->
+      <div class="modal__overlay" id="modalOverlay"></div>
+
+      <!-- Modal Content Box -->
+      <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+
+        <!-- Modal Header -->
+        <div class="modal__header">
+          <h3 id="modalTitle" class="modal__title">Your Match</h3>
+          <button class="iconbtn" id="btnCloseModal" aria-label="Close">✕</button>
+        </div>
+
+        <!-- Modal Body-->
+        <div class="modal__body">
+          <div class="place">
+
+            <!-- Place Title & Price -->
+            <div class="place__top">
+              <h3 class="place__name" id="placeName">Place Name</h3>
+              <span class="pill" id="placePrice">$$</span>
+            </div>
+
+            <!-- City/Category -->
+            <div class="place__meta" id="placeMeta">Category • City</div>
+            <!-- Description -->
+            <p class="place__desc" id="placeDesc">Description</p>
+
+            <div class="tags" id="placeTags"></div>
+
+            <!-- Match Score -->
+            <div class="matchrow">
+              <span class="muted">Match Score:</span>
+              <strong id="matchScore">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="modal__footer">
+          <button class="btn btn--ghost" id="btnPass" type="button">Pass</button>
+          <button class="btn" id="btnLike" type="button">Like</button>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+ <!--USER OUTPUT--> 
+  <section class="card" id="resultsPanel">
+  <h2 class="card__title">Your Matches</h2>
+  <p class="muted">Your matched locations will appear here.</p>
+
+  <!-- User's Match Results -->
+  <div id="resultsList" class="list"></div>
+</section>
+
+<!-- JavaScript Logic -->
+  <script src="matchmaker.js"></script>
+</body>
+</html>
+

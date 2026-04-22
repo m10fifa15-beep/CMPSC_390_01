@@ -1,0 +1,115 @@
+<html>
+  <body style="background-color: #ffffb0;">
+
+    <head>
+    <title>Add Location</title>
+
+    <link rel="stylesheet" href="anthony_style.css" >
+
+    </head>
+
+
+      <h1>Add Location</h1>
+
+      <h2>Location</h2>
+
+      <div>
+
+
+      </div>
+
+
+        <form data-pg-verify data-pg-skip-verification="true"  method="POST" enctype="multipart/form-data" id="addLocationForm">
+          
+          <input type = "file" name="ImageFile" Required>
+
+
+          <br><br>
+          <label for="PlaceType">Choose establishment type:</label>
+          <select name="PlaceType" id="PlaceType">
+            <option value="Resturant">Resturant</option>
+            <option value="Outdoor">Outdoor</option>
+          </select>
+          <br><br>
+
+
+          
+
+
+          <label>Location Name</label><br />
+          <input type="text" name="PlaceName" required /><br /><br />
+          <label>Location Address</label><br />
+            
+                
+            
+                <div class="wrapper">
+                    <label for="line1">Address 1</label>
+                    <input type="text" id="line1" name="addressLine1" required data-pg-address-line1></input>
+                    <div class="error" data-pg-address-line1-message></div>
+                </div>
+                <div class="wrapper">
+                    <label for="line2">Line 2</label>
+                    <input type="text" id="line2" name="addressLine2" data-pg-address-line2 />
+                    <div class="error" data-pg-address-line2-message></div>
+                </div>
+                <div class="wrapper">
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" required data-pg-city />
+                    <div class="error" data-pg-city-message></div>
+                </div>
+                <div class="wrapper">
+                    <label for="state">State/Province</label>
+                    <input type="text" id="state" name="state" required data-pg-prov />
+                    <div class="error" data-pg-prov-message></div>
+                </div>
+                <div class="wrapper">
+                    <label for="zip">Zip/Postal Code</label>
+                    <input type="text" id="zip" name="zip" required data-pg-pc />
+                    <div class="error" data-pg-pc-message></div>
+                </div>
+                <div class="wrapper">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" required data-pg-country />
+                    <div class="error" data-pg-country-message></div>
+                </div>
+            <div 
+                class="generic-message"
+                data-pg-generic-message>
+            </div>
+            <div data-pg-status></div>
+            
+
+            <button type="submit" id="submitBtn">Add Location</button>
+
+          </form>
+
+          <p id="LocationResult"></p>
+
+        <script>
+          const LocationForm = document.getElementById('addLocationForm');
+          const LocationResult = document.getElementById('LocationResult');
+          LocationForm.addEventListener('submit', async (e) => {
+            console.log("Pressed SUBMIT");
+
+          e.preventDefault();
+          
+          const formData = new FormData(LocationForm);
+          console.log("form data: " + formData);
+          const res = await fetch('/addLocation', {
+          method: 'POST',
+          body: formData
+          });
+
+          const text = await res.text();
+          console.log("text: " + text);
+
+          LocationResult.textContent = text;
+          });
+        </script>
+
+<script src="https://scripts.postgrid.com/autocomplete.min.js" 
+data-pg-key="live_sk_4Hmkmet6tp9mor15iApQ9j"    
+data-pg-international="true"
+            ></script>  
+      </body>
+</html>

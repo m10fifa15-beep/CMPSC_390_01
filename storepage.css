@@ -1,0 +1,121 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #fffdf5;
+}
+
+/* NAVBAR */
+.topnav {
+  background: #ffca28;
+  padding: 10px 20px;
+}
+
+.topnav__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  margin: 0;
+}
+
+.auth-inline input {
+  width: 120px;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.auth-inline button {
+  padding: 6px 10px;
+  margin-left: 3px;
+}
+
+/* HERO */
+.store-hero {
+  text-align: center;
+  padding: 40px;
+  background: #ffd54f;
+}
+
+.subtitle {
+  margin: 5px 0 10px;
+}
+
+/* REVIEW BOX */
+.review-box {
+  max-width: 500px;
+  margin: 30px auto;
+  text-align: center;
+}
+
+textarea {
+  width: 100%;
+  height: 80px;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+/* BUTTONS */
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background: #ffca28;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #ffc107;
+}
+
+/* STARS */
+.stars span {
+  font-size: 28px;
+  cursor: pointer;
+  color: gray;
+}
+
+.stars span.active {
+  color: gold;
+}
+
+/* REVIEW GRID */
+.section-title {
+  text-align: center;
+}
+
+.cardgrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* REVIEW CARD */
+.card {
+  background: #fff8dc;
+  padding: 15px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: left;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.stars-display {
+  color: gold;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+  background: #ff6b6b;
+  color: white;
+  width: 100%;
+}

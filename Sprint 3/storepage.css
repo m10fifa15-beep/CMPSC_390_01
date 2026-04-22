@@ -4,52 +4,59 @@ body {
   background: #fffdf5;
 }
 
+/* NAVBAR */
+.topnav {
+  background: #ffca28;
+  padding: 10px 20px;
+}
+
+.topnav__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  margin: 0;
+}
+
+.auth-inline input {
+  width: 120px;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.auth-inline button {
+  padding: 6px 10px;
+  margin-left: 3px;
+}
+
 /* HERO */
 .store-hero {
-  background: #ffd54f;
-  padding: 30px;
   text-align: center;
-  border-radius: 8px;
-  margin-bottom: 40px;
+  padding: 40px;
+  background: #ffd54f;
 }
 
 .subtitle {
-  font-size: 18px;
+  margin: 5px 0 10px;
 }
 
-/* GRID */
-.store-grid {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  margin-bottom: 40px;
-}
-
-/* CARDS */
-.card {
-  background: #fff8dc;
-  padding: 20px;
-  border-radius: 8px;
-  min-width: 220px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-/* REVIEW FORM */
+/* REVIEW BOX */
 .review-box {
-  max-width: 400px;
-  margin: auto;
+  max-width: 500px;
+  margin: 30px auto;
   text-align: center;
 }
 
-input, textarea, select {
+textarea {
   width: 100%;
+  height: 80px;
   margin-top: 10px;
   padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
 }
 
+/* BUTTONS */
 button {
   margin-top: 10px;
   padding: 10px;
@@ -74,30 +81,41 @@ button:hover {
   color: gold;
 }
 
+/* REVIEW GRID */
+.section-title {
+  text-align: center;
+}
+
+.cardgrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* REVIEW CARD */
+.card {
+  background: #fff8dc;
+  padding: 15px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: left;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
 .stars-display {
   color: gold;
 }
 
-/* REVIEW GRID */
-.cardgrid {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
+/* DELETE BUTTON */
 .delete-btn {
   background: #ff6b6b;
   color: white;
-  margin-top: 10px;
-}
-
-.auth-box {
-  max-width: 300px;
-  margin: 20px auto;
-  text-align: center;
-}
-
-.auth-box input {
-  margin-bottom: 10px;
+  width: 100%;
 }

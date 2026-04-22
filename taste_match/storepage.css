@@ -1,0 +1,78 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffb0; /* FULL PAGE YELLOW */
+  color: #222;
+}
+
+.store-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 50px;
+}
+
+/* HERO */
+.store-hero {
+  background: #fff;
+  padding: 30px 24px;
+  text-align: center;
+  border-radius: 14px;
+  border: 1px solid #bdbdbd;
+  margin: 20px 0 28px;
+}
+
+.auth-box,
+.review-box {
+  max-width: 700px;
+  margin: 0 auto 24px;
+  background: #fff;
+  border: 1px solid #bdbdbd;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 10px;
+}
+
+button {
+  margin-top: 12px;
+  padding: 11px;
+  background: #d9d9d9;
+  border: 1px solid #777;
+  border-radius: 8px;
+}
+
+button:hover {
+  background: #cfcfcf;
+}
+
+/* REVIEWS */
+.cardgrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #bdbdbd;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+@media (max-width: 900px) {
+  .cardgrid {
+    grid-template-columns: 1fr;
+  }
+}

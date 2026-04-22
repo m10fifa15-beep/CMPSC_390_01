@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+<<<<<<< HEAD
+    "dotenv": "^17.4.2"
+=======
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "multer": "^2.0.2",
+    "mysql2": "^3.20.0"
+>>>>>>> 6bc0120a10b84c2a028aa5dec40364179c855f74
+  }
+}
