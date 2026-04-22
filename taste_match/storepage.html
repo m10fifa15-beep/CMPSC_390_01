@@ -45,6 +45,15 @@
 let selectedRating = 0;
 let currentUser = null;
 
+// Load user from localStorage on page load
+window.addEventListener('load', () => {
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    currentUser = JSON.parse(storedUser);
+    document.getElementById("currentUser").innerText = "Logged in as: " + currentUser.username;
+  }
+});
+
 // STARS
 document.querySelectorAll("#starContainer span").forEach(star => {
   star.addEventListener("click", () => {
@@ -88,6 +97,7 @@ function login() {
     if (data.error) return alert("Login failed");
 
     currentUser = data;
+    localStorage.setItem('currentUser', JSON.stringify(data));
     document.getElementById("currentUser").innerText =
       "Logged in as: " + data.username;
   });

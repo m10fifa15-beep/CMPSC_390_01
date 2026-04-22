@@ -34,6 +34,15 @@ let current = null;
 //STORES LATEST RESULTS
 let lastResults = [];
 
+let currentUser = null;
+
+window.addEventListener('load', () => {
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    currentUser = JSON.parse(storedUser);
+  }
+});
+
 function getSaved() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -190,6 +199,21 @@ form.addEventListener("submit", async (e) => {
   prefs.category = categoryEl ? categoryEl.value : "";
   prefs.price = priceEl ? priceEl.value : "";
 
+  // Save preferences if logged in
+  if (currentUser) {
+    fetch("/save-preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        likes: prefs.likes,
+        personality: prefs.personality,
+        culture: prefs.culture,
+        trends: prefs.trends
+      })
+    }).catch(err => console.error("Save prefs error:", err));
+  }
+
   try {
     const results = await fetchMatches(prefs);
 
@@ -227,6 +251,17 @@ btnCloseModal.addEventListener("click", closeModal);
 modalOverlay.addEventListener("click", closeModal);
 
 btnPass.addEventListener("click", () => {
+  if (current && currentUser) {
+    fetch("/user-history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        locationId: current.id,
+        action: "passed"
+      })
+    }).catch(err => console.error("Log history error:", err));
+  }
   showNextMatch();
 });
 
@@ -244,6 +279,28 @@ btnLike.addEventListener("click", () => {
       description: current.description
     });
     setSaved(saved);
+
+    // Save to DB if logged in
+    if (currentUser) {
+      fetch("/save-location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id
+        })
+      }).catch(err => console.error("Save location error:", err));
+
+      fetch("/user-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id,
+          action: "liked"
+        })
+      }).catch(err => console.error("Log history error:", err));
+    }
   }
 
   showNextMatch();

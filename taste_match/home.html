@@ -27,7 +27,7 @@
           <a href="matchmaker.html">MatchMaker</a>
           <a href="storepage.html">Leave a Location Rating</a>
           <a href="social_feed.html">Photo Album</a>
-          <a href="auth.html">Login/SignUp</a>
+          <a href="profile.html" id="profileLink">Profile</a>
         </nav>
       </div>
     </header>
@@ -50,6 +50,17 @@
         </div>
       </section>
 
+      <!-- Login/Register Section -->
+      <section class="section auth-section">
+        <div class="auth-box">
+          <h3>Login or Register</h3>
+          <input id="authUsername" placeholder="Username">
+          <input id="authPassword" type="password" placeholder="Password">
+          <button onclick="register()">Register</button>
+          <button onclick="login()">Login</button>
+          <p id="currentUser"></p>
+        </div>
+      </section>
 
        <img src="food_table.png" alt="Image of Logo" class="featured-img">
 
@@ -539,6 +550,46 @@ demoPostForm.addEventListener("submit", function(e) {
 
 //add a review JS script
 <script>
+let currentUser = null;
+
+// Load user from localStorage on page load
+window.addEventListener('load', () => {
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    currentUser = JSON.parse(storedUser);
+    document.getElementById("currentUser").innerText = "Logged in as: " + currentUser.username;
+  }
+});
+
+function register() {
+  fetch("http://localhost:3000/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: document.getElementById('authUsername').value,
+      password: document.getElementById('authPassword').value
+    })
+  }).then(() => alert("Registered!"));
+}
+
+function login() {
+  fetch("http://localhost:3000/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      username: document.getElementById('authUsername').value,
+      password: document.getElementById('authPassword').value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) return alert("Login failed");
+    currentUser = data;
+    localStorage.setItem('currentUser', JSON.stringify(data));
+    document.getElementById("currentUser").innerText = "Logged in as: " + data.username;
+  });
+}
+</script>
   let demoSelectedRating = 0;
   let demoRatings = [5, 4];
 

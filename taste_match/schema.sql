@@ -59,3 +59,36 @@ CREATE TABLE IF NOT EXISTS Posts (
   image_path VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 6. `user_preferences` table (Stores user-selected preferences for matchmaking)
+CREATE TABLE IF NOT EXISTS user_preferences (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  likes TEXT,
+  personality TEXT,
+  culture TEXT,
+  trends TEXT,
+  saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES js_users(id) ON DELETE CASCADE
+);
+
+-- 7. `user_saved_locations` table (Stores locations saved by users)
+CREATE TABLE IF NOT EXISTS user_saved_locations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  location_id INT NOT NULL,
+  saved_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES js_users(id) ON DELETE CASCADE,
+  FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
+);
+
+-- 8. `user_history` table (Tracks user interactions with locations)
+CREATE TABLE IF NOT EXISTS user_history (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  location_id INT NOT NULL,
+  action VARCHAR(50), -- e.g., 'viewed', 'liked', 'passed', 'saved'
+  timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES js_users(id) ON DELETE CASCADE,
+  FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE CASCADE
+);
