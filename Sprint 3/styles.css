@@ -5,7 +5,8 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background: #ffffb0; /* FULL PAGE YELLOW */
+  background: #ffffb0;
+  /* FULL PAGE YELLOW */
   color: #222;
 }
 
@@ -75,4 +76,25 @@ button:hover {
   .cardgrid {
     grid-template-columns: 1fr;
   }
+}
+
+.post img {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  align-items: left;
+  margin-left: 10px;
+  border: 1px solid #ffffff;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 6px
+}
+
+.post {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 20px auto;
+  width: 800px;
+  gap: 20px;
 }
