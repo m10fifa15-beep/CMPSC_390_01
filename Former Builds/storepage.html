@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Restaurant</title>
+  <link rel="stylesheet" href="storepage.css">
+</head>
+
+<body>
+
+  <div class="store-hero">
+    <h1>Sunny Bites</h1>
+    <h2 id="avgRating">⭐ 0.0</h2>
+  </div>
+
+  <!-- LOGIN / REGISTER -->
+  <div class="auth-box">
+    <input id="authUsername" placeholder="Username">
+    <input id="authPassword" type="password" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <button onclick="login()">Login</button>
+    <p id="currentUser"></p>
+  </div>
+
+  <!-- REVIEW FORM -->
+  <div class="review-box">
+    <div class="stars" id="starContainer">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
+
+    <textarea id="reviewText" placeholder="Write review..."></textarea>
+    <button onclick="submitReview()">Submit</button>
+
+    <select id="sortSelect" onchange="loadReviews()">
+      <option value="newest">Newest</option>
+      <option value="highest">Highest</option>
+    </select>
+  </div>
+
+  <div id="reviews" class="cardgrid"></div>
+
+  <script>
+    let selectedRating = 0;
+    let currentUser = null;
+
+    // STARS
+    document.querySelectorAll("#starContainer span").forEach(star => {
+      star.addEventListener("click", () => {
+        selectedRating = Number(star.dataset.value);
+
+        document.querySelectorAll("#starContainer span").forEach(s => {
+          s.classList.remove("active");
+        });
+
+        for (let i = 0; i < selectedRating; i++) {
+          document.querySelectorAll("#starContainer span")[i].classList.add("active");
+        }
+      });
+    });
+
+    /* =========================
+       AUTH
+    ========================= */
+    function register() {
+      fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: authUsername.value,
+          password: authPassword.value
+        })
+      }).then(() => alert("Registered!"));
+    }
+
+    function login() {
+      fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: authUsername.value,
+          password: authPassword.value
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) return alert("Login failed");
+
+          currentUser = data;
+          document.getElementById("currentUser").innerText =
+            "Logged in as: " + data.username;
+        });
+    }
+
+    /* =========================
+       REVIEW
+    ========================= */
+    function submitReview() {
+      if (!currentUser) return alert("Login first");
+
+      fetch("http://localhost:3000/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          rating: selectedRating,
+          review: reviewText.value
+        })
+      }).then(() => {
+        loadReviews();
+        loadAverage();
+      });
+    }
+
+    /* =========================
+       LOAD REVIEWS
+    ========================= */
+    function loadReviews() {
+      fetch(`http://localhost:3000/reviews?sort=${sortSelect.value}`)
+        .then(res => res.json())
+        .then(data => {
+          reviews.innerHTML = "";
+
+          data.forEach(r => {
+            const div = document.createElement("div");
+            div.classList.add("card");
+
+            const isOwner = currentUser && currentUser.userId === r.user_id;
+
+            div.innerHTML = `
+          <strong>${r.username}</strong>
+          <div>${"★".repeat(r.rating)}</div>
+          <p>${r.review}</p>
+          ${isOwner ? `<button onclick="deleteReview(${r.id})">Delete</button>` : ""}
+        `;
+
+            reviews.appendChild(div);
+          });
+        });
+    }
+
+    /* =========================
+       DELETE
+    ========================= */
+    function deleteReview(id) {
+      fetch(`http://localhost:3000/reviews/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId
+        })
+      }).then(() => {
+        loadReviews();
+        loadAverage();
+      });
+    }
+
+    /* =========================
+       AVG
+    ========================= */
+    function loadAverage() {
+      fetch("http://localhost:3000/reviews/average")
+        .then(res => res.json())
+        .then(data => {
+          avgRating.innerText = "⭐ " + Number(data.average).toFixed(1);
+        });
+    }
+
+    loadReviews();
+    loadAverage();
+  </script>
+
+</body>
+
+</html>

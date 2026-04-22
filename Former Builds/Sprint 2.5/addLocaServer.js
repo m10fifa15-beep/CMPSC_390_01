@@ -1,0 +1,80 @@
+const express = require('express');
+const mysql = require('mysql2');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const upload = multer({ dest: 'UploadedImages/' });
+require("dotenv").config();
+
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(__dirname));
+app.use('/UploadedImages', express.static('UploadedImages'));
+
+const db = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  });
+
+
+app.post('/addLocation', upload.single('ImageFile'), (req, res) => {
+  console.log("START ADD LOCATION");
+
+  console.log("req" + req);
+
+  const ImageFile = req.file ? req.file.filename : null;
+
+
+  const PlaceType = req.body.PlaceType;
+  const PlaceName = req.body.PlaceName
+
+  const addressLine1 = req.body.addressLine1;
+  const addressLine2 = req.body.addressLine2;
+  const city = req.body.city;
+  const state = req.body.state;
+  const zip = req.body.zip;
+  const country = req.body.country;
+  
+  const PlaceAddress = `${addressLine1}, ${city}, ${state}, ${zip}, ${country}`
+  const sql = `
+
+
+  INSERT INTO place (PlaceType, PlaceName, PlaceAddress, PlaceImage)
+  VALUES (?, ?, ?, ?)
+  `;
+
+  db.query(sql, [PlaceType, PlaceName, PlaceAddress,  ImageFile], (err, results) => {
+  if (err) {
+  console.error(err);
+  return res.status(500).send('Server Error'); 
+
+  }
+  console.error(results);
+
+  if (results.affectedRows == 1) {
+  res.send(`${req.body.PlaceType}: has been created!`);
+  } else {
+    console.log("Error!");
+  res.send('User Not Created');
+  }
+  });
+  });
+
+
+app.use((req, res) => {
+
+  
+  res.status(404).send('Location Not Created');
+});
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
+
+
+  

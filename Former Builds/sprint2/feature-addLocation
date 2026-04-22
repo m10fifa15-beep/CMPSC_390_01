@@ -1,0 +1,26 @@
+Your Feature Document Must Include
+
+Problem Statement
+What problem does this solve?
+---gives the user redily available info on locations and cateagorys---
+
+User Flow
+Step by step from start to finish
+---User presses add location - User adds name of location - User adds Location Adress - User adds Location type - User submits location - Page adds info to database
+
+Technical Plan
+Frontend changes
+--- Give predetermined options to types (family, outdoor, resturant, ect)
+Backend routes
+--- Connect to database
+Database changes
+--- Make it exist
+Files expected to be created or modified
+---addLocaServer, addLocation
+
+Acceptance Criteria
+Clear definition of done
+Must be testable
+Allows the user to impliment an address and name and type, stores it in the database. Testable by checking if the database has been changed
+
+
