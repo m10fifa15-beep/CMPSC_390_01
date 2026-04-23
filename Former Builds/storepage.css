@@ -1,78 +1,103 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffb0; /* FULL PAGE YELLOW */
-  color: #222;
-}
-
-.store-shell {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 20px 50px;
+  font-family: Arial;
+  background: #fffdf5;
 }
 
 /* HERO */
 .store-hero {
-  background: #fff;
-  padding: 30px 24px;
+  background: #ffd54f;
+  padding: 30px;
   text-align: center;
-  border-radius: 14px;
-  border: 1px solid #bdbdbd;
-  margin: 20px 0 28px;
-}
-
-.auth-box,
-.review-box {
-  max-width: 700px;
-  margin: 0 auto 24px;
-  background: #fff;
-  border: 1px solid #bdbdbd;
-  border-radius: 14px;
-  padding: 22px;
-}
-
-input,
-textarea,
-select {
-  width: 100%;
-  padding: 10px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  margin-bottom: 40px;
+}
+
+.subtitle {
+  font-size: 18px;
+}
+
+/* GRID */
+.store-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+/* CARDS */
+.card {
+  background: #fff8dc;
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 220px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* REVIEW FORM */
+.review-box {
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+}
+
+input, textarea, select {
+  width: 100%;
   margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 button {
-  margin-top: 12px;
-  padding: 11px;
-  background: #d9d9d9;
-  border: 1px solid #777;
-  border-radius: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  background: #ffca28;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 button:hover {
-  background: #cfcfcf;
+  background: #ffc107;
 }
 
-/* REVIEWS */
+/* STARS */
+.stars span {
+  font-size: 28px;
+  cursor: pointer;
+  color: gray;
+}
+
+.stars span.active {
+  color: gold;
+}
+
+.stars-display {
+  color: gold;
+}
+
+/* REVIEW GRID */
 .cardgrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-.card {
-  background: white;
-  border: 1px solid #bdbdbd;
-  border-radius: 12px;
-  padding: 16px;
+.delete-btn {
+  background: #ff6b6b;
+  color: white;
+  margin-top: 10px;
 }
 
-@media (max-width: 900px) {
-  .cardgrid {
-    grid-template-columns: 1fr;
-  }
+.auth-box {
+  max-width: 300px;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.auth-box input {
+  margin-bottom: 10px;
 }
