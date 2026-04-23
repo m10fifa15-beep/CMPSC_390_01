@@ -64,6 +64,21 @@ db.connect((err) => {
   console.log("Connected to MySQL database");
 });
 
+const sql = `
+  INSERT INTO place (
+    placeType,
+    placeName,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    zip,
+    country,
+    placeImage
+  )
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
+
 /* =========================
    HELPERS
 ========================= */
@@ -76,24 +91,26 @@ function scorePlace(place, prefs) {
   const personality = normalize(prefs.personality);
   const culture = normalize(prefs.culture);
   const trends = normalize(prefs.trends);
-  const category = normalize(prefs.category);
   const price = normalize(prefs.price);
 
   let score = 0;
 
-  if (category && normalize(place.food_category) === category) score += 4;
-  if (price && normalize(place.price_range) === price) score += 3;
-
+  const foodCategory = normalize(place.food_category || place.placeType);
   const blob = normalize(
-    `${place.name} ${place.food_category} ${place.city} ${place.state}`
-  );
+  `${place.name} ${place.food_category || ""} ${place.placeType || ""} ${place.city} ${place.state}`
+);
+
+  if (price && normalize(place.price_range).includes(price)) score += 3;
 
   const tokens = `${likes} ${personality} ${culture} ${trends}`
     .split(/[, ]+/)
     .filter(Boolean);
 
   tokens.forEach((t) => {
-    if (t.length > 2 && blob.includes(t)) score += 2;
+    if (t.length > 2) {
+      if (foodCategory.includes(t)) score += 4;
+      else if (blob.includes(t)) score += 2;
+    }
   });
 
   return score;
@@ -110,56 +127,143 @@ app.get("/", (req, res) => {
    MATCH API
 ========================= */
 app.post("/api/match", (req, res) => {
-  const prefs = req.body;
+  try {
+    console.log("POST /api/match hit");
+    console.log("prefs:", req.body);
 
-  const sql = `
+    const prefs = req.body || {};
+
+    const sql = `
+  SELECT
+    l.id AS id,
+    l.name AS name,
+    COALESCE(r.review_count, l.number_of_reviews, 0) AS number_of_reviews,
+    COALESCE(r.avg_rating, l.average_rating, 0) AS average_rating,
+    l.food_category,
+    l.price_range,
+    COALESCE(p.city, l.city) AS city,
+    COALESCE(p.state, l.state) AS state,
+    l.website_url,
+    p.placeType,
+    p.addressLine1,
+    p.addressLine2,
+    p.zip,
+    p.country,
+    p.placeImage
+  FROM locations l
+  LEFT JOIN place p
+    ON LOWER(TRIM(l.name)) COLLATE utf8mb4_unicode_ci
+       = LOWER(TRIM(p.placeName)) COLLATE utf8mb4_unicode_ci
+  LEFT JOIN (
     SELECT
-      id,
-      name,
-      number_of_reviews,
-      average_rating,
-      food_category,
-      price_range,
-      city,
-      state,
-      website_url
-    FROM locations
-  `;
+      location_id,
+      AVG(rating) AS avg_rating,
+      COUNT(*) AS review_count
+    FROM reviews
+    GROUP BY location_id
+  ) r
+    ON r.location_id COLLATE utf8mb4_unicode_ci
+       = CAST(l.id AS CHAR) COLLATE utf8mb4_unicode_ci
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      console.error("Match query error:", err);
-      return res.status(500).send("Database error");
-    }
+  UNION
 
-    const ranked = results
-      .map((place) => ({
-        ...place,
-        matchScore: scorePlace(place, prefs)
-      }))
-      .sort((a, b) => b.matchScore - a.matchScore);
+  SELECT
+    CONCAT('place_', p.id) AS id,
+    p.placeName AS name,
+    COALESCE(rp.review_count, 0) AS number_of_reviews,
+    COALESCE(rp.avg_rating, 0) AS average_rating,
+    p.placeType AS food_category,
+    '' AS price_range,
+    p.city AS city,
+    p.state AS state,
+    '' AS website_url,
+    p.placeType,
+    p.addressLine1,
+    p.addressLine2,
+    p.zip,
+    p.country,
+    p.placeImage
+  FROM place p
+  LEFT JOIN locations l
+    ON LOWER(TRIM(l.name)) COLLATE utf8mb4_unicode_ci
+       = LOWER(TRIM(p.placeName)) COLLATE utf8mb4_unicode_ci
+  LEFT JOIN (
+    SELECT
+      location_id,
+      AVG(rating) AS avg_rating,
+      COUNT(*) AS review_count
+    FROM reviews
+    GROUP BY location_id
+  ) rp
+    ON rp.location_id COLLATE utf8mb4_unicode_ci
+       = CONCAT('place_', p.id) COLLATE utf8mb4_unicode_ci
+  WHERE l.id IS NULL
+`;
 
-    const hasRealMatches = ranked.length > 0 && ranked[0].matchScore > 0;
-    const finalList = hasRealMatches
-      ? ranked.filter((r) => r.matchScore > 0)
-      : ranked;
+    db.query(sql, (err, results) => {
+      try {
+        if (err) {
+          console.error("Match query error:", err);
+          return res.status(500).json({
+            error: "Database error",
+            details: err.message
+          });
+        }
 
-    const response = finalList.slice(0, 10).map((r) => ({
-      id: r.id,
-      name: r.name,
-      category: r.food_category,
-      price: r.price_range,
-      city: r.city,
-      state: r.state,
-      website: r.website_url,
-      reviews: r.number_of_reviews,
-      rating: r.average_rating,
-      matchScore: r.matchScore,
-      description: ""
-    }));
+        console.log("rows:", results.length);
 
-    res.json({ results: response });
-  });
+        const safeResults = Array.isArray(results) ? results : [];
+
+        const ranked = safeResults
+          .map((place) => ({
+            ...place,
+            matchScore: scorePlace(place, prefs)
+          }))
+          .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0));
+
+        const hasRealMatches = ranked.length > 0 && (ranked[0].matchScore || 0) > 0;
+        const finalList = hasRealMatches
+          ? ranked.filter((r) => (r.matchScore || 0) > 0)
+          : ranked;
+
+        const response = finalList.slice(0, 10).map((r) => ({
+          id: r.id,
+          name: r.name || "",
+          category: r.placeType || r.food_category || "",
+          price: r.price_range || "",
+          city: r.city || "",
+          state: r.state || "",
+          website: r.website_url || "",
+          rating: Number(r.avg_rating || r.average_rating || 0),
+          reviews: Number(r.review_count || r.number_of_reviews || 0),
+          matchScore: r.matchScore || 0,
+          image: r.placeImage || "",
+          description: [
+            r.addressLine1,
+            r.addressLine2,
+            r.city,
+            r.state,
+            r.zip,
+            r.country
+          ].filter(Boolean).join(", ")
+        }));
+
+        return res.json({ results: response });
+      } catch (innerError) {
+        console.error("Match route processing error:", innerError);
+        return res.status(500).json({
+          error: "Match processing failed",
+          details: innerError.message
+        });
+      }
+    });
+  } catch (outerError) {
+    console.error("Match route outer error:", outerError);
+    return res.status(500).json({
+      error: "Route failed",
+      details: outerError.message
+    });
+  }
 });
 
 /* =========================
@@ -285,66 +389,202 @@ app.post("/login", (req, res) => {
   });
 });
 
+/*LOCATION*/
+app.get("/location/:id", (req, res) => {
+  const rawId = String(req.params.id || "").trim();
+
+  // Handle user-added places like place_1
+  if (rawId.startsWith("place_")) {
+    const placeId = rawId.replace("place_", "");
+
+    const sql = `
+      SELECT
+        CONCAT('place_', id) AS id,
+        placeName AS name,
+        placeType AS category,
+        '' AS price,
+        city,
+        state,
+        '' AS website,
+        0 AS reviews,
+        0 AS rating,
+        addressLine1,
+        addressLine2,
+        zip,
+        country,
+        placeImage
+      FROM place
+      WHERE id = ?
+      LIMIT 1
+    `;
+
+    db.query(sql, [placeId], (err, results) => {
+      if (err) {
+        console.error("Load place error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      if (results.length === 0) {
+        return res.status(404).json({ error: "Restaurant not found" });
+      }
+
+      const row = results[0];
+
+      res.json({
+        id: row.id,
+        name: row.name,
+        category: row.category,
+        price: row.price,
+        city: row.city,
+        state: row.state,
+        website: row.website,
+        reviews: row.reviews,
+        rating: row.rating,
+        image: row.placeImage || "",
+        description: [
+          row.addressLine1,
+          row.addressLine2,
+          row.city,
+          row.state,
+          row.zip,
+          row.country
+        ].filter(Boolean).join(", ")
+      });
+    });
+
+    return;
+  }
+
+  // Handle original CSV/imported restaurants like 1, 2, 3...
+  const sql = `
+    SELECT
+      id,
+      name,
+      number_of_reviews,
+      average_rating,
+      food_category,
+      price_range,
+      city,
+      state,
+      website_url
+    FROM locations
+    WHERE id = ?
+    LIMIT 1
+  `;
+
+  db.query(sql, [rawId], (err, results) => {
+    if (err) {
+      console.error("Load location error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Restaurant not found" });
+    }
+
+    const row = results[0];
+
+    res.json({
+      id: row.id,
+      name: row.name,
+      category: row.food_category,
+      price: row.price_range,
+      city: row.city,
+      state: row.state,
+      website: row.website_url,
+      reviews: row.number_of_reviews,
+      rating: row.average_rating
+    });
+  });
+});
+
 /* =========================
    STORE PAGE REVIEWS
    TABLE: js_reviews
    Using location_id = 1 for this page
 ========================= */
 app.post("/reviews", (req, res) => {
-  const { userId, rating, review } = req.body;
-  const locationId = 1;
+  const { userId, locationId, rating, review } = req.body;
 
   if (!userId) {
     return res.status(400).json({ error: "Login required" });
+  }
+
+  if (!locationId) {
+    return res.status(400).json({ error: "Location ID is required" });
   }
 
   if (!rating || rating < 1 || rating > 5) {
     return res.status(400).json({ error: "Rating must be 1 to 5" });
   }
 
-  const sql = `
-    INSERT INTO js_reviews (user_id, location_id, rating, review)
-    VALUES (?, ?, ?, ?)
+  const usernameSql = `
+    SELECT username
+    FROM js_users
+    WHERE id = ?
+    LIMIT 1
   `;
 
-  db.query(sql, [userId, locationId, rating, review || ""], (err, result) => {
-    if (err) {
-      console.error("Create review error:", err);
+  db.query(usernameSql, [userId], (userErr, userResults) => {
+    if (userErr) {
+      console.error("Load username error:", userErr);
       return res.status(500).json({ error: "Database error" });
     }
 
-    res.json({
-      success: true,
-      reviewId: result.insertId
+    if (userResults.length === 0) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const username = userResults[0].username;
+
+    const sql = `
+      INSERT INTO reviews (user_id, location_id, username, rating, review)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+
+    db.query(sql, [userId, String(locationId), username, rating, review || ""], (err, result) => {
+      if (err) {
+        console.error("Create review error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      res.json({
+        success: true,
+        reviewId: result.insertId
+      });
     });
   });
 });
 
+
 app.get("/reviews", (req, res) => {
   const sort = req.query.sort === "highest" ? "highest" : "newest";
-  const locationId = 1;
+  const locationId = req.query.locationId;
 
-  let orderBy = "r.created_at DESC";
+  if (!locationId) {
+    return res.status(400).json({ error: "Location ID is required" });
+  }
+
+  let orderBy = "created_at DESC";
   if (sort === "highest") {
-    orderBy = "r.rating DESC, r.created_at DESC";
+    orderBy = "rating DESC, created_at DESC";
   }
 
   const sql = `
     SELECT
-      r.id,
-      r.user_id,
-      r.location_id,
-      r.rating,
-      r.review,
-      r.created_at,
-      u.username
-    FROM js_reviews r
-    JOIN js_users u ON r.user_id = u.id
-    WHERE r.location_id = ?
+      id,
+      user_id,
+      location_id,
+      username,
+      rating,
+      review,
+      created_at
+    FROM reviews
+    WHERE location_id = ?
     ORDER BY ${orderBy}
   `;
 
-  db.query(sql, [locationId], (err, results) => {
+  db.query(sql, [String(locationId)], (err, results) => {
     if (err) {
       console.error("Load reviews error:", err);
       return res.status(500).json({ error: "Database error" });
@@ -353,6 +593,7 @@ app.get("/reviews", (req, res) => {
     res.json(results);
   });
 });
+
 
 app.delete("/reviews/:id", (req, res) => {
   const reviewId = req.params.id;
@@ -364,7 +605,7 @@ app.delete("/reviews/:id", (req, res) => {
 
   const checkSql = `
     SELECT id, user_id
-    FROM js_reviews
+    FROM reviews
     WHERE id = ?
     LIMIT 1
   `;
@@ -383,7 +624,7 @@ app.delete("/reviews/:id", (req, res) => {
       return res.status(403).json({ error: "Not allowed to delete this review" });
     }
 
-    const deleteSql = `DELETE FROM js_reviews WHERE id = ?`;
+    const deleteSql = `DELETE FROM reviews WHERE id = ?`;
 
     db.query(deleteSql, [reviewId], (deleteErr) => {
       if (deleteErr) {
@@ -397,15 +638,19 @@ app.delete("/reviews/:id", (req, res) => {
 });
 
 app.get("/reviews/average", (req, res) => {
-  const locationId = 1;
+  const locationId = req.query.locationId;
+
+  if (!locationId) {
+    return res.status(400).json({ error: "Location ID is required" });
+  }
 
   const sql = `
     SELECT AVG(rating) AS average
-    FROM js_reviews
+    FROM reviews
     WHERE location_id = ?
   `;
 
-  db.query(sql, [locationId], (err, results) => {
+  db.query(sql, [String(locationId)], (err, results) => {
     if (err) {
       console.error("Average review error:", err);
       return res.status(500).json({ error: "Database error" });
@@ -415,6 +660,7 @@ app.get("/reviews/average", (req, res) => {
     res.json({ average: Number(average) || 0 });
   });
 });
+
 
 /* =========================
    SOCIAL FEED POSTS

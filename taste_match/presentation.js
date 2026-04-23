@@ -492,23 +492,23 @@ app.post("/save-preferences", (req, res) => {
     return res.status(400).json({ error: "Login required" });
   }
 
-  // Upsert preferences
   const sql = `
     INSERT INTO user_preferences (user_id, likes, personality, culture, trends)
     VALUES (?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE
-    likes = VALUES(likes),
-    personality = VALUES(personality),
-    culture = VALUES(culture),
-    trends = VALUES(trends),
-    saved_at = CURRENT_TIMESTAMP
+      likes = VALUES(likes),
+      personality = VALUES(personality),
+      culture = VALUES(culture),
+      trends = VALUES(trends),
+      saved_at = CURRENT_TIMESTAMP
   `;
 
-  db.query(sql, [userId, likes, personality, culture, trends], (err, result) => {
+  db.query(sql, [userId, likes, personality, culture, trends], (err) => {
     if (err) {
       console.error("Save preferences error:", err);
       return res.status(500).json({ error: "Database error" });
     }
+
     res.json({ success: true });
   });
 });
@@ -528,11 +528,12 @@ app.post("/save-location", (req, res) => {
     VALUES (?, ?)
   `;
 
-  db.query(sql, [userId, locationId], (err, result) => {
+  db.query(sql, [userId, locationId], (err) => {
     if (err) {
       console.error("Save location error:", err);
       return res.status(500).json({ error: "Database error" });
     }
+
     res.json({ success: true });
   });
 });
@@ -552,11 +553,12 @@ app.post("/user-history", (req, res) => {
     VALUES (?, ?, ?)
   `;
 
-  db.query(sql, [userId, locationId, action], (err, result) => {
+  db.query(sql, [userId, locationId, action], (err) => {
     if (err) {
       console.error("User history error:", err);
       return res.status(500).json({ error: "Database error" });
     }
+
     res.json({ success: true });
   });
 });
@@ -571,19 +573,26 @@ app.get("/user-profile", (req, res) => {
     return res.status(400).json({ error: "User ID required" });
   }
 
-  // Get preferences
   const prefsSql = "SELECT * FROM user_preferences WHERE user_id = ?";
-  // Get saved locations with location details
   const savedSql = `
-    SELECT l.id, l.name, l.food_category, l.price_range, l.city, l.state, us.saved_at
+    SELECT
+      l.id,
+      l.name,
+      l.food_category,
+      l.price_range,
+      l.city,
+      l.state,
+      us.saved_at
     FROM user_saved_locations us
     JOIN locations l ON us.location_id = l.id
     WHERE us.user_id = ?
     ORDER BY us.saved_at DESC
   `;
-  // Get history
   const historySql = `
-    SELECT h.action, h.timestamp, l.name
+    SELECT
+      h.action,
+      h.timestamp,
+      l.name
     FROM user_history h
     JOIN locations l ON h.location_id = l.id
     WHERE h.user_id = ?
@@ -592,13 +601,22 @@ app.get("/user-profile", (req, res) => {
   `;
 
   db.query(prefsSql, [userId], (err, prefs) => {
-    if (err) return res.status(500).json({ error: "Database error" });
+    if (err) {
+      console.error("Get profile preferences error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
 
     db.query(savedSql, [userId], (err, saved) => {
-      if (err) return res.status(500).json({ error: "Database error" });
+      if (err) {
+        console.error("Get profile saved locations error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
 
       db.query(historySql, [userId], (err, history) => {
-        if (err) return res.status(500).json({ error: "Database error" });
+        if (err) {
+          console.error("Get profile history error:", err);
+          return res.status(500).json({ error: "Database error" });
+        }
 
         res.json({
           preferences: prefs[0] || {},

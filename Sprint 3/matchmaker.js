@@ -70,6 +70,15 @@ function cleanPrefText(text) {
     .trim();
 }
 
+let currentUser = null;
+
+window.addEventListener('load', () => {
+  const storedUser = localStorage.getItem('currentUser');
+  if (storedUser) {
+    currentUser = JSON.parse(storedUser);
+  }
+});
+
 function getSaved() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -282,7 +291,6 @@ async function logUserHistory(place, action) {
 
 /* =========================
    PAGE VIEWS
-========================= */
 function showMatchView() {
   if (savedPanel) {
     savedPanel.style.display = "none";
@@ -292,6 +300,117 @@ function showMatchView() {
 function showSavedView() {
   if (savedPanel) {
     savedPanel.style.display = "block";
+  // keep dropdowns if you have them (category/price)
+  const categoryEl = form.querySelector('[name="category"]');
+  const priceEl = form.querySelector('[name="price"]');
+  prefs.category = categoryEl ? categoryEl.value : "";
+  prefs.price = priceEl ? priceEl.value : "";
+
+  // Save preferences if logged in
+  if (currentUser) {
+    fetch("/save-preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        likes: prefs.likes,
+        personality: prefs.personality,
+        culture: prefs.culture,
+        trends: prefs.trends
+      })
+    }).catch(err => console.error("Save prefs error:", err));
+  }
+
+  try {
+  const results = await fetchMatches(prefs);
+
+  lastResults = results;
+
+  const unsavedMatches = results.filter(r => !alreadySaved(r.id));
+  matchQueue = unsavedMatches.length > 0 ? unsavedMatches : results;
+
+  renderMatches(results);
+
+  if (results.length === 0) {
+    alert("No matches found.");
+    return;
+  }
+
+  showNextMatch();
+} catch (err) {
+  console.error(err);
+}
+});
+
+
+
+// SECOND HALF
+//clear button function
+if (btnClear) {
+  btnClear.addEventListener("click", () => {
+    document.querySelectorAll(".pref-btn.selected").forEach((btn) => {
+      btn.classList.remove("selected");
+    });
+
+    resultsList.innerHTML = "";
+  });
+}
+
+//modal controls
+btnCloseModal.addEventListener("click", closeModal);
+modalOverlay.addEventListener("click", closeModal);
+
+btnPass.addEventListener("click", () => {
+  if (current && currentUser) {
+    fetch("/user-history", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: currentUser.userId,
+        locationId: current.id,
+        action: "passed"
+      })
+    }).catch(err => console.error("Log history error:", err));
+  }
+  showNextMatch();
+});
+
+btnLike.addEventListener("click", () => {
+  if (!current) return;
+
+  const saved = getSaved();
+  if (!saved.some(p => p.id === current.id)) {
+    saved.unshift({
+      id: current.id,
+      name: current.name,
+      category: current.category,
+      price: current.price,
+      city: current.city,
+      description: current.description
+    });
+    setSaved(saved);
+
+    // Save to DB if logged in
+    if (currentUser) {
+      fetch("/save-location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id
+        })
+      }).catch(err => console.error("Save location error:", err));
+
+      fetch("/user-history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          locationId: current.id,
+          action: "liked"
+        })
+      }).catch(err => console.error("Log history error:", err));
+    }
   }
   renderSaved();
 }
@@ -309,13 +428,31 @@ function renderMatches(results) {
 
   resultsList.innerHTML = results.map((place) => `
     <div class="resultCard">
+      ${place.image ? `
+        <div class="resultCard__imageWrap">
+          <img
+            src="${escapeHtml(place.image)}"
+            alt="${escapeHtml(place.name)}"
+            class="resultCard__image"
+          />
+        </div>
+      ` : ""}
+
       <div class="resultCard__top">
-        <h3 class="resultCard__name">${escapeHtml(place.name)}</h3>
+        <h3 class="resultCard__name">
+          <a href="storepage.html?locationId=${encodeURIComponent(place.id)}" class="restaurant-link">
+            ${escapeHtml(place.name)}
+          </a>
+        </h3>
         <span class="pill">${escapeHtml(place.price || "")}</span>
       </div>
 
       <div class="resultCard__meta">
         ${escapeHtml(place.category || "")} • ${escapeHtml(place.city || "")}
+      </div>
+
+      <div class="resultCard__rating">
+        ⭐ ${Number(place.rating || 0).toFixed(1)} (${place.reviews || 0})
       </div>
 
       <div class="resultCard__desc">
@@ -328,7 +465,7 @@ function renderMatches(results) {
       </div>
 
       <div class="resultCard__actions">
-        <button class="btn btn--ghost" type="button" onclick="saveMatch(${Number(place.id)})">
+        <button class="btn btn--ghost" type="button" onclick="saveMatch('${escapeHtml(String(place.id))}')">
           Save
         </button>
       </div>
