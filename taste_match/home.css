@@ -348,6 +348,7 @@ body {
 
 /* Responsive */
 @media (max-width: 900px) {
+
   .info-grid,
   .cardgrid,
   .feature-grid {
@@ -414,7 +415,7 @@ body {
   max-width: 500px;
   border-radius: 12px;
   border: 1px solid #ccc;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   display: block;
   margin-left: auto;
@@ -425,7 +426,6 @@ body {
   transform: scale(1.03);
 }
 
-// ADD LOCATION DEMO
 .add-demo-section {
   margin-bottom: 42px;
 }
@@ -770,7 +770,7 @@ body {
   padding: 16px;
   min-width: 220px;
   flex: 1 1 240px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .demo-review-post p {
