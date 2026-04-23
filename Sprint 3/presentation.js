@@ -483,6 +483,152 @@ app.post("/create-post", upload.single("image"), (req, res) => {
 });
 
 /* =========================
+   USER PREFERENCES
+========================= */
+app.post("/save-preferences", (req, res) => {
+  const { userId, likes, personality, culture, trends } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "Login required" });
+  }
+
+  const sql = `
+    INSERT INTO user_preferences (user_id, likes, personality, culture, trends)
+    VALUES (?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+      likes = VALUES(likes),
+      personality = VALUES(personality),
+      culture = VALUES(culture),
+      trends = VALUES(trends),
+      saved_at = CURRENT_TIMESTAMP
+  `;
+
+  db.query(sql, [userId, likes, personality, culture, trends], (err) => {
+    if (err) {
+      console.error("Save preferences error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+/* =========================
+   SAVE LOCATION
+========================= */
+app.post("/save-location", (req, res) => {
+  const { userId, locationId } = req.body;
+
+  if (!userId || !locationId) {
+    return res.status(400).json({ error: "User ID and Location ID required" });
+  }
+
+  const sql = `
+    INSERT IGNORE INTO user_saved_locations (user_id, location_id)
+    VALUES (?, ?)
+  `;
+
+  db.query(sql, [userId, locationId], (err) => {
+    if (err) {
+      console.error("Save location error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+/* =========================
+   USER HISTORY
+========================= */
+app.post("/user-history", (req, res) => {
+  const { userId, locationId, action } = req.body;
+
+  if (!userId || !locationId || !action) {
+    return res.status(400).json({ error: "User ID, Location ID, and action required" });
+  }
+
+  const sql = `
+    INSERT INTO user_history (user_id, location_id, action)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [userId, locationId, action], (err) => {
+    if (err) {
+      console.error("User history error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.json({ success: true });
+  });
+});
+
+/* =========================
+   GET USER PROFILE
+========================= */
+app.get("/user-profile", (req, res) => {
+  const userId = req.query.userId;
+
+  if (!userId) {
+    return res.status(400).json({ error: "User ID required" });
+  }
+
+  const prefsSql = "SELECT * FROM user_preferences WHERE user_id = ?";
+  const savedSql = `
+    SELECT
+      l.id,
+      l.name,
+      l.food_category,
+      l.price_range,
+      l.city,
+      l.state,
+      us.saved_at
+    FROM user_saved_locations us
+    JOIN locations l ON us.location_id = l.id
+    WHERE us.user_id = ?
+    ORDER BY us.saved_at DESC
+  `;
+  const historySql = `
+    SELECT
+      h.action,
+      h.timestamp,
+      l.name
+    FROM user_history h
+    JOIN locations l ON h.location_id = l.id
+    WHERE h.user_id = ?
+    ORDER BY h.timestamp DESC
+    LIMIT 20
+  `;
+
+  db.query(prefsSql, [userId], (err, prefs) => {
+    if (err) {
+      console.error("Get profile preferences error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    db.query(savedSql, [userId], (err, saved) => {
+      if (err) {
+        console.error("Get profile saved locations error:", err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      db.query(historySql, [userId], (err, history) => {
+        if (err) {
+          console.error("Get profile history error:", err);
+          return res.status(500).json({ error: "Database error" });
+        }
+
+        res.json({
+          preferences: prefs[0] || {},
+          savedLocations: saved,
+          history: history
+        });
+      });
+    });
+  });
+});
+
+/* =========================
    TEST ROUTE
 ========================= */
 app.get("/hello-place", (req, res) => {

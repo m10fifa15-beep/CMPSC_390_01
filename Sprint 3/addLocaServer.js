@@ -38,7 +38,7 @@ app.post('/addLocation', upload.single('ImageFile'), (req, res) => {
   const state = req.body.state;
   const zip = req.body.zip;
   const country = req.body.country;
-  
+
   const PlaceAddress = `${addressLine1}, ${city}, ${state}, ${zip}, ${country}`
   const sql = `
 
@@ -47,27 +47,27 @@ app.post('/addLocation', upload.single('ImageFile'), (req, res) => {
   VALUES (?, ?, ?, ?)
   `;
 
-  db.query(sql, [PlaceType, PlaceName, PlaceAddress,  ImageFile], (err, results) => {
-  if (err) {
-  console.error(err);
-  return res.status(500).send('Server Error'); 
+  db.query(sql, [PlaceType, PlaceName, PlaceAddress, ImageFile], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('Server Error');
 
-  }
-  console.error(results);
+    }
+    console.error(results);
 
-  if (results.affectedRows == 1) {
-  res.send(`${req.body.PlaceType}: has been created!`);
-  } else {
-    console.log("Error!");
-  res.send('User Not Created');
-  }
+    if (results.affectedRows == 1) {
+      res.send(`${req.body.PlaceType}: has been created!`);
+    } else {
+      console.log("Error!");
+      res.send('User Not Created');
+    }
   });
-  });
+});
 
 
 app.use((req, res) => {
 
-  
+
   res.status(404).send('Location Not Created');
 });
 
@@ -76,4 +76,3 @@ app.listen(port, () => {
 });
 
 
-  
