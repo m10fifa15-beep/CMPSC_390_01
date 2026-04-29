@@ -1,51 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <title>Food Social Feed</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Restaurant Reviews</title>
+  <link rel="stylesheet" href="storepage.css">
 </head>
 
 <body>
+  <header class="top_nav">
+    <div class="topnav__inner">
+      <div class="logo">
+        <a href="home.html">
+          <img src="lmm_logo.png" alt="TasteMatch Logo" width="50" height="50">
+        </a>
+      </div>
 
-  <header>
-    <div class="logo">Logo</div>
-    <input class="search" type="text" placeholder="Search...">
-    <div class="nav">
-      <a href="#create-post" class="post-btn">+ Post</a>
-      <div>Profile</div>
+      <nav class="topnav">
+        <a href="home.html">Home</a>
+        <a href="addLocation.html">Add Location</a>
+        <a href="matchmaker.html">MatchMaker</a>
+        <a href="storepage.html" class="active">Leave a Location Rating</a>
+        <a href="social_feed.html">Photo Album</a>
+      </nav>
     </div>
   </header>
 
-  <div id="create-post" class="modal">
-    <div class="modal-content">
-      <a href="#" class="close">✕</a>
-      <h2>Create a New Post</h2>
+  <main class="store-shell">
+    <section class="store-hero">
+      <h1>Sunny Bites</h1>
+      <p class="subtitle">Fresh food. Bright flavors.</p>
+      <h2 id="avgRating">⭐ 0.0</h2>
+      <p id="currentUser"></p>
+    </section>
 
-      <form id="postForm" enctype="multipart/form-data">
-        <label>Restaurant Name</label>
-        <input type="text" name="restaurant_name" placeholder="Enter restaurant name" required>
+    <section class="auth-box">
+      <h3>Login or Register</h3>
+      <input id="authUsername" placeholder="Username">
+      <input id="authPassword" type="password" placeholder="Password">
+      <button type="button" onclick="login()">Login</button>
+      <button type="button" onclick="register()">Register</button>
+    </section>
 
-        <label>Caption</label>
-        <textarea name="caption" placeholder="Write a short caption..." required></textarea>
+    <section class="review-box">
+      <h3>Leave a Review</h3>
 
-        <label>Upload Image</label>
-        <input type="file" name="image" accept="image/*" required>
+      <div class="stars" id="starContainer">
+        <span data-value="1">★</span>
+        <span data-value="2">★</span>
+        <span data-value="3">★</span>
+        <span data-value="4">★</span>
+        <span data-value="5">★</span>
+      </div>
 
-        <button type="submit">Share Post</button>
-      </form>
-    </div>
-  </div>
+      <textarea id="reviewText" placeholder="Write your review..."></textarea>
 
-  <section class="feed" id="feed"></section>
+      <button type="button" onclick="submitReview()">Submit Review</button>
 
-  <footer>
-    Loading more...
-  </footer>
+      <select id="sortSelect" onchange="loadReviews()">
+        <option value="newest">Newest</option>
+        <option value="highest">Highest Rated</option>
+      </select>
+    </section>
 
-  <script src="/script.js"></script>
+    <h2 class="section-title">Customer Reviews</h2>
+    <div id="reviews" class="cardgrid"></div>
+  </main>
 
+  <script>
+    let selectedRating = 0;
+    let currentUser = null;
+
+    window.addEventListener("load", () => {
+      const storedUser = localStorage.getItem("currentUser");
+
+      if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        document.getElementById("currentUser").innerText =
+          "Logged in as: " + currentUser.username;
+      }
+
+      loadReviews();
+      loadAverage();
+    });
+
+    document.querySelectorAll("#starContainer span").forEach((star) => {
+      star.addEventListener("click", () => {
+        selectedRating = Number(star.dataset.value);
+
+        document.querySelectorAll("#starContainer span").forEach((s) => {
+          s.classList.remove("active");
+        });
+
+        for (let i = 0; i < selectedRating; i++) {
+          document.querySelectorAll("#starContainer span")[i].classList.add("active");
+        }
+      });
+    });
+
+    async function register() {
+      const username = document.getElementById("authUsername").value;
+      const password = document.getElementById("authPassword").value;
+
+      const res = await fetch("/register", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.error || "Register failed");
+        return;
+      }
+
+      alert("Registered! Now login.");
+    }
+
+    async function login() {
+      const username = document.getElementById("authUsername").value;
+      const password = document.getElementById("authPassword").value;
+
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        alert(data.error || "Login failed");
+        return;
+      }
+
+      currentUser = data;
+      localStorage.setItem("currentUser", JSON.stringify(data));
+      document.getElementById("currentUser").innerText =
+        "Logged in as: " + data.username;
+
+      loadReviews();
+    }
+
+    async function submitReview() {
+      if (!currentUser) {
+        alert("Login first");
+        return;
+      }
+
+      if (!selectedRating) {
+        alert("Select a star rating first");
+        return;
+      }
+
+      const review = document.getElementById("reviewText").value;
+
+      const res = await fetch("/reviews", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          userId: currentUser.userId,
+          rating: selectedRating,
+          review
+        })
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Review failed");
+        return;
+      }
+
+      document.getElementById("reviewText").value = "";
+      selectedRating = 0;
+
+      document.querySelectorAll("#starContainer span").forEach((s) => {
+        s.classList.remove("active");
+      });
+
+      loadReviews();
+      loadAverage();
+    }
+
+    async function loadReviews() {
+      const sort = document.getElementById("sortSelect").value;
+
+      const res = await fetch(`/reviews?sort=${sort}`);
+      const data = await res.json();
+
+      const reviewsDiv = document.getElementById("reviews");
+      reviewsDiv.innerHTML = "";
+
+      data.forEach((r) => {
+        const div = document.createElement("div");
+        div.classList.add("card");
+
+        const isOwner = currentUser && Number(currentUser.userId) === Number(r.user_id);
+
+        div.innerHTML = `
+          <div class="review-header">
+            <strong>${r.username}</strong>
+            <span class="stars-display">${"★".repeat(r.rating)}</span>
+          </div>
+          <p>${r.review || ""}</p>
+          ${isOwner ? `<button class="delete-btn" onclick="deleteReview(${r.id})">Delete</button>` : ""}
+        `;
+
+        reviewsDiv.appendChild(div);
+      });
+    }
+
+    async function deleteReview(id) {
+      if (!currentUser) return;
+
+      await fetch(`/reviews/${id}`, {
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          userId: currentUser.userId
+        })
+      });
+
+      loadReviews();
+      loadAverage();
+    }
+
+    async function loadAverage() {
+      const res = await fetch("/reviews/average");
+      const data = await res.json();
+
+      document.getElementById("avgRating").innerText =
+        "⭐ " + Number(data.average).toFixed(1);
+    }
+  </script>
 </body>
-
 </html>

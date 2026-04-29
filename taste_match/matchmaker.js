@@ -1,5 +1,6 @@
 const form = document.getElementById("prefsForm");
 const btnClear = document.getElementById("btnClear");
+const btnClearMatches = document.getElementById("btnClearMatches");
 
 const navMatch = document.getElementById("navMatch");
 const navSaved = document.getElementById("navSaved");
@@ -7,7 +8,6 @@ const savedPanel = document.getElementById("savedPanel");
 const savedList = document.getElementById("savedList");
 const btnClearSaved = document.getElementById("btnClearSaved");
 
-// Modal elements
 const modal = document.getElementById("matchModal");
 const modalOverlay = document.getElementById("modalOverlay");
 const btnCloseModal = document.getElementById("btnCloseModal");
@@ -21,53 +21,30 @@ const placeDesc = document.getElementById("placeDesc");
 const placeTags = document.getElementById("placeTags");
 const matchScore = document.getElementById("matchScore");
 
-// Result elements
-const resultsPanel = document.getElementById("resultsPanel");
 const resultsList = document.getElementById("resultsList");
 
 const STORAGE_KEY = "location_matchmaker_saved_v1";
 const USER_STORAGE_KEY = "currentUser";
 
-// Queue of matches to “swipe”
 let matchQueue = [];
 let current = null;
 let lastResults = [];
 let currentUser = null;
 
-<<<<<<< HEAD
-/* =========================
-   INIT
-========================= */
 window.addEventListener("load", () => {
-=======
-let currentUser = null;
-
-window.addEventListener('load', () => {
-  const storedUser = localStorage.getItem('currentUser');
-  if (storedUser) {
-    currentUser = JSON.parse(storedUser);
-  }
-});
-
-function getSaved() {
->>>>>>> c43eea6bf5528df02884911c20ce90022ff4074b
   try {
     const storedUser = localStorage.getItem(USER_STORAGE_KEY);
-    if (storedUser) {
-      currentUser = JSON.parse(storedUser);
-    }
+    currentUser = storedUser ? JSON.parse(storedUser) : null;
   } catch (err) {
     console.error("Could not load current user:", err);
     currentUser = null;
   }
 
   renderSaved();
+  renderLikedResults();
   showMatchView();
 });
 
-/* =========================
-   HELPERS
-========================= */
 function escapeHtml(str) {
   return String(str ?? "")
     .replaceAll("&", "&amp;")
@@ -79,7 +56,7 @@ function escapeHtml(str) {
 
 function cleanPrefText(text) {
   return String(text || "")
-    .replace(/[^\p{L}\p{N}\s/&-]/gu, "") // remove emojis/symbols
+    .replace(/[^\p{L}\p{N}\s/&-]/gu, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -126,12 +103,6 @@ function buildPrefsFromForm() {
     prefs[name] = selected.join(" ");
   });
 
-  const categoryEl = form.querySelector('[name="category"]');
-  const priceEl = form.querySelector('[name="price"]');
-
-  prefs.category = categoryEl ? categoryEl.value.trim() : "";
-  prefs.price = priceEl ? priceEl.value.trim() : "";
-
   return prefs;
 }
 
@@ -139,31 +110,22 @@ async function safePostJson(url, payload) {
   try {
     const res = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify(payload)
     });
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => "");
-      console.warn(`Request to ${url} failed:`, text || res.status);
-      return null;
-    }
+    if (!res.ok) return null;
 
     const contentType = res.headers.get("content-type") || "";
-    if (contentType.includes("application/json")) {
-      return await res.json();
-    }
-
-    return await res.text();
+    return contentType.includes("application/json") ? await res.json() : await res.text();
   } catch (err) {
     console.warn(`Request to ${url} failed:`, err);
     return null;
   }
 }
 
-/* =========================
-   SAVED VIEW
-========================= */
 function renderSaved() {
   if (!savedList) return;
 
@@ -180,15 +142,22 @@ function renderSaved() {
         <h3 class="savedItem__name">${escapeHtml(p.name)}</h3>
         <span class="pill">${escapeHtml(p.price || "")}</span>
       </div>
-      <div class="savedItem__meta">${escapeHtml(p.category || "")} • ${escapeHtml(p.city || "")}</div>
-      <div class="muted" style="margin-top:8px;">${escapeHtml(p.description || "")}</div>
+
+      <div class="savedItem__meta">
+        ${escapeHtml(p.category || "")} • ${escapeHtml(p.city || "")}
+      </div>
+
+      <div class="muted" style="margin-top:8px;">
+        ${escapeHtml(p.description || "")}
+      </div>
     </div>
   `).join("");
 }
 
-/* =========================
-   MODAL
-========================= */
+function renderLikedResults() {
+  renderMatches(getSaved());
+}
+
 function openModal() {
   if (!modal) return;
   modal.classList.add("is-open");
@@ -211,7 +180,7 @@ function renderModalTags(place) {
   if (place.city) tags.push(place.city);
   if (place.price) tags.push(place.price);
 
-  tags.slice(0, 10).forEach((tagText) => {
+  tags.forEach((tagText) => {
     const el = document.createElement("span");
     el.className = "tag";
     el.textContent = tagText;
@@ -224,33 +193,26 @@ function showNextMatch() {
 
   if (!current) {
     closeModal();
-    alert("No more matches right now. Try different preferences!");
+    alert("You finished swiping through all available matches!");
     return;
   }
 
-  if (placeName) placeName.textContent = current.name || "Unknown Place";
-  if (placePrice) placePrice.textContent = current.price || "";
-  if (placeMeta) {
-    placeMeta.textContent = `${current.category || "Unknown Category"} • ${current.city || "Unknown City"}`;
-  }
-  if (placeDesc) {
-    placeDesc.textContent = current.description || "No description available.";
-  }
-  if (matchScore) {
-    matchScore.textContent = String(current.matchScore ?? 0);
-  }
+  placeName.textContent = current.name || "Unknown Place";
+  placePrice.textContent = current.price || "";
+  placeMeta.textContent = `${current.category || "Unknown Category"} • ${current.city || "Unknown City"}`;
+  placeDesc.textContent = current.description || "No description available.";
+  matchScore.textContent = String(current.matchScore ?? 0);
 
   renderModalTags(current);
   openModal();
 }
 
-/* =========================
-   API
-========================= */
 async function fetchMatches(prefs) {
   const res = await fetch("/api/match", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify(prefs)
   });
 
@@ -294,189 +256,24 @@ async function logUserHistory(place, action) {
   });
 }
 
-/* =========================
-   PAGE VIEWS
-========================= */
 function showMatchView() {
-  if (savedPanel) {
-    savedPanel.style.display = "none";
-  }
+  if (savedPanel) savedPanel.style.display = "none";
 }
 
 function showSavedView() {
-  if (savedPanel) {
-    savedPanel.style.display = "block";
-  }
+  if (savedPanel) savedPanel.style.display = "block";
   renderSaved();
 }
 
-<<<<<<< HEAD
-/* =========================
-   RESULT RENDERING
-========================= */
-=======
-// Nav
-if (navMatch) {
-  navMatch.addEventListener("click", (e) => {
-    e.preventDefault();
-    showMatchView();
-  });
-}
-
-if (navSaved) {
-  navSaved.addEventListener("click", (e) => {
-    e.preventDefault();
-    showSavedView();
-  });
-}
-
-btnClearSaved.addEventListener("click", () => {
-  if (confirm("Clear all saved places?")) {
-    setSaved([]);
-    renderSaved();
-  }
-});
-
-// SUBMIT HANDLER
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const prefs = {};
-
-  document.querySelectorAll(".button-group").forEach(group => {
-    const name = group.dataset.name;
-    const selected = [...group.querySelectorAll(".pref-btn.selected")]
-      .map(btn => btn.textContent.trim());
-    prefs[name] = selected.join(" ");
-  });
-
-  // keep dropdowns if you have them (category/price)
-  const categoryEl = form.querySelector('[name="category"]');
-  const priceEl = form.querySelector('[name="price"]');
-  prefs.category = categoryEl ? categoryEl.value : "";
-  prefs.price = priceEl ? priceEl.value : "";
-
-  // Save preferences if logged in
-  if (currentUser) {
-    fetch("/save-preferences", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: currentUser.userId,
-        likes: prefs.likes,
-        personality: prefs.personality,
-        culture: prefs.culture,
-        trends: prefs.trends
-      })
-    }).catch(err => console.error("Save prefs error:", err));
-  }
-
-  try {
-    const results = await fetchMatches(prefs);
-
-    lastResults = results;
-    matchQueue = results.filter(r => !alreadySaved(r.id));
-
-    renderMatches(results);
-
-    if (matchQueue.length === 0) {
-      alert("No unsaved matches found.");
-      return;
-    }
-
-    showNextMatch();
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-
-// SECOND HALF
-//clear button function
-if (btnClear) {
-  btnClear.addEventListener("click", () => {
-    document.querySelectorAll(".pref-btn.selected").forEach((btn) => {
-      btn.classList.remove("selected");
-    });
-
-    resultsList.innerHTML = "";
-  });
-}
-
-//modal controls
-btnCloseModal.addEventListener("click", closeModal);
-modalOverlay.addEventListener("click", closeModal);
-
-btnPass.addEventListener("click", () => {
-  if (current && currentUser) {
-    fetch("/user-history", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: currentUser.userId,
-        locationId: current.id,
-        action: "passed"
-      })
-    }).catch(err => console.error("Log history error:", err));
-  }
-  showNextMatch();
-});
-
-btnLike.addEventListener("click", () => {
-  if (!current) return;
-
-  const saved = getSaved();
-  if (!saved.some(p => p.id === current.id)) {
-    saved.unshift({
-      id: current.id,
-      name: current.name,
-      category: current.category,
-      price: current.price,
-      city: current.city,
-      description: current.description
-    });
-    setSaved(saved);
-
-    // Save to DB if logged in
-    if (currentUser) {
-      fetch("/save-location", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUser.userId,
-          locationId: current.id
-        })
-      }).catch(err => console.error("Save location error:", err));
-
-      fetch("/user-history", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUser.userId,
-          locationId: current.id,
-          action: "liked"
-        })
-      }).catch(err => console.error("Log history error:", err));
-    }
-  }
-
-  showNextMatch();
-});
-
-//preference button color toggling
-document.querySelectorAll(".pref-btn").forEach((button) => {
-  button.addEventListener("click", () => {
-    button.classList.toggle("selected");
-  });
-});
-
-//render matches on page
->>>>>>> c43eea6bf5528df02884911c20ce90022ff4074b
 function renderMatches(results) {
   if (!resultsList) return;
 
   if (!results || results.length === 0) {
-    resultsList.innerHTML = `<div class="muted">No matches found. Try different preferences.</div>`;
+    resultsList.innerHTML = `
+      <div class="muted">
+        No liked restaurants yet. Click Find Matches, then press Like on restaurants you want to keep.
+      </div>
+    `;
     return;
   }
 
@@ -488,12 +285,28 @@ function renderMatches(results) {
       </div>
 
       <div class="resultCard__meta">
-        ${escapeHtml(place.category || "")} • ${escapeHtml(place.city || "")}
+        ${escapeHtml(place.category || "")} • 
+        ${escapeHtml(place.city || "")}, ${escapeHtml(place.state || "")}
       </div>
 
       <div class="resultCard__desc">
         ${escapeHtml(place.description || "No description available.")}
       </div>
+
+      <div class="resultCard__rating">
+        ⭐ ${Number(place.rating || 0).toFixed(1)}
+        (${escapeHtml(String(place.reviews || 0))} reviews)
+      </div>
+
+      ${
+        place.website
+          ? `<div class="resultCard__website">
+              <a href="${escapeHtml(place.website)}" target="_blank" rel="noopener noreferrer">
+                Visit Website
+              </a>
+            </div>`
+          : `<div class="resultCard__website muted">No website available</div>`
+      }
 
       <div class="matchrow">
         <span class="muted">Match Score:</span>
@@ -501,54 +314,58 @@ function renderMatches(results) {
       </div>
 
       <div class="resultCard__actions">
-        <button class="btn btn--ghost" type="button" onclick="saveMatch(${Number(place.id)})">
-          Save
+        <button class="btn btn--ghost" type="button" onclick="removeLikedMatch(${Number(place.id)})">
+          Remove
         </button>
       </div>
     </div>
   `).join("");
 }
 
-/* =========================
-   SAVE ACTION
-========================= */
+
 async function saveMatch(placeId) {
   const place =
+    lastResults.find((p) => Number(p.id) === Number(placeId)) ||
     matchQueue.find((p) => Number(p.id) === Number(placeId)) ||
-    lastResults.find((p) => Number(p.id) === Number(placeId));
+    current;
 
   if (!place) return;
 
   const saved = getSaved();
 
   if (!saved.some((p) => Number(p.id) === Number(place.id))) {
-    saved.unshift({
-      id: place.id,
-      name: place.name,
-      category: place.category,
-      price: place.price,
-      city: place.city,
-      description: place.description
-    });
+saved.unshift({
+  id: place.id,
+  name: place.name,
+  category: place.category,
+  price: place.price,
+  city: place.city,
+  state: place.state,
+  website: place.website,
+  reviews: place.reviews,
+  rating: place.rating,
+  description: place.description,
+  matchScore: place.matchScore
+});
 
     setSaved(saved);
-    alert("Place saved!");
-
     await saveLocationToDb(place);
-  } else {
-    alert("That place is already saved.");
   }
 
   renderSaved();
+  renderLikedResults();
+}
+
+function removeLikedMatch(placeId) {
+  const updatedSaved = getSaved().filter((p) => Number(p.id) !== Number(placeId));
+  setSaved(updatedSaved);
+  renderSaved();
+  renderLikedResults();
 }
 
 window.saveMatch = saveMatch;
+window.removeLikedMatch = removeLikedMatch;
 
-/* =========================
-   EVENT LISTENERS
-========================= */
-
-// Navigation
 if (navMatch) {
   navMatch.addEventListener("click", (e) => {
     e.preventDefault();
@@ -563,35 +380,37 @@ if (navSaved) {
   });
 }
 
-// Clear saved
 if (btnClearSaved) {
   btnClearSaved.addEventListener("click", () => {
     if (confirm("Clear all saved places?")) {
       setSaved([]);
       renderSaved();
+      renderLikedResults();
     }
   });
 }
 
-// Submit form
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const prefs = buildPrefsFromForm();
-
     await savePreferencesToDb(prefs);
 
     try {
       const results = await fetchMatches(prefs);
-
       lastResults = results;
-      matchQueue = results.filter((r) => !alreadySaved(r.id));
 
-      renderMatches(results);
+    matchQueue = [...results];
 
-      if (matchQueue.length === 0) {
-        alert("No unsaved matches found.");
+      resultsList.innerHTML = `
+        <div class="muted">
+          Matches are ready. Use the popup and click Like to add restaurants here.
+        </div>
+      `;
+
+      if (results.length === 0) {
+        alert("No matches found.");
         closeModal();
         return;
       }
@@ -599,55 +418,46 @@ if (form) {
       showNextMatch();
     } catch (err) {
       console.error("Match fetch failed:", err);
-      if (resultsList) {
-        resultsList.innerHTML = `<div class="muted">Something went wrong while loading matches.</div>`;
-      }
+      resultsList.innerHTML = `<div class="muted">Something went wrong while loading matches.</div>`;
       closeModal();
     }
   });
 }
 
-// Clear form selections
 if (btnClear) {
   btnClear.addEventListener("click", () => {
     document.querySelectorAll(".pref-btn.selected").forEach((btn) => {
       btn.classList.remove("selected");
     });
 
-    if (form) {
-      const categoryEl = form.querySelector('[name="category"]');
-      const priceEl = form.querySelector('[name="price"]');
-
-      if (categoryEl) categoryEl.value = "";
-      if (priceEl) priceEl.value = "";
-    }
-
     matchQueue = [];
     current = null;
     lastResults = [];
-
-    if (resultsList) {
-      resultsList.innerHTML = "";
-    }
-
     closeModal();
   });
 }
 
-// Modal controls
-if (btnCloseModal) {
-  btnCloseModal.addEventListener("click", closeModal);
+if (btnClearMatches) {
+  btnClearMatches.addEventListener("click", () => {
+    if (!confirm("Clear all liked matches from the results?")) return;
+
+    setSaved([]);
+    matchQueue = [];
+    current = null;
+    lastResults = [];
+
+    renderSaved();
+    renderLikedResults();
+    closeModal();
+  });
 }
 
-if (modalOverlay) {
-  modalOverlay.addEventListener("click", closeModal);
-}
+if (btnCloseModal) btnCloseModal.addEventListener("click", closeModal);
+if (modalOverlay) modalOverlay.addEventListener("click", closeModal);
 
 if (btnPass) {
   btnPass.addEventListener("click", async () => {
-    if (current) {
-      await logUserHistory(current, "passed");
-    }
+    if (current) await logUserHistory(current, "passed");
     showNextMatch();
   });
 }
@@ -656,29 +466,12 @@ if (btnLike) {
   btnLike.addEventListener("click", async () => {
     if (!current) return;
 
-    const saved = getSaved();
-
-    if (!saved.some((p) => Number(p.id) === Number(current.id))) {
-      saved.unshift({
-        id: current.id,
-        name: current.name,
-        category: current.category,
-        price: current.price,
-        city: current.city,
-        description: current.description
-      });
-      setSaved(saved);
-    }
-
-    await saveLocationToDb(current);
+    await saveMatch(current.id);
     await logUserHistory(current, "liked");
-
-    renderSaved();
     showNextMatch();
   });
 }
 
-// Preference button toggling
 document.querySelectorAll(".pref-btn").forEach((button) => {
   button.addEventListener("click", () => {
     button.classList.toggle("selected");

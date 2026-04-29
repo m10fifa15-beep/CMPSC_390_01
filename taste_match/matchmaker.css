@@ -432,3 +432,15 @@ hr {
   border-top: 1px solid #cfcfcf;
   background: #efefef;
 }
+
+/* Clear Matches Button */
+#btnClearMatches {
+  margin-bottom: 10px;
+}
+
+.resultCard__address {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #444;
+  line-height: 1.4;
+}

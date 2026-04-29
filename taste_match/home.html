@@ -14,7 +14,6 @@
     <header class="top_nav">
       <div class="topnav__inner">
         <div class="logo">
-          <img src="lmm_logo.png" alt="Image of Logo" width="50" height="50">
           <!--<a href = "____.html" -->
           <!--FIX LOGO LATER-->
           <img src = "lmm_logo.png" alt = "Image of Logo" width = "50px" height = "50px">
@@ -64,19 +63,7 @@
 
        <img src="food_table.png" alt="Image of Logo" class="featured-img">
 
-<!-- Demo Video Section -->
-<section class="section video-section">
-  <div class="section-heading">
-    <h2 class="section__title">Watch Our Website Demo</h2>
-    <p class="section__subtitle">
-      See how TasteMatch works through this short screen-recorded walkthrough.
-    </p>
-  </div>
 
-
-</section>
-
-<!--END VIDEO SECTION-->
 
 
       <!-- Quick Intro Templates -->
@@ -492,7 +479,7 @@ Here’s what makes it worth using:
     </main>
   </div>
 
-//add location deso JS script
+<!-- add location demo JS script -->
 <script>
   const homeDemoForm = document.getElementById("homeDemoForm");
   const demoResultBox = document.getElementById("demoResultBox");
@@ -514,7 +501,7 @@ Here’s what makes it worth using:
   });
 </script>
 
-//social feed demo JS script
+<!-- social feed demo JS script -->
 
 <script>
 const demoPostForm = document.getElementById("demoPostForm");
@@ -548,11 +535,11 @@ demoPostForm.addEventListener("submit", function(e) {
 });
 </script>
 
-//add a review JS script
+<!--add a review JS script -->
 <script>
 let currentUser = null;
 
-// Load user from localStorage on page load
+<!-- Load user from localStorage on page load -->
 window.addEventListener('load', () => {
   const storedUser = localStorage.getItem('currentUser');
   if (storedUser) {
@@ -590,6 +577,8 @@ function login() {
   });
 }
 </script>
+
+<script>
   let demoSelectedRating = 0;
   let demoRatings = [5, 4];
 
@@ -663,7 +652,7 @@ function login() {
   updateDemoAverage();
 </script>
 
-//matchmaker demo JS script
+<!--matchmaker demo JS script-->
 <script>
   const demoPrefButtons = document.querySelectorAll(".demo-pref-btn");
   const demoFindMatchesBtn = document.getElementById("demoFindMatchesBtn");
@@ -812,4 +801,3 @@ function login() {
   
 </body>
 </html>
-

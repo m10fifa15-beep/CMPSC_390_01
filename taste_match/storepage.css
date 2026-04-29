@@ -1,78 +1,146 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffb0; /* FULL PAGE YELLOW */
-  color: #222;
+  font-family: Arial;
+  background: #fffdf5;
 }
 
-.store-shell {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 24px 20px 50px;
+/* NAVBAR */
+.topnav {
+  background:#ffffb0;
+  padding: 10px 20px;
+}
+
+.topnav__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  margin: 0;
+}
+
+.auth-inline input {
+  width: 120px;
+  padding: 5px;
+  margin-right: 5px;
+}
+
+.auth-inline button {
+  padding: 6px 10px;
+  margin-left: 3px;
 }
 
 /* HERO */
 .store-hero {
-  background: #fff;
-  padding: 30px 24px;
   text-align: center;
-  border-radius: 14px;
-  border: 1px solid #bdbdbd;
-  margin: 20px 0 28px;
+  padding: 40px;
+  background: #ffd54f;
 }
 
-.auth-box,
+.subtitle {
+  margin: 5px 0 10px;
+}
+
+/* REVIEW BOX */
 .review-box {
-  max-width: 700px;
-  margin: 0 auto 24px;
-  background: #fff;
-  border: 1px solid #bdbdbd;
-  border-radius: 14px;
-  padding: 22px;
+  max-width: 500px;
+  margin: 30px auto;
+  text-align: center;
 }
 
-input,
-textarea,
-select {
+textarea {
   width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  height: 80px;
   margin-top: 10px;
+  padding: 10px;
 }
 
+/* BUTTONS */
 button {
-  margin-top: 12px;
-  padding: 11px;
-  background: #d9d9d9;
-  border: 1px solid #777;
-  border-radius: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  background: #ffca28;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 button:hover {
-  background: #cfcfcf;
+  background: #ffc107;
 }
 
-/* REVIEWS */
+/* STARS */
+.stars span {
+  font-size: 28px;
+  cursor: pointer;
+  color: gray;
+}
+
+.stars span.active {
+  color: gold;
+}
+
+/* REVIEW GRID */
+.section-title {
+  text-align: center;
+}
+
 .cardgrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }
 
+/* REVIEW CARD */
 .card {
-  background: white;
-  border: 1px solid #bdbdbd;
-  border-radius: 12px;
-  padding: 16px;
+  background: #fff8dc;
+  padding: 15px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  text-align: left;
 }
 
-@media (max-width: 900px) {
-  .cardgrid {
-    grid-template-columns: 1fr;
-  }
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.stars-display {
+  color: gold;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+  background: #ff6b6b;
+  color: white;
+  width: 100%;
+}
+
+/* NAVBAR (Diego's new addition) */
+.topnav {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.topnav a {
+  text-decoration: none;
+  color: #222;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.topnav a:hover {
+  background: #eaeaea;
+  transform: translateY(-1px);
+}
+
+.topnav a.active {
+  background: #dcdcdc;
+  font-weight: 700;
 }
