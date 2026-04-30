@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="anthony_style.css">
 </head>
 
+
 <body>
   <div class="background">
     <header class="top_nav">
@@ -15,6 +16,7 @@
             <img src="lmm_logo.png" alt="TasteMatch Logo" width="50" height="50">
           </a>
         </div>
+
 
         <nav class="topnav">
           <a href="home.html">Home</a>
@@ -27,16 +29,19 @@
       </div>
     </header>
 
+
     <main class="content">
       <section class="page-hero">
         <h1>Add Location</h1>
         <p>Add a new place into the project database.</p>
       </section>
 
+
       <section class="form-shell">
         <form method="POST" enctype="multipart/form-data" id="addLocationForm">
           <label for="ImageFile">Location Image</label>
           <input type="file" id="ImageFile" name="ImageFile" required>
+
 
           <label for="PlaceType">Choose establishment type:</label>
           <select name="PlaceType" id="PlaceType" required>
@@ -47,43 +52,56 @@
             <option value="Dessert">Dessert</option>
           </select>
 
+
           <label for="PlaceName">Location Name</label>
           <input type="text" id="PlaceName" name="PlaceName" required>
+
 
           <label for="addressLine1">Address Line 1</label>
           <input type="text" id="addressLine1" name="addressLine1" required>
 
+
           <label for="addressLine2">Address Line 2</label>
           <input type="text" id="addressLine2" name="addressLine2">
+
 
           <label for="city">City</label>
           <input type="text" id="city" name="city" required>
 
+
           <label for="state">State</label>
           <input type="text" id="state" name="state" required>
+
 
           <label for="zip">Zip Code</label>
           <input type="text" id="zip" name="zip" required>
 
+
           <label for="country">Country</label>
           <input type="text" id="country" name="country" required>
 
+
           <button type="submit" id="submitBtn">Add Location</button>
         </form>
+
 
         <p id="LocationResult"></p>
       </section>
     </main>
   </div>
 
+
   <script>
     const LocationForm = document.getElementById("addLocationForm");
     const LocationResult = document.getElementById("LocationResult");
 
+
     LocationForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+
       const formData = new FormData(LocationForm);
+
 
       try {
         const res = await fetch("/addLocation", {
@@ -91,8 +109,10 @@
           body: formData
         });
 
+
         const text = await res.text();
         LocationResult.textContent = text;
+
 
         if (res.ok) {
           LocationForm.reset();
@@ -105,3 +125,4 @@
   </script>
 </body>
 </html>
+

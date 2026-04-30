@@ -1,6 +1,7 @@
 /* Global Reset*/
 * { box-sizing: border-box; }
 
+
 /* Base Page Styling */
 body {
   margin: 0;
@@ -9,12 +10,14 @@ body {
   color: #222;
 }
 
+
 /* divider line */
 hr {
   height: 0.5px;
   background-color: black;
   border: none;
 }
+
 
 /* Main centered page container */
 .background {
@@ -26,11 +29,13 @@ hr {
   position: relative;
 }
 
+
 /* Top bar */
 .top_nav {
   border-bottom: 1px solid #cfcfcf;
   background: #f7f7f7;
 }
+
 
 .topnav__inner {
   display: flex;
@@ -38,6 +43,7 @@ hr {
   justify-content: space-between;
   padding: 12px 18px;
 }
+
 
 .logo {
   border: 1px solid #bdbdbd;
@@ -48,14 +54,17 @@ hr {
   background: #fff;
 }
 
+
 .logo img:hover {
   background: #ff0000;
 }
+
 
 .topnav {
   display: flex;
   gap: 18px;
 }
+
 
 .topnav a {
   text-decoration: none;
@@ -64,11 +73,14 @@ hr {
   border-radius: 6px;
 }
 
+
 .topnav a:hover {
   background: #eaeaea;
 }
 
+
 /* ----- */
+
 
 /* Page title text */
 .page_title {
@@ -78,11 +90,13 @@ hr {
   color: #333;
 }
 
+
 /* Navigation link container */
 .topnav {
   display: flex;
   gap: 14px;
 }
+
 
 /* Navigation Links */
 .topnav__link {
@@ -95,15 +109,18 @@ hr {
   background: #fff;
 }
 
+
 /* Hover effect for nav links */
 .topnav__link:hover {
   filter: brightness(0.98);
 }
 
+
 /* Main content padding */
 .content {
   padding: 16px;
 }
+
 
 /* Generic Card Container */
 .card {
@@ -115,13 +132,16 @@ hr {
   box-shadow: 0 1px 0 rgba(0,0,0,0.06);
 }
 
+
 /* Card section titles */
 .card__title {
   margin: 0 0 6px;
   font-size: 16px;
 }
 
+
 /* OUTPUT (RESULTS) STYLING */
+
 
 /*START OF CSS FOR OUTPUT*/
 .resultCard {
@@ -131,6 +151,7 @@ hr {
   background: #fff;
 }
 
+
 .resultCard__top {
   display: flex;
   justify-content: space-between;
@@ -138,10 +159,12 @@ hr {
   gap: 10px;
 }
 
+
 .resultCard__name {
   margin: 0;
   font-size: 16px;
 }
+
 
 .resultCard__meta {
   font-size: 13px;
@@ -149,11 +172,13 @@ hr {
   margin-top: 4px;
 }
 
+
 .resultCard__desc {
   margin-top: 8px;
   font-size: 14px;
   color: #333;
 }
+
 
 .resultCard__actions {
   margin-top: 10px;
@@ -163,11 +188,14 @@ hr {
 /*END OF CSS FOR OUTPUT*/
 
 
+
+
 .muted {
   color: #666;
   font-size: 13px;
   margin: 6px 0 12px;
 }
+
 
 .form__row {
   display: flex;
@@ -176,6 +204,7 @@ hr {
   margin-bottom: 10px;
 }
 
+
 /* Two-column grid */
 .form__grid {
   display: grid;
@@ -183,10 +212,12 @@ hr {
   gap: 10px;
 }
 
+
 .label {
   font-size: 13px;
   color: #333;
 }
+
 
 /* Text input fields */
 .input {
@@ -198,9 +229,11 @@ hr {
   outline: none;
 }
 
+
 .input:focus {
   border-color: #888;
 }
+
 
 /* Button row layout */
 .actions {
@@ -209,6 +242,7 @@ hr {
   align-items: center;
   margin-top: 8px;
 }
+
 
 /* Primary button */
 .btn {
@@ -221,7 +255,9 @@ hr {
   font-size: 14px;
 }
 
+
 .btn:hover { filter: brightness(1.05); }
+
 
 /* Secondary button */
 .btn--ghost {
@@ -230,12 +266,14 @@ hr {
   border-color: #cfcfcf;
 }
 
+
 /* delete/clear button */
 .btn--danger {
   background: #b00020;
   border-color: #b00020;
   color: #fff;
 }
+
 
 /* preference buttons */
 .pref-btn {
@@ -249,10 +287,12 @@ hr {
   font-size: 14px;
 }
 
+
 /* hover effect */
 .pref-btn:hover {
   background-color: #c0c0c0;
 }
+
 
 /* selected state (stays darker) */
 .pref-btn.selected {
@@ -261,11 +301,13 @@ hr {
   border-color: #666;
 }
 
+
 /* Generic grid list for results & saved items */
 .list {
   display: grid;
   gap: 10px;
 }
+
 
 /* Saved items Styling */
 .savedItem {
@@ -275,6 +317,7 @@ hr {
   background: #fff;
 }
 
+
 .savedItem__top {
   display: flex;
   justify-content: space-between;
@@ -282,16 +325,19 @@ hr {
   gap: 10px;
 }
 
+
 .savedItem__name {
   margin: 0;
   font-size: 15px;
 }
+
 
 .savedItem__meta {
   font-size: 13px;
   color: #555;
   margin-top: 4px;
 }
+
 
 /* price tag */
 .pill {
@@ -302,6 +348,7 @@ hr {
   background: #f6f6f6;
 }
 
+
 /* Modal */
 .modal {
   display: none;
@@ -310,15 +357,18 @@ hr {
   z-index: 50;
 }
 
+
 .modal.is-open {
   display: block;
 }
+
 
 .modal__overlay {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.35);
 }
+
 
 .modal__box {
   position: absolute;
@@ -334,10 +384,12 @@ hr {
   animation: pop 120ms ease-out;
 }
 
+
 @keyframes pop {
   from { transform: translate(-50%, -48%) scale(0.98); opacity: 0.4; }
   to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
+
 
 .modal__header {
   display: flex;
@@ -348,12 +400,15 @@ hr {
   border-bottom: 1px solid #cfcfcf;
 }
 
+
 .modal__title {
   margin: 0;
   font-size: 14px;
 }
 
+
 /* Close Button */
+
 
 .iconbtn {
   border: 1px solid #cfcfcf;
@@ -363,9 +418,11 @@ hr {
   cursor: pointer;
 }
 
+
 .modal__body {
   padding: 14px;
 }
+
 
 /* footer buttons */
 .modal__footer {
@@ -377,6 +434,7 @@ hr {
   background: #fafafa;
 }
 
+
 /* place info inside modal */
 .place__top {
   display: flex;
@@ -385,10 +443,12 @@ hr {
   gap: 10px;
 }
 
+
 .place__name {
   margin: 0;
   font-size: 18px;
 }
+
 
 .place__meta {
   margin-top: 4px;
@@ -396,11 +456,13 @@ hr {
   color: #555;
 }
 
+
 .place__desc {
   margin: 10px 0 10px;
   font-size: 14px;
   color: #333;
 }
+
 
 /* Tag stylings */
 .tags {
@@ -410,6 +472,7 @@ hr {
   margin-top: 8px;
 }
 
+
 .tag {
   font-size: 12px;
   padding: 4px 8px;
@@ -417,6 +480,7 @@ hr {
   border: 1px solid #cfcfcf;
   background: #fff;
 }
+
 
 /* Match score row */
 .matchrow {
@@ -426,6 +490,7 @@ hr {
   align-items: center;
 }
 
+
 /* Footer */
 .footer {
   padding: 12px 16px;
@@ -433,10 +498,12 @@ hr {
   background: #efefef;
 }
 
+
 /* Clear Matches Button */
 #btnClearMatches {
   margin-bottom: 10px;
 }
+
 
 .resultCard__address {
   margin-top: 6px;
@@ -444,3 +511,4 @@ hr {
   color: #444;
   line-height: 1.4;
 }
+

@@ -24,8 +24,10 @@
   </style>
 </head>
 
+
 <body>
   <div class="background">
+
 
     <!-- Top Navigation -->
     <header class="top_nav">
@@ -34,6 +36,7 @@
           <img src="lmm_logo.png" alt="Image of Logo" width="50" height="50">
           <img src="lmm_logo.png" alt="Image of Logo" width="50px" height="50px">
         </div>
+
 
         <nav class="topnav">
           <a href="home.html">Home</a>
@@ -46,7 +49,9 @@
       </div>
     </header>
 
+
     <main class="content">
+
 
       <!-- Profile Section -->
       <section class="section">
@@ -57,11 +62,13 @@
         </div>
       </section>
 
+
       <!-- Preferences Section -->
       <section class="section" id="prefsSection" style="display:none;">
         <h3>Your Preferences</h3>
         <div id="preferences"></div>
       </section>
+
 
       <!-- Saved Locations Section -->
       <section class="section" id="savedSection" style="display:none;">
@@ -69,18 +76,23 @@
         <div id="savedLocations"></div>
       </section>
 
+
       <!-- History Section -->
       <section class="section" id="historySection" style="display:none;">
         <h3>Your Activity History</h3>
         <div id="history"></div>
       </section>
 
+
     </main>
+
 
   </div>
 
+
   <script>
     let currentUser = null;
+
 
     window.addEventListener('load', () => {
       const storedUser = localStorage.getItem('currentUser');
@@ -91,6 +103,7 @@
         loadProfile();
       }
     });
+
 
     function logout() {
       localStorage.removeItem('currentUser');
@@ -103,8 +116,10 @@
       alert("Logged out!");
     }
 
+
     function loadProfile() {
       if (!currentUser) return;
+
 
       fetch(`/user-profile?userId=${currentUser.userId}`)
         .then(res => res.json())
@@ -121,6 +136,7 @@
             `;
           }
 
+
           // Saved Locations
           const saved = data.savedLocations;
           if (saved.length > 0) {
@@ -133,6 +149,7 @@
               </div>
             `).join("");
           }
+
 
           // History
           const history = data.history;
@@ -149,5 +166,7 @@
     }
   </script>
 
+
 </body>
 </html>
+

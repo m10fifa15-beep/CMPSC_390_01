@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="storepage.css">
 </head>
 
+
 <body>
   <header class="top_nav">
     <div class="topnav__inner">
@@ -14,6 +15,7 @@
           <img src="lmm_logo.png" alt="TasteMatch Logo" width="50" height="50">
         </a>
       </div>
+
 
       <nav class="topnav">
         <a href="home.html">Home</a>
@@ -25,6 +27,7 @@
     </div>
   </header>
 
+
   <main class="store-shell">
     <section class="store-hero">
       <h1>Sunny Bites</h1>
@@ -32,6 +35,7 @@
       <h2 id="avgRating">⭐ 0.0</h2>
       <p id="currentUser"></p>
     </section>
+
 
     <section class="auth-box">
       <h3>Login or Register</h3>
@@ -41,8 +45,10 @@
       <button type="button" onclick="register()">Register</button>
     </section>
 
+
     <section class="review-box">
       <h3>Leave a Review</h3>
+
 
       <div class="stars" id="starContainer">
         <span data-value="1">★</span>
@@ -52,9 +58,12 @@
         <span data-value="5">★</span>
       </div>
 
+
       <textarea id="reviewText" placeholder="Write your review..."></textarea>
 
+
       <button type="button" onclick="submitReview()">Submit Review</button>
+
 
       <select id="sortSelect" onchange="loadReviews()">
         <option value="newest">Newest</option>
@@ -62,16 +71,20 @@
       </select>
     </section>
 
+
     <h2 class="section-title">Customer Reviews</h2>
     <div id="reviews" class="cardgrid"></div>
   </main>
+
 
   <script>
     let selectedRating = 0;
     let currentUser = null;
 
+
     window.addEventListener("load", () => {
       const storedUser = localStorage.getItem("currentUser");
+
 
       if (storedUser) {
         currentUser = JSON.parse(storedUser);
@@ -79,17 +92,21 @@
           "Logged in as: " + currentUser.username;
       }
 
+
       loadReviews();
       loadAverage();
     });
+
 
     document.querySelectorAll("#starContainer span").forEach((star) => {
       star.addEventListener("click", () => {
         selectedRating = Number(star.dataset.value);
 
+
         document.querySelectorAll("#starContainer span").forEach((s) => {
           s.classList.remove("active");
         });
+
 
         for (let i = 0; i < selectedRating; i++) {
           document.querySelectorAll("#starContainer span")[i].classList.add("active");
@@ -97,9 +114,11 @@
       });
     });
 
+
     async function register() {
       const username = document.getElementById("authUsername").value;
       const password = document.getElementById("authPassword").value;
+
 
       const res = await fetch("/register", {
         method: "POST",
@@ -107,19 +126,24 @@
         body: JSON.stringify({ username, password })
       });
 
+
       const data = await res.json();
+
 
       if (!res.ok) {
         alert(data.error || "Register failed");
         return;
       }
 
+
       alert("Registered! Now login.");
     }
+
 
     async function login() {
       const username = document.getElementById("authUsername").value;
       const password = document.getElementById("authPassword").value;
+
 
       const res = await fetch("/login", {
         method: "POST",
@@ -127,20 +151,25 @@
         body: JSON.stringify({ username, password })
       });
 
+
       const data = await res.json();
+
 
       if (!res.ok || data.error) {
         alert(data.error || "Login failed");
         return;
       }
 
+
       currentUser = data;
       localStorage.setItem("currentUser", JSON.stringify(data));
       document.getElementById("currentUser").innerText =
         "Logged in as: " + data.username;
 
+
       loadReviews();
     }
+
 
     async function submitReview() {
       if (!currentUser) {
@@ -148,12 +177,15 @@
         return;
       }
 
+
       if (!selectedRating) {
         alert("Select a star rating first");
         return;
       }
 
+
       const review = document.getElementById("reviewText").value;
+
 
       const res = await fetch("/reviews", {
         method: "POST",
@@ -165,37 +197,47 @@
         })
       });
 
+
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         alert(data.error || "Review failed");
         return;
       }
 
+
       document.getElementById("reviewText").value = "";
       selectedRating = 0;
+
 
       document.querySelectorAll("#starContainer span").forEach((s) => {
         s.classList.remove("active");
       });
 
+
       loadReviews();
       loadAverage();
     }
 
+
     async function loadReviews() {
       const sort = document.getElementById("sortSelect").value;
+
 
       const res = await fetch(`/reviews?sort=${sort}`);
       const data = await res.json();
 
+
       const reviewsDiv = document.getElementById("reviews");
       reviewsDiv.innerHTML = "";
+
 
       data.forEach((r) => {
         const div = document.createElement("div");
         div.classList.add("card");
 
+
         const isOwner = currentUser && Number(currentUser.userId) === Number(r.user_id);
+
 
         div.innerHTML = `
           <div class="review-header">
@@ -206,12 +248,15 @@
           ${isOwner ? `<button class="delete-btn" onclick="deleteReview(${r.id})">Delete</button>` : ""}
         `;
 
+
         reviewsDiv.appendChild(div);
       });
     }
 
+
     async function deleteReview(id) {
       if (!currentUser) return;
+
 
       await fetch(`/reviews/${id}`, {
         method: "DELETE",
@@ -221,13 +266,16 @@
         })
       });
 
+
       loadReviews();
       loadAverage();
     }
 
+
     async function loadAverage() {
       const res = await fetch("/reviews/average");
       const data = await res.json();
+
 
       document.getElementById("avgRating").innerText =
         "⭐ " + Number(data.average).toFixed(1);
@@ -235,3 +283,4 @@
   </script>
 </body>
 </html>
+

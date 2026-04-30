@@ -4,11 +4,13 @@ body {
   background: #fffdf5;
 }
 
+
 /* NAVBAR */
 .topnav {
   background:#ffffb0;
   padding: 10px 20px;
 }
+
 
 .topnav__inner {
   display: flex;
@@ -16,9 +18,11 @@ body {
   align-items: center;
 }
 
+
 .logo {
   margin: 0;
 }
+
 
 .auth-inline input {
   width: 120px;
@@ -26,10 +30,12 @@ body {
   margin-right: 5px;
 }
 
+
 .auth-inline button {
   padding: 6px 10px;
   margin-left: 3px;
 }
+
 
 /* HERO */
 .store-hero {
@@ -38,9 +44,11 @@ body {
   background: #ffd54f;
 }
 
+
 .subtitle {
   margin: 5px 0 10px;
 }
+
 
 /* REVIEW BOX */
 .review-box {
@@ -49,12 +57,14 @@ body {
   text-align: center;
 }
 
+
 textarea {
   width: 100%;
   height: 80px;
   margin-top: 10px;
   padding: 10px;
 }
+
 
 /* BUTTONS */
 button {
@@ -66,9 +76,11 @@ button {
   cursor: pointer;
 }
 
+
 button:hover {
   background: #ffc107;
 }
+
 
 /* STARS */
 .stars span {
@@ -77,14 +89,17 @@ button:hover {
   color: gray;
 }
 
+
 .stars span.active {
   color: gold;
 }
+
 
 /* REVIEW GRID */
 .section-title {
   text-align: center;
 }
+
 
 .cardgrid {
   display: flex;
@@ -92,6 +107,7 @@ button:hover {
   justify-content: center;
   gap: 20px;
 }
+
 
 /* REVIEW CARD */
 .card {
@@ -103,15 +119,18 @@ button:hover {
   text-align: left;
 }
 
+
 .review-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
 }
 
+
 .stars-display {
   color: gold;
 }
+
 
 /* DELETE BUTTON */
 .delete-btn {
@@ -120,12 +139,14 @@ button:hover {
   width: 100%;
 }
 
+
 /* NAVBAR (Diego's new addition) */
 .topnav {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
+
 
 .topnav a {
   text-decoration: none;
@@ -135,12 +156,15 @@ button:hover {
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
+
 .topnav a:hover {
   background: #eaeaea;
   transform: translateY(-1px);
 }
 
+
 .topnav a.active {
   background: #dcdcdc;
   font-weight: 700;
 }
+
