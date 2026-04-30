@@ -207,6 +207,9 @@ function showNextMatch() {
   openModal();
 }
 
+/* =========================
+   API
+========================= */
 async function fetchMatches(prefs) {
   const res = await fetch("/api/match", {
     method: "POST",
@@ -256,6 +259,40 @@ async function logUserHistory(place, action) {
   });
 }
 
+async function savePreferencesToDb(prefs) {
+  if (!currentUser) return;
+
+  await safePostJson("/save-preferences", {
+    userId: currentUser.userId,
+    likes: prefs.likes,
+    personality: prefs.personality,
+    culture: prefs.culture,
+    trends: prefs.trends
+  });
+}
+
+async function saveLocationToDb(place) {
+  if (!currentUser || !place) return;
+
+  await safePostJson("/save-location", {
+    userId: currentUser.userId,
+    locationId: place.id
+  });
+}
+
+async function logUserHistory(place, action) {
+  if (!currentUser || !place) return;
+
+  await safePostJson("/user-history", {
+    userId: currentUser.userId,
+    locationId: place.id,
+    action
+  });
+}
+
+/* =========================
+   PAGE VIEWS
+========================= */
 function showMatchView() {
   if (savedPanel) savedPanel.style.display = "none";
 }
