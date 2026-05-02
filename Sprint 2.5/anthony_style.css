@@ -1,0 +1,67 @@
+.form-shell {
+  max-width: 700px;
+  margin: 40px auto;
+  background: white;
+  border: 1px solid #bdbdbd;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+/* TITLE */
+.page-hero {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-hero h1 {
+  margin: 0;
+}
+
+/* FORM */
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  background: #d9d9d9;
+  border: 1px solid #777;
+  border-radius: 8px;
+}
+
+button:hover {
+  background: #cfcfcf;
+}
+
+/* RESULT */
+#LocationResult {
+  margin-top: 15px;
+  background: #f3fbef;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+/*matchmaker buttons */
+.pref-btn {
+  padding: 8px 12px;
+  border: 1px solid #777;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 4px;
+}
+
+.pref-btn.selected {
+  background: #d9d9d9;
+}
