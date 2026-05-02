@@ -1,75 +1,58 @@
-form {
-   
-    background: #ffffb0;
-    border: 1px solid #bdbdbd;
-    padding: 20px;
-    border-radius: 6px;
-  }
- 
- 
-  label {
-    font-weight: 600;
-    font-size: 14px;
-    display: block;
-  }
- 
- 
-  input[type="text"],
-  select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #bdbdbd;
-    border-radius: 4px;
-    margin-bottom: 12px;
-    font-size: 14px;
-  }
- 
- 
-  input[type="file"] {
-    margin-bottom: 12px;
-  }
- 
- 
-  .wrapper {
-    margin-bottom: 10px;
-  }
- 
- 
-  .error {
-    font-size: 12px;
-    color: red;
-    margin-top: 2px;
-  }
- 
- 
-  #LocationResult {
-    margin-top: 15px;
-    font-weight: 600;
-  }
- 
- 
-  button[type="submit"] {
-    padding: 10px 16px;
-    border: 1px solid #777;
-    background: #d9d9d9;
-    cursor: pointer;
-    border-radius: 4px;
-    width: 100%;
-  }
- 
- 
-  button[type="submit"]:hover {
-    background: #cfcfcf;
-  }
+* {
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #ffffb0;
+  color: #222;
+}
 
-  /* Diego added the navigation bar*/
-  .topnav {
+.background {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #ffffb0;
+  min-height: 100vh;
+  border: 1px solid #cfcfcf;
+}
+
+.content {
+  padding: 24px 20px 50px;
+}
+
+/* Navigation */
+.top_nav {
+  border-bottom: 1px solid #cfcfcf;
+  background: #f7f7f7;
+}
+
+.topnav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  border: 1px solid #bdbdbd;
+  padding: 6px 10px;
+  min-width: 70px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.logo img {
+  display: block;
+}
+
+.topnav {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
 }
-
 
 .topnav a {
   text-decoration: none;
@@ -79,15 +62,133 @@ form {
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
-
 .topnav a:hover {
   background: #eaeaea;
   transform: translateY(-1px);
 }
-
 
 .topnav a.active {
   background: #dcdcdc;
   font-weight: 700;
 }
 
+/* Title */
+.page-hero {
+  text-align: center;
+  margin: 24px auto 20px;
+}
+
+.page-hero h1 {
+  margin: 0 0 8px;
+}
+
+.page-hero p {
+  margin: 0;
+  color: #555;
+}
+
+/* Form Shell */
+.form-shell {
+  max-width: 700px;
+  margin: 40px auto;
+  background: white;
+  border: 1px solid #bdbdbd;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+form {
+  background: #fff;
+  border-radius: 6px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+input[type="text"],
+input[type="file"],
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+input[type="file"] {
+  background: #fff;
+}
+
+button[type="submit"] {
+  margin-top: 15px;
+  width: 100%;
+  padding: 12px;
+  background: #d9d9d9;
+  border: 1px solid #777;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button[type="submit"]:hover {
+  background: #cfcfcf;
+}
+
+/* Cuisine Buttons */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.pref-btn {
+  width: auto;
+  padding: 8px 12px;
+  border: 1px solid #777;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 4px 0;
+  background: #f4f4f4;
+}
+
+.pref-btn:hover {
+  background: #e6e6e6;
+}
+
+.pref-btn.selected {
+  background: #808080;
+  color: white;
+  border-color: #666;
+}
+
+/* Result Message */
+#LocationResult {
+  margin-top: 15px;
+  background: #f3fbef;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .topnav__inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topnav {
+    justify-content: center;
+  }
+
+  .form-shell {
+    margin: 24px auto;
+  }
+}

@@ -212,3 +212,21 @@ footer {
   font-weight: 700;
 }
 
+/* Top bar */
+.top_nav {
+  border-bottom: 1px solid #cfcfcf;
+  background: #f7f7f7;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+
+.topnav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 18px;
+  flex-wrap: wrap;
+}
