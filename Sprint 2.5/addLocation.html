@@ -1,4 +1,4 @@
-<html>
+html>
   <body style="background-color: #ffffb0;">
 
     <head>
@@ -32,18 +32,27 @@
           </select>
           <br><br>
 
-          <label>Select Cuisine</label>
-
-          <div class="button-group" data-name="cuisine">
-            <button type="button" class="pref-btn">🍣 Sushi</button>
-            <button type="button" class="pref-btn">🌮 Mexican</button>
-            <button type="button" class="pref-btn">🍝 Italian</button>
-            <button type="button" class="pref-btn">🍔 American</button>
-            <button type="button" class="pref-btn">🥗 Healthy</button>
-          </div>
-
-          <input type="hidden" name="cuisine" id="cuisineInput">
-          
+          <label for="cuisine">Choose cuisine/category:</label>
+          <select name="cuisine" id="cuisine" required>
+            <option value="">Select cuisine</option>
+            <option value="Mexican">Mexican</option>
+            <option value="American">American</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Italian">Italian</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Korean">Korean</option>
+            <option value="Greek">Greek</option>
+            <option value="Middle Eastern">Middle Eastern</option>
+            <option value="Seafood">Seafood</option>
+            <option value="Vegetarian">Vegetarian</option>
+            <option value="Pizza">Pizza</option>
+            <option value="Wings">Wings</option>
+            <option value="Burgers">Burgers</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Cafe">Cafe</option>
+            <option value="Other">Other</option>
+          </select>
+          <br><br>
 
 
           <label>Location Name</label><br />
@@ -99,22 +108,10 @@
           const LocationForm = document.getElementById('addLocationForm');
           const LocationResult = document.getElementById('LocationResult');
 
-          document.querySelectorAll(".pref-btn").forEach(btn => {
-            btn.addEventListener("click", () => {
-              btn.classList.toggle("selected");
-            });
-          });
-
           LocationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const formData = new FormData(LocationForm);
-
-            const selectedCuisine = [...document.querySelectorAll('[data-name="cuisine"] .pref-btn.selected')]
-              .map(btn => btn.textContent.trim())
-              .join(" ");
-
-            formData.set("cuisine", selectedCuisine);
 
             const res = await fetch('/addLocation', {
               method: 'POST',
