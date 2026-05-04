@@ -199,7 +199,6 @@ app.post("/addLocation", upload.single("ImageFile"), (req, res) => {
 
   const {
     PlaceType,
-    cuisine,
     PlaceName,
     addressLine1,
     addressLine2,
@@ -218,33 +217,31 @@ app.post("/addLocation", upload.single("ImageFile"), (req, res) => {
   const sql = `
     INSERT INTO place
     (
-      placeImage,
-      placeType,
-      cuisine,
-      placeName,
+      PlaceType,
+      PlaceName,
       addressLine1,
       addressLine2,
       city,
       state,
       zip,
-      country
+      country,
+      placeImage
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
     [
-      imagePath,
       PlaceType,
-      cuisine || "",
       PlaceName,
       addressLine1,
       addressLine2 || "",
       city,
       state,
       zip,
-      country
+      country,
+      imagePath
     ],
     (err, result) => {
       if (err) {
