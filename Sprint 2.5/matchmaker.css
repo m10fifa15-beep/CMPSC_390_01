@@ -432,3 +432,34 @@ hr {
   border-top: 1px solid #cfcfcf;
   background: #efefef;
 }
+
+.restaurant-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.restaurant-link:hover {
+  text-decoration: underline;
+}
+
+.resultCard__imageWrap {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #cfcfcf;
+  background: #f6f6f6;
+}
+
+.resultCard__image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.resultCard__rating {
+  font-size: 14px;
+  color: #555;
+  margin-top: 6px;
+}
