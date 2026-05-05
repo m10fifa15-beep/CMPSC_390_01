@@ -2,111 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Restaurant Reviews</title>
+  <title>Restaurant</title>
   <link rel="stylesheet" href="storepage.css">
 </head>
 
-
 <body>
-  <header class="top_nav">
-    <div class="topnav__inner">
-      <div class="logo">
-        <a href="home.html">
-          <img src="lmm_logo.png" alt="TasteMatch Logo" width="50" height="50">
-        </a>
-      </div>
-
 
       <nav class="topnav">
-        <a href="home.html">Home</a>
-        <a href="addLocation.html">Add Location</a>
-        <a href="matchmaker.html">MatchMaker</a>
-        <a href="storepage.html" class="active">Leave a Location Rating</a>
-        <a href="social_feed.html">Photo Album</a>
-      </nav>
-    </div>
-  </header>
+          <a href="home.html">Home</a>
+          <a href="addLocation.html">Add Location</a>
+          <a href="matchmaker.html">MatchMaker</a>
+          <a href="social_feed.html">Photo Album</a>
+        </nav>
 
+  <div class="topnav">
+    <div class="topnav__inner">
+      <h2 class="logo" id="storeLogo">Restaurant</h2>
 
-  <main class="store-shell">
-    <section class="store-hero">
-      <h1>Sunny Bites</h1>
-      <p class="subtitle">Fresh food. Bright flavors.</p>
-      <h2 id="avgRating">⭐ 0.0</h2>
-      <p id="currentUser"></p>
-    </section>
-
-
-    <section class="auth-box">
-      <h3>Login or Register</h3>
-      <input id="authUsername" placeholder="Username">
-      <input id="authPassword" type="password" placeholder="Password">
-      <button type="button" onclick="login()">Login</button>
-      <button type="button" onclick="register()">Register</button>
-    </section>
-
-
-    <section class="review-box">
-      <h3>Leave a Review</h3>
-
-
-      <div class="stars" id="starContainer">
-        <span data-value="1">★</span>
-        <span data-value="2">★</span>
-        <span data-value="3">★</span>
-        <span data-value="4">★</span>
-        <span data-value="5">★</span>
+      <div class="auth-inline">
+        <input id="authUsername" placeholder="Username">
+        <input id="authPassword" type="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <button onclick="register()">Register</button>
       </div>
+    </div>
+  </div>
 
+  <div class="store-hero">
+    <h1 id="storeName">Restaurant</h1>
+    <p class="subtitle" id="storeSubtitle">Loading restaurant details...</p>
+    <h2 id="avgRating">⭐ 0.0</h2>
+    <p id="currentUser"></p>
+  </div>
 
-      <textarea id="reviewText" placeholder="Write your review..."></textarea>
+  <div class="review-box">
+    <h3>Leave a Review</h3>
 
+    <div class="stars" id="starContainer">
+      <span data-value="1">★</span>
+      <span data-value="2">★</span>
+      <span data-value="3">★</span>
+      <span data-value="4">★</span>
+      <span data-value="5">★</span>
+    </div>
 
-      <button type="button" onclick="submitReview()">Submit Review</button>
+    <textarea id="reviewText" placeholder="Write your review..."></textarea>
 
+    <button onclick="submitReview()">Submit Review</button>
 
-      <select id="sortSelect" onchange="loadReviews()">
-        <option value="newest">Newest</option>
-        <option value="highest">Highest Rated</option>
-      </select>
-    </section>
+    <select id="sortSelect" onchange="loadReviews()">
+      <option value="newest">Newest</option>
+      <option value="highest">Highest Rated</option>
+    </select>
+  </div>
 
-
-    <h2 class="section-title">Customer Reviews</h2>
-    <div id="reviews" class="cardgrid"></div>
-  </main>
-
+  <h2 class="section-title">Customer Reviews</h2>
+  <div id="reviews" class="cardgrid"></div>
 
   <script>
+    const params = new URLSearchParams(window.location.search);
+
+    const locationId = params.get("locationId") || 1;
+    const restaurantNameFromUrl = params.get("name") || "Restaurant";
+
     let selectedRating = 0;
     let currentUser = null;
 
+    window.currentLocationId = locationId;
+
+    document.getElementById("storeName").innerText = restaurantNameFromUrl;
+    document.getElementById("storeLogo").innerText = restaurantNameFromUrl;
+    document.getElementById("storeSubtitle").innerText = "Restaurant details loading...";
 
     window.addEventListener("load", () => {
       const storedUser = localStorage.getItem("currentUser");
-
 
       if (storedUser) {
         currentUser = JSON.parse(storedUser);
         document.getElementById("currentUser").innerText =
           "Logged in as: " + currentUser.username;
       }
-
-
-      loadReviews();
-      loadAverage();
     });
 
-
-    document.querySelectorAll("#starContainer span").forEach((star) => {
+    document.querySelectorAll("#starContainer span").forEach(star => {
       star.addEventListener("click", () => {
         selectedRating = Number(star.dataset.value);
 
-
-        document.querySelectorAll("#starContainer span").forEach((s) => {
+        document.querySelectorAll("#starContainer span").forEach(s => {
           s.classList.remove("active");
         });
-
 
         for (let i = 0; i < selectedRating; i++) {
           document.querySelectorAll("#starContainer span")[i].classList.add("active");
@@ -114,173 +98,164 @@
       });
     });
 
-
-    async function register() {
-      const username = document.getElementById("authUsername").value;
-      const password = document.getElementById("authPassword").value;
-
-
-      const res = await fetch("/register", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ username, password })
-      });
-
-
-      const data = await res.json();
-
-
-      if (!res.ok) {
-        alert(data.error || "Register failed");
+    function loadRestaurant() {
+      if (!locationId) {
+        document.getElementById("storeName").innerText = restaurantNameFromUrl;
+        document.getElementById("storeLogo").innerText = restaurantNameFromUrl;
+        document.getElementById("storeSubtitle").innerText = "No restaurant selected.";
         return;
       }
 
+      fetch(`/location/${locationId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById("storeName").innerText = restaurantNameFromUrl;
+            document.getElementById("storeLogo").innerText = restaurantNameFromUrl;
+            document.getElementById("storeSubtitle").innerText =
+              "Restaurant details unavailable, but reviews still work.";
+            return;
+          }
 
-      alert("Registered! Now login.");
+          document.getElementById("storeName").innerText = data.name || restaurantNameFromUrl;
+          document.getElementById("storeLogo").innerText = data.name || restaurantNameFromUrl;
+
+          document.getElementById("storeSubtitle").innerText =
+            `${data.category || "Restaurant"} • ${data.city || ""}${data.state ? ", " + data.state : ""}`;
+        })
+        .catch(() => {
+          document.getElementById("storeName").innerText = restaurantNameFromUrl;
+          document.getElementById("storeLogo").innerText = restaurantNameFromUrl;
+          document.getElementById("storeSubtitle").innerText =
+            "Restaurant details unavailable, but reviews still work.";
+        });
     }
 
-
-    async function login() {
-      const username = document.getElementById("authUsername").value;
-      const password = document.getElementById("authPassword").value;
-
-
-      const res = await fetch("/login", {
+    function register() {
+      fetch("/register", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ username, password })
-      });
-
-
-      const data = await res.json();
-
-
-      if (!res.ok || data.error) {
-        alert(data.error || "Login failed");
-        return;
-      }
-
-
-      currentUser = data;
-      localStorage.setItem("currentUser", JSON.stringify(data));
-      document.getElementById("currentUser").innerText =
-        "Logged in as: " + data.username;
-
-
-      loadReviews();
+        body: JSON.stringify({
+          username: authUsername.value,
+          password: authPassword.value
+        })
+      }).then(() => alert("Registered!"));
     }
 
+    function login() {
+      fetch("/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          username: authUsername.value,
+          password: authPassword.value
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) return alert("Login failed");
 
-    async function submitReview() {
-      if (!currentUser) {
-        alert("Login first");
-        return;
-      }
+        currentUser = data;
+        localStorage.setItem("currentUser", JSON.stringify(data));
 
+        document.getElementById("currentUser").innerText =
+          "Logged in as: " + data.username;
+      });
+    }
 
-      if (!selectedRating) {
-        alert("Select a star rating first");
-        return;
-      }
+    function submitReview() {
+      if (!currentUser) return alert("Login first");
+      if (!locationId) return alert("No restaurant selected");
+      if (!selectedRating) return alert("Please select a rating");
 
-
-      const review = document.getElementById("reviewText").value;
-
-
-      const res = await fetch("/reviews", {
+      fetch("/reviews", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           userId: currentUser.userId,
+          locationId: Number(locationId),
           rating: selectedRating,
-          review
+          review: reviewText.value
         })
-      });
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) return alert(data.error);
 
+        reviewText.value = "";
+        selectedRating = 0;
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        alert(data.error || "Review failed");
-        return;
-      }
+        document.querySelectorAll("#starContainer span").forEach(s => {
+          s.classList.remove("active");
+        });
 
-
-      document.getElementById("reviewText").value = "";
-      selectedRating = 0;
-
-
-      document.querySelectorAll("#starContainer span").forEach((s) => {
-        s.classList.remove("active");
-      });
-
-
-      loadReviews();
-      loadAverage();
-    }
-
-
-    async function loadReviews() {
-      const sort = document.getElementById("sortSelect").value;
-
-
-      const res = await fetch(`/reviews?sort=${sort}`);
-      const data = await res.json();
-
-
-      const reviewsDiv = document.getElementById("reviews");
-      reviewsDiv.innerHTML = "";
-
-
-      data.forEach((r) => {
-        const div = document.createElement("div");
-        div.classList.add("card");
-
-
-        const isOwner = currentUser && Number(currentUser.userId) === Number(r.user_id);
-
-
-        div.innerHTML = `
-          <div class="review-header">
-            <strong>${r.username}</strong>
-            <span class="stars-display">${"★".repeat(r.rating)}</span>
-          </div>
-          <p>${r.review || ""}</p>
-          ${isOwner ? `<button class="delete-btn" onclick="deleteReview(${r.id})">Delete</button>` : ""}
-        `;
-
-
-        reviewsDiv.appendChild(div);
+        loadReviews();
+        loadAverage();
       });
     }
 
+    function loadReviews() {
+      if (!locationId) return;
 
-    async function deleteReview(id) {
-      if (!currentUser) return;
+      fetch(`/reviews?locationId=${locationId}&sort=${sortSelect.value}`)
+        .then(res => res.json())
+        .then(data => {
+          reviews.innerHTML = "";
 
+          if (!Array.isArray(data) || data.length === 0) {
+            reviews.innerHTML = `<p>No reviews yet for this restaurant.</p>`;
+            return;
+          }
 
-      await fetch(`/reviews/${id}`, {
+          data.forEach(r => {
+            const div = document.createElement("div");
+            div.classList.add("card");
+
+            const isOwner = currentUser && Number(currentUser.userId) === Number(r.user_id);
+
+            div.innerHTML = `
+              <div class="review-header">
+                <strong>${r.username}</strong>
+                <span class="stars-display">${"★".repeat(r.rating)}</span>
+              </div>
+              <p>${r.review}</p>
+              ${isOwner ? `<button class="delete-btn" onclick="deleteReview(${r.id})">Delete</button>` : ""}
+            `;
+
+            reviews.appendChild(div);
+          });
+        });
+    }
+
+    function deleteReview(id) {
+      if (!currentUser) return alert("Login first");
+
+      fetch(`/reviews/${id}`, {
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           userId: currentUser.userId
         })
+      }).then(() => {
+        loadReviews();
+        loadAverage();
       });
-
-
-      loadReviews();
-      loadAverage();
     }
 
+    function loadAverage() {
+      if (!locationId) return;
 
-    async function loadAverage() {
-      const res = await fetch("/reviews/average");
-      const data = await res.json();
-
-
-      document.getElementById("avgRating").innerText =
-        "⭐ " + Number(data.average).toFixed(1);
+      fetch(`/reviews/average?locationId=${locationId}`)
+        .then(res => res.json())
+        .then(data => {
+          avgRating.innerText = "⭐ " + Number(data.average || 0).toFixed(1);
+        });
     }
+
+    loadRestaurant();
+    loadReviews();
+    loadAverage();
   </script>
+
 </body>
 </html>
-

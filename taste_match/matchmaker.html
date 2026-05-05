@@ -7,44 +7,31 @@
   <link rel="stylesheet" href="matchmaker.css" />
 </head>
 
-
 <body>
   <div class="background">
-
-
     <header class="top_nav">
       <div class="topnav__inner">
         <div class="logo">
           <a href="home.html">
-            <img src="lmm_logo.png" alt="TasteMatch Logo" width="50" height="50">
+            <img src="lmm_logo.png" alt="Image of Logo" width="50" height="50">
           </a>
         </div>
-
 
         <nav class="topnav">
           <a href="home.html">Home</a>
           <a href="addLocation.html">Add Location</a>
-          <a href="matchmaker.html" class="active">MatchMaker</a>
+          <a href="matchmaker.html">MatchMaker</a>
           <a href="social_feed.html">Photo Album</a>
-          <a class="topnav__link" href="#" id="navMatch">Match</a>
-          <a class="topnav__link" href="#" id="navSaved">Saved</a>
         </nav>
       </div>
     </header>
 
-
     <main class="content">
-
-
       <section class="card">
         <h2 class="card__title">Tell us your Vibe</h2>
-        <p class="muted">
-          Add your preferences and we’ll match you with places.
-        </p>
-
+        <p class="muted">Add your preferences and we’ll match you with places.</p>
 
         <form id="prefsForm" class="form">
-
 
           <div class="form__row">
             <label class="label">Likes</label>
@@ -72,7 +59,6 @@
             </div>
           </div>
 
-
           <div class="form__row">
             <label class="label">Personality</label>
             <div class="button-group" data-name="personality">
@@ -90,7 +76,6 @@
               <button type="button" class="pref-btn">🎉 Celebrating</button>
             </div>
           </div>
-
 
           <div class="form__row">
             <label class="label">Cuisine / Culture</label>
@@ -114,7 +99,6 @@
             </div>
           </div>
 
-
           <div class="form__row">
             <label class="label">Trends</label>
             <div class="button-group" data-name="trends">
@@ -127,70 +111,46 @@
             </div>
           </div>
 
-
-          <input type="hidden" name="category" value="">
-          <input type="hidden" name="price" value="">
-
-
           <div class="actions">
             <button class="btn" type="submit">Find Matches</button>
             <button class="btn btn--ghost" type="button" id="btnClear">Clear</button>
           </div>
-
-
         </form>
       </section>
-
 
       <section class="card" id="savedPanel" style="display:none;">
         <h2 class="card__title">Your Saved Places</h2>
         <p class="muted">Likes are saved on this browser.</p>
-
-
         <div id="savedList" class="list"></div>
 
-
         <div class="actions">
-          <button class="btn btn--danger" id="btnClearSaved" type="button">
-            Clear Saved
-          </button>
+          <button class="btn btn--danger" id="btnClearSaved" type="button">Clear Saved</button>
         </div>
       </section>
 
-
-<!--updated the matches announcment section on 4-24-26-->      
-<section class="card" id="resultsPanel">
+     <section class="card" id="resultsPanel">
   <h2 class="card__title">Your Matches</h2>
-  <p class="muted">Only restaurants you like will appear here.</p>
-
+  <p class="muted">Your matched locations will appear here.</p>
 
   <div class="actions">
-    <button class="btn btn--ghost" id="btnClearMatches" type="button">
-      Clear Matches
+    <button class="btn btn--danger" id="btnClearMatches" type="button">
+      Clear All Matches
     </button>
   </div>
 
-
   <div id="resultsList" class="list"></div>
 </section>
-<!-- end of matches announcement section -->
-
-
-
 
     </main>
 
-
     <div class="modal" id="matchModal" aria-hidden="true">
       <div class="modal__overlay" id="modalOverlay"></div>
-
 
       <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
         <div class="modal__header">
           <h3 id="modalTitle" class="modal__title">Your Match</h3>
           <button class="iconbtn" id="btnCloseModal" aria-label="Close">✕</button>
         </div>
-
 
         <div class="modal__body">
           <div class="place">
@@ -199,13 +159,10 @@
               <span class="pill" id="placePrice">$$</span>
             </div>
 
-
             <div class="place__meta" id="placeMeta">Category • City</div>
             <p class="place__desc" id="placeDesc">Description</p>
 
-
             <div class="tags" id="placeTags"></div>
-
 
             <div class="matchrow">
               <span class="muted">Match Score:</span>
@@ -214,19 +171,14 @@
           </div>
         </div>
 
-
         <div class="modal__footer">
           <button class="btn btn--ghost" id="btnPass" type="button">Pass</button>
           <button class="btn" id="btnLike" type="button">Like</button>
         </div>
       </div>
     </div>
-
-
   </div>
-
 
   <script src="matchmaker.js"></script>
 </body>
 </html>
-
