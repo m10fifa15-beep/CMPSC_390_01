@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(__dirname));
- 
+  
 /* ---------------- UPLOADS ---------------- */
 const uploadsDir = path.join(__dirname, "uploads");
 

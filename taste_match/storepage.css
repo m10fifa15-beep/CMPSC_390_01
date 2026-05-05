@@ -75,6 +75,7 @@ button:hover {
   .cardgrid {
     grid-template-columns: 1fr;
   }
+
 }
  
 /* Navigation link container */
