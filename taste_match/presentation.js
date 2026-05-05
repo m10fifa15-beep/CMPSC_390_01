@@ -900,6 +900,7 @@ app.delete("/reviews/:id", (req, res) => {
     return res.status(400).json({ error: "Login required" });
   }
 
+<<<<<<< HEAD
   /* =========================
      ADD LOCATION
   ========================= */
@@ -961,6 +962,8 @@ app.delete("/reviews/:id", (req, res) => {
     );
   });
 
+=======
+>>>>>>> origin
 
   const checkSql = `
     SELECT id, user_id

@@ -1,141 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
+<<<<<<< HEAD=======>>>>>>> origin
 
-<head>
-  <meta charset="UTF-8">
-  <title>Add Location</title>
-  <link rel="stylesheet" href="anthony_style.css">
-</head>
+  <head>
+    <meta charset="UTF-8">
+    <title>Add Location</title>
+    <link rel="stylesheet" href="anthony_style.css">
+  </head>
 
-<body>
-  <div class="background">
-    <header class="top_nav">
-      <div class="topnav__inner">
-        <div class="logo">
-          <a href="home.html">
-            <img src="Page_Images/Tastematch_Logo.png" alt="TasteMatch Logo" width="50" height="50">
-          </a>
-        </div>
-
-        <nav class="topnav">
-          <a href="home.html">Home</a>
-          <a href="addLocation.html" class="active">Add Location</a>
-          <a href="matchmaker.html">MatchMaker</a>
-          <a href="social_feed.html">Photo Album</a>
-        </nav>
-      </div>
-    </header>
-
-    <main class="content">
-      <section class="page-hero">
-        <h1>Add Location</h1>
-        <p>Add a new place into the project database.</p>
-      </section>
-
-      <section class="form-shell">
-        <form method="POST" enctype="multipart/form-data" id="addLocationForm">
-          <label for="ImageFile">Location Image</label>
-          <input type="file" id="ImageFile" name="ImageFile" required>
-
-          <label for="PlaceType">Choose establishment type:</label>
-          <select name="PlaceType" id="PlaceType" required>
-            <option value="">Select one</option>
-            <option value="Restaurant">Restaurant</option>
-            <option value="Outdoor">Outdoor</option>
-            <option value="Cafe">Cafe</option>
-            <option value="Dessert">Dessert</option>
-          </select>
-
-          <label>Select Cuisine</label>
-          <div class="button-group" data-name="cuisine">
-            <button type="button" class="pref-btn">🍣 Sushi</button>
-            <button type="button" class="pref-btn">🌮 Mexican</button>
-            <button type="button" class="pref-btn">🍝 Italian</button>
-            <button type="button" class="pref-btn">🍔 American</button>
-            <button type="button" class="pref-btn">🥗 Healthy</button>
+  <body>
+    <div class="background">
+      <header class="top_nav">
+        <div class="topnav__inner">
+          <div class="logo">
+            <a href="home.html">
+              <img src="Page_Images/Tastematch_Logo.png" alt="TasteMatch Logo" width="50" height="50">
+            </a>
           </div>
 
-          <input type="hidden" name="cuisine" id="cuisineInput">
+          <nav class="topnav">
+            <a href="home.html">Home</a>
+            <a href="addLocation.html" class="active">Add Location</a>
+            <a href="matchmaker.html">MatchMaker</a>
+            <a href="social_feed.html">Photo Album</a>
+          </nav>
+        </div>
+      </header>
 
-          <label for="PlaceName">Location Name</label>
-          <input type="text" id="PlaceName" name="PlaceName" required>
+      <main class="content">
+        <section class="page-hero">
+          <h1>Add Location</h1>
+          <p>Add a new place into the project database.</p>
+        </section>
 
-          <label for="addressLine1">Address Line 1</label>
-          <input type="text" id="addressLine1" name="addressLine1" required>
+        <section class="form-shell">
+          <form method="POST" enctype="multipart/form-data" id="addLocationForm">
+            <label for="ImageFile">Location Image</label>
+            <input type="file" id="ImageFile" name="ImageFile" required>
 
-          <label for="addressLine2">Address Line 2</label>
-          <input type="text" id="addressLine2" name="addressLine2">
+            <label for="PlaceType">Choose establishment type:</label>
+            <select name="PlaceType" id="PlaceType" required>
+              <option value="">Select one</option>
+              <option value="Restaurant">Restaurant</option>
+              <option value="Outdoor">Outdoor</option>
+              <option value="Cafe">Cafe</option>
+              <option value="Dessert">Dessert</option>
+            </select>
 
-          <label for="city">City</label>
-          <input type="text" id="city" name="city" required>
+            <label>Select Cuisine</label>
+            <div class="button-group" data-name="cuisine">
+              <button type="button" class="pref-btn">🍣 Sushi</button>
+              <button type="button" class="pref-btn">🌮 Mexican</button>
+              <button type="button" class="pref-btn">🍝 Italian</button>
+              <button type="button" class="pref-btn">🍔 American</button>
+              <button type="button" class="pref-btn">🥗 Healthy</button>
+            </div>
 
-          <label for="state">State</label>
-          <input type="text" id="state" name="state" required>
+            <input type="hidden" name="cuisine" id="cuisineInput">
 
-          <label for="zip">Zip Code</label>
-          <input type="text" id="zip" name="zip" required>
+            <label for="PlaceName">Location Name</label>
+            <input type="text" id="PlaceName" name="PlaceName" required>
 
-          <label for="country">Country</label>
-          <input type="text" id="country" name="country" required>
+            <label for="addressLine1">Address Line 1</label>
+            <input type="text" id="addressLine1" name="addressLine1" required>
 
-          <button type="submit" id="submitBtn">Add Location</button>
-        </form>
+            <label for="addressLine2">Address Line 2</label>
+            <input type="text" id="addressLine2" name="addressLine2">
 
-        <p id="LocationResult"></p>
-      </section>
-    </main>
-  </div>
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" required>
 
-  <script>
-    const LocationForm = document.getElementById("addLocationForm");
-    const LocationResult = document.getElementById("LocationResult");
-    const cuisineInput = document.getElementById("cuisineInput");
+            <label for="state">State</label>
+            <input type="text" id="state" name="state" required>
 
-    document.querySelectorAll(".pref-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        btn.classList.toggle("selected");
-      });
-    });
+            <label for="zip">Zip Code</label>
+            <input type="text" id="zip" name="zip" required>
 
-    function cleanCuisineText(text) {
-      return String(text || "")
-        .replace(/[^\p{L}\p{N}\s/&-]/gu, "")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" required>
 
-    LocationForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+            <button type="submit" id="submitBtn">Add Location</button>
+          </form>
 
-      const selectedCuisine = [...document.querySelectorAll('[data-name="cuisine"] .pref-btn.selected')]
-        .map((btn) => cleanCuisineText(btn.textContent))
-        .join(" ");
+          <p id="LocationResult"></p>
+        </section>
+      </main>
+    </div>
 
-      cuisineInput.value = selectedCuisine;
+    <script>
+      const LocationForm = document.getElementById("addLocationForm");
+      const LocationResult = document.getElementById("LocationResult");
+      const cuisineInput = document.getElementById("cuisineInput");
 
-      const formData = new FormData(LocationForm);
-
-      try {
-        const res = await fetch("/addLocation", {
-          method: "POST",
-          body: formData
+      document.querySelectorAll(".pref-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          btn.classList.toggle("selected");
         });
+      });
 
-        const text = await res.text();
-        LocationResult.textContent = text;
-
-        if (res.ok) {
-          LocationForm.reset();
-          document.querySelectorAll(".pref-btn.selected").forEach((btn) => {
-            btn.classList.remove("selected");
-          });
-        }
-      } catch (err) {
-        console.error(err);
-        LocationResult.textContent = "Something went wrong while adding the location.";
+      function cleanCuisineText(text) {
+        return String(text || "")
+          .replace(/[^\p{L}\p{N}\s/&-]/gu, "")
+          .replace(/\s+/g, " ")
+          .trim();
       }
-    });
-  </script>
-</body>
+
+      LocationForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const selectedCuisine = [...document.querySelectorAll('[data-name="cuisine"] .pref-btn.selected')]
+          .map((btn) => cleanCuisineText(btn.textContent))
+          .join(" ");
+
+        cuisineInput.value = selectedCuisine;
+
+        const formData = new FormData(LocationForm);
+
+        try {
+          const res = await fetch("/addLocation", {
+            method: "POST",
+            body: formData
+          });
+
+          const text = await res.text();
+          LocationResult.textContent = text;
+
+          if (res.ok) {
+            LocationForm.reset();
+            document.querySelectorAll(".pref-btn.selected").forEach((btn) => {
+              btn.classList.remove("selected");
+            });
+          }
+        } catch (err) {
+          console.error(err);
+          LocationResult.textContent = "Something went wrong while adding the location.";
+        }
+      });
+    </script>
+  </body>
+  <<<<<<< HEAD=======>>>>>>> origin
 
 </html>
