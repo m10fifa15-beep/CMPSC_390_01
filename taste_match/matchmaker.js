@@ -494,6 +494,6 @@ if (btnLike) {
 
     await saveMatch(current.id);
     await logUserHistory(current, "liked");
-    showNextMatch();
+    showNextMatch(); 
   });
 }
