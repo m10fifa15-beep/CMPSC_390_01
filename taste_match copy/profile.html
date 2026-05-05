@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile</title>
+  <style>
+    .saved-item, .history-item {
+      background: #fff;
+      border: 1px solid #bdbdbd;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .saved-item h4 {
+      margin: 0 0 5px 0;
+    }
+    .saved-item p, .history-item p {
+      margin: 5px 0;
+    }
+    .saved-item small {
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background">
+
+    <!-- Top Navigation -->
+    <header class="top_nav">
+      <div class="topnav__inner">
+        <div class="logo">
+          <img src="lmm_logo.png" alt="Image of Logo" width="50" height="50">
+          <img src="lmm_logo.png" alt="Image of Logo" width="50px" height="50px">
+        </div>
+
+        <nav class="topnav">
+          <a href="home.html">Home</a>
+          <a href="addLocation.html">Add Location</a>
+          <a href="matchmaker.html">MatchMaker</a>
+          <a href="storepage.html">Leave a Location Rating</a>
+          <a href="social_feed.html">Photo Album</a>
+          <a href="profile.html" class="active">Profile</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- Profile Section -->
+      <section class="section">
+        <div class="profile-box">
+          <h2>Your Profile</h2>
+          <p id="profileInfo">Not logged in.</p>
+          <button id="logoutBtn" onclick="logout()" style="display:none;">Logout</button>
+        </div>
+      </section>
+
+      <!-- Preferences Section -->
+      <section class="section" id="prefsSection" style="display:none;">
+        <h3>Your Preferences</h3>
+        <div id="preferences"></div>
+      </section>
+
+      <!-- Saved Locations Section -->
+      <section class="section" id="savedSection" style="display:none;">
+        <h3>Your Saved Locations</h3>
+        <div id="savedLocations"></div>
+      </section>
+
+      <!-- History Section -->
+      <section class="section" id="historySection" style="display:none;">
+        <h3>Your Activity History</h3>
+        <div id="history"></div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    let currentUser = null;
+
+    window.addEventListener('load', () => {
+      const storedUser = localStorage.getItem('currentUser');
+      if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        document.getElementById("profileInfo").innerText = "Logged in as: " + currentUser.username;
+        document.getElementById("logoutBtn").style.display = "block";
+        loadProfile();
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('currentUser');
+      currentUser = null;
+      document.getElementById("profileInfo").innerText = "Not logged in.";
+      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("prefsSection").style.display = "none";
+      document.getElementById("savedSection").style.display = "none";
+      document.getElementById("historySection").style.display = "none";
+      alert("Logged out!");
+    }
+
+    function loadProfile() {
+      if (!currentUser) return;
+
+      fetch(`/user-profile?userId=${currentUser.userId}`)
+        .then(res => res.json())
+        .then(data => {
+          // Preferences
+          const prefs = data.preferences;
+          if (prefs.likes || prefs.personality || prefs.culture || prefs.trends) {
+            document.getElementById("prefsSection").style.display = "block";
+            document.getElementById("preferences").innerHTML = `
+              <p><strong>Likes:</strong> ${prefs.likes || 'None'}</p>
+              <p><strong>Personality:</strong> ${prefs.personality || 'None'}</p>
+              <p><strong>Culture:</strong> ${prefs.culture || 'None'}</p>
+              <p><strong>Trends:</strong> ${prefs.trends || 'None'}</p>
+            `;
+          }
+
+          // Saved Locations
+          const saved = data.savedLocations;
+          if (saved.length > 0) {
+            document.getElementById("savedSection").style.display = "block";
+            document.getElementById("savedLocations").innerHTML = saved.map(loc => `
+              <div class="saved-item">
+                <h4>${loc.name}</h4>
+                <p>${loc.food_category} • ${loc.price_range} • ${loc.city}, ${loc.state}</p>
+                <small>Saved on: ${new Date(loc.saved_at).toLocaleDateString()}</small>
+              </div>
+            `).join("");
+          }
+
+          // History
+          const history = data.history;
+          if (history.length > 0) {
+            document.getElementById("historySection").style.display = "block";
+            document.getElementById("history").innerHTML = history.map(h => `
+              <div class="history-item">
+                <p>${h.action} - ${h.name} on ${new Date(h.timestamp).toLocaleString()}</p>
+              </div>
+            `).join("");
+          }
+        })
+        .catch(err => console.error("Load profile error:", err));
+    }
+  </script>
+
+</body>
+</html>
