@@ -1,24 +1,5 @@
 require("dotenv").config();
 
-
-const express = require("express");
-const mysql = require("mysql2");
-const bodyParser = require("body-parser");
-const path = require("path");
-const fs = require("fs");
-const multer = require("multer");
-
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(express.static(__dirname));
-
-require("dotenv").config();
-
 const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
@@ -68,7 +49,6 @@ db.connect((err) => {
     console.error("Database connection failed:", err);
     return;
   }
-
   console.log("Connected to MySQL database");
 });
 
@@ -213,17 +193,12 @@ app.post("/api/match", (req, res) => {
 });
 
 /* ---------------- ADD LOCATION API ---------------- */
-/*
-Your addLocation.html sends:
-ImageFile, PlaceType, cuisine, PlaceName, addressLine1, addressLine2, city, state, zip, country
-*/
 app.post("/addLocation", upload.single("ImageFile"), (req, res) => {
   console.log("Add Location form body:", req.body);
   console.log("Uploaded file:", req.file);
 
   const {
     PlaceType,
-    cuisine,
     PlaceName,
     addressLine1,
     addressLine2,
@@ -242,33 +217,31 @@ app.post("/addLocation", upload.single("ImageFile"), (req, res) => {
   const sql = `
     INSERT INTO place
     (
-      placeImage,
-      placeType,
-      cuisine,
-      placeName,
+      PlaceType,
+      PlaceName,
       addressLine1,
       addressLine2,
       city,
       state,
       zip,
-      country
+      country,
+      placeImage
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
     [
-      imagePath,
       PlaceType,
-      cuisine || "",
       PlaceName,
       addressLine1,
       addressLine2 || "",
       city,
       state,
       zip,
-      country
+      country,
+      imagePath
     ],
     (err, result) => {
       if (err) {
@@ -537,40 +510,6 @@ app.post("/create-post", upload.single("image"), (req, res) => {
   });
 });
 
-/* ---------------- TEST ROUTES ---------------- */
-app.get("/test-db", (req, res) => {
-  db.query("SELECT 1 AS test", (err, results) => {
-    if (err) {
-      console.error("Test DB error:", err);
-      return res.status(500).send("Database connection failed.");
-    }
-
-    res.send("Database connection works!");
-  });
-});
-
-app.get("/test-place-table", (req, res) => {
-  db.query("DESCRIBE place", (err, results) => {
-    if (err) {
-      console.error("Describe place table error:", err);
-      return res.status(500).send("Could not find or describe the place table.");
-    }
-
-    res.json(results);
-  });
-});
-
-app.get("/test-locations-table", (req, res) => {
-  db.query("DESCRIBE locations", (err, results) => {
-    if (err) {
-      console.error("Describe locations table error:", err);
-      return res.status(500).send("Could not find or describe the locations table.");
-    }
-
-    res.json(results);
-  });
-});
-
 /* ---------------- 404 ---------------- */
 app.use((req, res) => {
   res.status(404).send("Not Found");
@@ -580,6 +519,7 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+<<<<<<< HEAD
 const uploadsDir = path.join(__dirname, "uploads");
 
 
@@ -1145,3 +1085,5 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
+=======
+>>>>>>> 08d6fe637e489464d213d81e8b47440647c8b73a
