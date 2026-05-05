@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,9 +17,7 @@
     <header class="top_nav">
       <div class="topnav__inner">
         <div class="logo">
-          <!--FIX LOGO LATER-->
-          <img src = "lmm_logo.png" alt = "Image of Logo" width = "50px" height = "50px">
-          </a>
+          <img src="Page_Images/Tastematch_Logo.png" alt="Image of Logo" width="50" height="50">
         </div>
 
 
@@ -65,14 +64,21 @@
         </div>
       </section>
 
+      <img src="Page_Images/food_table.png" alt="Table full of food" class="featured-img">
 
-       <img src="food_table.png" alt="Image of Logo" class="featured-img">
+      <!-- Demo Video Section -->
+      <section class="section video-section">
+        <div class="section-heading">
+          <h2 class="section__title">Watch Our Website Demo</h2>
+          <p class="section__subtitle">
+            See how TasteMatch works through this short screen-recorded walkthrough.
+          </p>
+        </div>
 
 
+      </section>
 
-
-
-
+      <!--END VIDEO SECTION-->
 
 
       <!-- Quick Intro Templates -->
@@ -89,7 +95,8 @@
           <article class="info-card">
             <h3>About This Project</h3>
             <p>
-Finding your next go‑to food spot shouldn’t feel like a chore. Whether you’re planning a date, celebrating a milestone, or just grabbing a bite with friends, TasteMatch has you covered.  
+              Finding your next go‑to food spot shouldn’t feel like a chore. Whether you’re planning a date, celebrating
+              a milestone, or just grabbing a bite with friends, TasteMatch has you covered.
 
 
 TasteMatch is a web application built to serve the community by offering personalized recommendations based on your preferences, personality, and curiosity. Founded by four university students, our mission is simple: make discovering your next favorite place fast, fun, and effortless.  
@@ -131,13 +138,19 @@ Here’s what makes it worth using:
 
           <article class="info-card">
             <h3>Team Message</h3>
-            <p>[ Developer Diego ~ "Try out my custom built <a href="matchmaker.html">MatchMaker</a> Page. It'll give you recommendations based on your personality, selected trends, and what you're in the mood for"]</p>
+            <p>[ Developer Diego ~ "Try out my custom built <a href="matchmaker.html">MatchMaker</a> Page. It'll give
+              you recommendations based on your personality, selected trends, and what you're in the mood for"]</p>
             <br>
-            <p>[ Developer Jason ~ "Enjoyed your visit and want to leave a review on your experience? Head to my <a href="storepage.html">Leave a Review</a> Page. Rank your experience with Stars and your review might show up on our website!"]</p>
+            <p>[ Developer Jason ~ "Enjoyed your visit and want to leave a review on your experience? Head to my <a
+                href="storepage.html">Leave a Review</a> Page. Rank your experience with Stars and your review might
+              show up on our website!"]</p>
             <br>
-            <p>[ Developer Micheel ~ "Is Social Media your vibe? Is scrolling through pictures of food the move? Head to my <a href="social_feed.html">Social Feed</a>"]</p>
+            <p>[ Developer Micheel ~ "Is Social Media your vibe? Is scrolling through pictures of food the move? Head to
+              my <a href="social_feed.html">Social Feed</a>"]</p>
             <br>
-            <p>[ Developer Anthony ~ "Know of a good place in Chicago that you want more people to know exists? Enter your place in our <a href="addLocation.html">Database</a> and have matchMaker will work it's magic to have it show up on people's feed."]</p>
+            <p>[ Developer Anthony ~ "Know of a good place in Chicago that you want more people to know exists? Enter
+              your place in our <a href="addLocation.html">Database</a> and have matchMaker will work it's magic to have
+              it show up on people's feed."]</p>
           </article>
         </div>
       </section>
@@ -478,14 +491,14 @@ Here’s what makes it worth using:
 
 
       <!-- Social Feed Demo Section -->
-<section class="section social-demo-section">
-  <div class="section-heading">
-    <h2 class="section__title">Try Our Photo Demo</h2>
-    <p class="section__subtitle">
-      Share food photos, write captions, and explore what others are posting.
-      Try it below, then visit the full feed! Kind like our own Pinterest!
-    </p>
-  </div>
+      <section class="section social-demo-section">
+        <div class="section-heading">
+          <h2 class="section__title">Try Our Photo Demo</h2>
+          <p class="section__subtitle">
+            Share food photos, write captions, and explore what others are posting.
+            Try it below, then visit the full feed! Kind like our own Pinterest!
+          </p>
+        </div>
 
 
   <div class="social-demo-layout">
@@ -642,7 +655,7 @@ window.addEventListener('load', () => {
 
 
 function register() {
-  fetch("http://localhost:3000/register", {
+  fetch("/register", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
@@ -654,7 +667,7 @@ function register() {
 
 
 function login() {
-  fetch("http://localhost:3000/login", {
+  fetch("/login", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
@@ -698,7 +711,6 @@ function login() {
         demoStars[i].classList.add("active");
       }
     });
-  });
 
 
   function updateDemoAverage() {
@@ -835,7 +847,6 @@ function login() {
     btn.addEventListener("click", () => {
       btn.classList.toggle("selected");
     });
-  });
 
 
   function renderDemoMatches(matches) {
@@ -848,8 +859,8 @@ function login() {
           No demo matches found. Try choosing different preferences.
         </div>
       `;
-      return;
-    }
+        return;
+      }
 
 
     matches.forEach((place) => {
@@ -922,11 +933,12 @@ function login() {
         Choose a few preferences and click <strong>Find Demo Matches</strong>.
       </div>
     `;
-  });
-</script>
+    });
+  </script>
+
 
 
  
 </body>
-</html>
 
+</html>
