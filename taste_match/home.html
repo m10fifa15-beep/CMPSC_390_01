@@ -15,7 +15,11 @@
     <header class="top_nav">
       <div class="topnav__inner">
         <div class="logo">
-          <img src="Page_Images/Tastematch_Logo.png" alt="Image of Logo" width="50" height="50">
+          <img src="lmm_logo.png" alt="Image of Logo" width="50" height="50">
+          <!--<a href = "____.html" -->
+          <!--FIX LOGO LATER-->
+          <img src="lmm_logo.png" alt="Image of Logo" width="50px" height="50px">
+          </a>
         </div>
 
         <nav class="topnav">
@@ -24,7 +28,6 @@
           <a href="matchmaker.html">MatchMaker</a>
           <a href="storepage.html">Leave a Location Rating</a>
           <a href="social_feed.html">Photo Album</a>
-          <a href="profile.html" id="profileLink">Profile</a>
         </nav>
       </div>
     </header>
@@ -34,7 +37,7 @@
       <!-- Hero / Welcome -->
       <section class="welcome">
         <div class="welcome__text">
-          <p class="eyebrow">DISCOVER YOUR NEXT DINING SPOT</p>
+          <p class="eyebrow">DISCOVER YOUR NEXT DINING SPOT TEST 123</p>
           <h1>Welcome to Our Site</h1>
           <p class="welcome__subtitle">
             Our Mission is to Match You With The Food You Love.
@@ -59,7 +62,7 @@
         </div>
       </section>
 
-      <img src="Page_Images/food_table.png" alt="Table full of food" class="featured-img">
+      <img src="food_table.png" alt="Image of Logo" class="featured-img">
 
       <!-- Demo Video Section -->
       <section class="section video-section">
@@ -580,7 +583,7 @@
     });
 
     function register() {
-      fetch("http://localhost:3000/register", {
+      fetch("/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -591,7 +594,7 @@
     }
 
     function login() {
-      fetch("http://localhost:3000/login", {
+      fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
