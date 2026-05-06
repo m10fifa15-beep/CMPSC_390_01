@@ -33,7 +33,8 @@
       </section>
 
       <section class="form-shell">
-        <form method="POST" enctype="multipart/form-data" id="addLocationForm">
+        <form data-pg-verify data-pg-skip-verification="true" method="POST" enctype="multipart/form-data"
+          id="addLocationForm">
           <label for="ImageFile">Location Image</label>
           <input type="file" id="ImageFile" name="ImageFile" required>
 
@@ -60,23 +61,43 @@
           <label for="PlaceName">Location Name</label>
           <input type="text" id="PlaceName" name="PlaceName" required>
 
-          <label for="addressLine1">Address Line 1</label>
-          <input type="text" id="addressLine1" name="addressLine1" required>
+          <div class="wrapper">
+            <label for="addressLine1">Address Line 1</label>
+            <input type="text" id="addressLine1" name="addressLine1" required data-pg-address-line1>
+            <div class="error" data-pg-address-line1-message></div>
+          </div>
 
-          <label for="addressLine2">Address Line 2</label>
-          <input type="text" id="addressLine2" name="addressLine2">
+          <div class="wrapper">
+            <label for="addressLine2">Address Line 2</label>
+            <input type="text" id="addressLine2" name="addressLine2" data-pg-address-line2>
+            <div class="error" data-pg-address-line2-message></div>
+          </div>
 
-          <label for="city">City</label>
-          <input type="text" id="city" name="city" required>
+          <div class="wrapper">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" required data-pg-city>
+            <div class="error" data-pg-city-message></div>
+          </div>
 
-          <label for="state">State</label>
-          <input type="text" id="state" name="state" required>
+          <div class="wrapper">
+            <label for="state">State</label>
+            <input type="text" id="state" name="state" required data-pg-prov>
+            <div class="error" data-pg-prov-message></div>
+          </div>
 
-          <label for="zip">Zip Code</label>
-          <input type="text" id="zip" name="zip" required>
+          <div class="wrapper">
+            <label for="zip">Zip Code</label>
+            <input type="text" id="zip" name="zip" required data-pg-pc>
+            <div class="error" data-pg-pc-message></div>
+          </div>
 
-          <label for="country">Country</label>
-          <input type="text" id="country" name="country" required>
+          <div class="wrapper">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" required data-pg-country>
+            <div class="error" data-pg-country-message></div>
+          </div>
+          <div class="generic-message" data-pg-generic-message></div>
+          <div data-pg-status></div>
 
           <button type="submit" id="submitBtn">Add Location</button>
         </form>
@@ -136,4 +157,7 @@
       }
     });
   </script>
+
+  <script src="https://scripts.postgrid.com/autocomplete.min.js" data-pg-key="live_sk_4Hmkmet6tp9mor15iApQ9j"
+    data-pg-international="true"></script>
 </body>
