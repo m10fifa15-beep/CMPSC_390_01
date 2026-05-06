@@ -1,137 +1,163 @@
-<html>
-  <body style="background-color: #ffffb0;">
+<!DOCTYPE html>
+<html lang="en">
 
-    <head>
-    <title>Add Location</title>
+<head>
+  <meta charset="UTF-8">
+  <title>Add Location</title>
+  <link rel="stylesheet" href="anthony_style.css">
+</head>
 
-    <link rel="stylesheet" href="anthony_style.css" >
-
-    </head>
+<body>
+  <div class="background">
+    <header class="top_nav">
+      <div class="topnav__inner">
+        <div class="logo">
+          <a href="home.html">
+            <img src="Page_Images/Tastematch_Logo.png" alt="TasteMatch Logo" width="50" height="50">
+          </a>
+        </div>
 
         <nav class="topnav">
-          <a href="home.html" class="active">Home</a>
-          <a href="addLocation.html">Add Location</a>
+          <a href="home.html">Home</a>
+          <a href="addLocation.html" class="active">Add Location</a>
           <a href="matchmaker.html">MatchMaker</a>
           <a href="social_feed.html">Photo Album</a>
         </nav>
-
-      <h1>Add Location</h1>
-
-      <h2>Location</h2>
-
-      <div>
-
-
       </div>
+    </header>
 
+    <main class="content">
+      <section class="page-hero">
+        <h1>Add Location</h1>
+        <p>Add a new place into the project database.</p>
+      </section>
 
-        <form data-pg-verify data-pg-skip-verification="true"  method="POST" enctype="multipart/form-data" id="addLocationForm">
-          
-          <input type = "file" name="ImageFile" Required>
+      <section class="form-shell">
+        <form data-pg-verify data-pg-skip-verification="true" method="POST" enctype="multipart/form-data"
+          id="addLocationForm">
+          <label for="ImageFile">Location Image</label>
+          <input type="file" id="ImageFile" name="ImageFile" required>
 
-
-          <br><br>
           <label for="PlaceType">Choose establishment type:</label>
-          <select name="PlaceType" id="PlaceType">
-            <option value="Resturant">Resturant</option>
+          <select name="PlaceType" id="PlaceType" required>
+            <option value="">Select one</option>
+            <option value="Restaurant">Restaurant</option>
             <option value="Outdoor">Outdoor</option>
-          </select>
-          <br><br>
-
-          <label for="cuisine">Choose cuisine/category:</label>
-          <select name="cuisine" id="cuisine" required>
-            <option value="">Select cuisine</option>
-            <option value="Mexican">Mexican</option>
-            <option value="American">American</option>
-            <option value="Chinese">Chinese</option>
-            <option value="Italian">Italian</option>
-            <option value="Japanese">Japanese</option>
-            <option value="Korean">Korean</option>
-            <option value="Greek">Greek</option>
-            <option value="Middle Eastern">Middle Eastern</option>
-            <option value="Seafood">Seafood</option>
-            <option value="Vegetarian">Vegetarian</option>
-            <option value="Pizza">Pizza</option>
-            <option value="Wings">Wings</option>
-            <option value="Burgers">Burgers</option>
-            <option value="Breakfast">Breakfast</option>
             <option value="Cafe">Cafe</option>
-            <option value="Other">Other</option>
+            <option value="Dessert">Dessert</option>
           </select>
-          <br><br>
 
+          <label>Select Cuisine</label>
+          <div class="button-group" data-name="cuisine">
+            <button type="button" class="pref-btn">🍣 Sushi</button>
+            <button type="button" class="pref-btn">🌮 Mexican</button>
+            <button type="button" class="pref-btn">🍝 Italian</button>
+            <button type="button" class="pref-btn">🍔 American</button>
+            <button type="button" class="pref-btn">🥗 Healthy</button>
+          </div>
 
-          <label>Location Name</label><br />
-          <input type="text" name="PlaceName" required /><br /><br />
-          <label>Location Address</label><br />
-            
-                
-            
-                <div class="wrapper">
-                    <label for="line1">Address 1</label>
-                    <input type="text" id="line1" name="addressLine1" required data-pg-address-line1></input>
-                    <div class="error" data-pg-address-line1-message></div>
-                </div>
-                <div class="wrapper">
-                    <label for="line2">Line 2</label>
-                    <input type="text" id="line2" name="addressLine2" data-pg-address-line2 />
-                    <div class="error" data-pg-address-line2-message></div>
-                </div>
-                <div class="wrapper">
-                    <label for="city">City</label>
-                    <input type="text" id="city" name="city" required data-pg-city />
-                    <div class="error" data-pg-city-message></div>
-                </div>
-                <div class="wrapper">
-                    <label for="state">State/Province</label>
-                    <input type="text" id="state" name="state" required data-pg-prov />
-                    <div class="error" data-pg-prov-message></div>
-                </div>
-                <div class="wrapper">
-                    <label for="zip">Zip/Postal Code</label>
-                    <input type="text" id="zip" name="zip" required data-pg-pc />
-                    <div class="error" data-pg-pc-message></div>
-                </div>
-                <div class="wrapper">
-                    <label for="country">Country</label>
-                    <input type="text" id="country" name="country" required data-pg-country />
-                    <div class="error" data-pg-country-message></div>
-                </div>
-            <div 
-                class="generic-message"
-                data-pg-generic-message>
-            </div>
-            <div data-pg-status></div>
-            
+          <input type="hidden" name="cuisine" id="cuisineInput">
 
-            <button type="submit" id="submitBtn">Add Location</button>
+          <label for="PlaceName">Location Name</label>
+          <input type="text" id="PlaceName" name="PlaceName" required>
 
-          </form>
+          <div class="wrapper">
+            <label for="addressLine1">Address Line 1</label>
+            <input type="text" id="addressLine1" name="addressLine1" required data-pg-address-line1>
+            <div class="error" data-pg-address-line1-message></div>
+          </div>
 
-          <p id="LocationResult"></p>
+          <div class="wrapper">
+            <label for="addressLine2">Address Line 2</label>
+            <input type="text" id="addressLine2" name="addressLine2" data-pg-address-line2>
+            <div class="error" data-pg-address-line2-message></div>
+          </div>
 
-        <script>
-          const LocationForm = document.getElementById('addLocationForm');
-          const LocationResult = document.getElementById('LocationResult');
+          <div class="wrapper">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" required data-pg-city>
+            <div class="error" data-pg-city-message></div>
+          </div>
 
-          LocationForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+          <div class="wrapper">
+            <label for="state">State</label>
+            <input type="text" id="state" name="state" required data-pg-prov>
+            <div class="error" data-pg-prov-message></div>
+          </div>
 
-            const formData = new FormData(LocationForm);
+          <div class="wrapper">
+            <label for="zip">Zip Code</label>
+            <input type="text" id="zip" name="zip" required data-pg-pc>
+            <div class="error" data-pg-pc-message></div>
+          </div>
 
-            const res = await fetch('/addLocation', {
-              method: 'POST',
-              body: formData
-            });
+          <div class="wrapper">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" required data-pg-country>
+            <div class="error" data-pg-country-message></div>
+          </div>
+          <div class="generic-message" data-pg-generic-message></div>
+          <div data-pg-status></div>
 
-            const text = await res.text();
-            LocationResult.textContent = text;
+          <button type="submit" id="submitBtn">Add Location</button>
+        </form>
+
+        <p id="LocationResult"></p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const LocationForm = document.getElementById("addLocationForm");
+    const LocationResult = document.getElementById("LocationResult");
+    const cuisineInput = document.getElementById("cuisineInput");
+
+    document.querySelectorAll(".pref-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        btn.classList.toggle("selected");
+      });
+    });
+
+    function cleanCuisineText(text) {
+      return String(text || "")
+        .replace(/[^\p{L}\p{N}\s/&-]/gu, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    LocationForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const selectedCuisine = [...document.querySelectorAll('[data-name="cuisine"] .pref-btn.selected')]
+        .map((btn) => cleanCuisineText(btn.textContent))
+        .join(" ");
+
+      cuisineInput.value = selectedCuisine;
+
+      const formData = new FormData(LocationForm);
+
+      try {
+        const res = await fetch("/addLocation", {
+          method: "POST",
+          body: formData
+        });
+
+        const text = await res.text();
+        LocationResult.textContent = text;
+
+        if (res.ok) {
+          LocationForm.reset();
+          document.querySelectorAll(".pref-btn.selected").forEach((btn) => {
+            btn.classList.remove("selected");
           });
-        </script>
+        }
+      } catch (err) {
+        console.error(err);
+        LocationResult.textContent = "Something went wrong while adding the location.";
+      }
+    });
+  </script>
 
-<script src="https://scripts.postgrid.com/autocomplete.min.js" 
-data-pg-key="live_sk_4Hmkmet6tp9mor15iApQ9j"    
-data-pg-international="true"
-            ></script>  
-      </body>
-</html>
+  <script src="https://scripts.postgrid.com/autocomplete.min.js" data-pg-key="live_sk_4Hmkmet6tp9mor15iApQ9j"
+    data-pg-international="true"></script>
+</body>

@@ -1,48 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Profile</title>
   <style>
-    .saved-item,
-    .history-item {
+    .saved-item, .history-item {
       background: #fff;
       border: 1px solid #bdbdbd;
       border-radius: 8px;
       padding: 12px;
       margin-bottom: 10px;
     }
-
     .saved-item h4 {
       margin: 0 0 5px 0;
     }
-
-    .saved-item p,
-    .history-item p {
+    .saved-item p, .history-item p {
       margin: 5px 0;
     }
-
     .saved-item small {
       color: #666;
     }
   </style>
 </head>
 
-
 <body>
   <div class="background">
-
 
     <!-- Top Navigation -->
     <header class="top_nav">
       <div class="topnav__inner">
         <div class="logo">
-          <img src="Page_Images/Tastematch_Logo.png" alt="Image of Logo" width="50" height="50">
-          <img src="Page_Images/Tastematch_Logo.png" alt="Image of Logo" width="50px" height="50px">
+          <img src="lmm_logo.png" alt="Image of Logo" width="50" height="50">
+          <img src="lmm_logo.png" alt="Image of Logo" width="50px" height="50px">
         </div>
-
 
         <nav class="topnav">
           <a href="home.html">Home</a>
@@ -55,9 +46,7 @@
       </div>
     </header>
 
-
     <main class="content">
-
 
       <!-- Profile Section -->
       <section class="section">
@@ -68,13 +57,11 @@
         </div>
       </section>
 
-
       <!-- Preferences Section -->
       <section class="section" id="prefsSection" style="display:none;">
         <h3>Your Preferences</h3>
         <div id="preferences"></div>
       </section>
-
 
       <!-- Saved Locations Section -->
       <section class="section" id="savedSection" style="display:none;">
@@ -82,23 +69,18 @@
         <div id="savedLocations"></div>
       </section>
 
-
       <!-- History Section -->
       <section class="section" id="historySection" style="display:none;">
         <h3>Your Activity History</h3>
         <div id="history"></div>
       </section>
 
-
     </main>
-
 
   </div>
 
-
   <script>
     let currentUser = null;
-
 
     window.addEventListener('load', () => {
       const storedUser = localStorage.getItem('currentUser');
@@ -109,7 +91,6 @@
         loadProfile();
       }
     });
-
 
     function logout() {
       localStorage.removeItem('currentUser');
@@ -122,10 +103,8 @@
       alert("Logged out!");
     }
 
-
     function loadProfile() {
       if (!currentUser) return;
-
 
       fetch(`/user-profile?userId=${currentUser.userId}`)
         .then(res => res.json())
@@ -142,7 +121,6 @@
             `;
           }
 
-
           // Saved Locations
           const saved = data.savedLocations;
           if (saved.length > 0) {
@@ -155,7 +133,6 @@
               </div>
             `).join("");
           }
-
 
           // History
           const history = data.history;
@@ -172,12 +149,5 @@
     }
   </script>
 
-
 </body>
-<<<<<<< HEAD
-
 </html>
-=======
-</html>
-
->>>>>>> origin
