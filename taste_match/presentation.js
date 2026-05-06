@@ -177,7 +177,7 @@ const sql = `
       .map((place) => ({
         ...place,
         matchScore: scorePlace(place, prefs)
-      })) 
+      }))  
       .sort((a, b) => b.matchScore - a.matchScore);
 
     const hasAnySelection =
