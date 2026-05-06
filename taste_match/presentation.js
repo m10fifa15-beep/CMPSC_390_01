@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(__dirname));
-
+  
 /* ---------------- UPLOADS ---------------- */
 const uploadsDir = path.join(__dirname, "uploads");
 
@@ -443,6 +443,36 @@ app.delete("/reviews/:id", (req, res) => {
 
       res.json({ success: true });
     });
+  });
+});
+
+
+app.get("/location/:id", (req, res) => {
+  const id = req.params.id;
+
+  const sql = `
+    SELECT 
+      id,
+      name,
+      food_category AS category,
+      city,
+      state
+    FROM locations
+    WHERE id = ?
+    LIMIT 1
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("Location lookup error:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (results.length === 0) {
+      return res.json({ error: "Location not found" });
+    }
+
+    res.json(results[0]);
   });
 });
 

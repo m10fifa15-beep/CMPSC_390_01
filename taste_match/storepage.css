@@ -75,5 +75,27 @@ button:hover {
   .cardgrid {
     grid-template-columns: 1fr;
   }
+
+}
+ 
+/* Navigation link container */
+.topnav {
+  display: flex;
+  gap: 14px;
 }
 
+/* Navigation Links */
+.topnav__link {
+  text-decoration: none;
+  font-size: 13px;
+  color: #333;
+  padding: 6px 10px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  background: #fff;
+}
+
+/* Hover effect for nav links */
+.topnav__link:hover {
+  filter: brightness(0.98);
+}
