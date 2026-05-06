@@ -60,7 +60,7 @@ const restaurantNameFromUrl = params.get("name") || "Restaurant";
 let selectedRating = 0;
 let currentUser = null;
 
-window.currentLocationId = locationId;
+window.currentLocationId = locationId;   
 
 /* FIXED: declare elements */
 const authUsername = document.getElementById("authUsername");
@@ -121,13 +121,13 @@ function login() {
   .then(res => res.json())
   .then(data => {
     if (data.error) return alert("Login failed");
-
+  
     currentUser = data;
     localStorage.setItem("currentUser", JSON.stringify(data));
 
     document.getElementById("currentUser").innerText =
       "Logged in as: " + data.username;
-  });
+  }); 
 }
 
 /* REVIEW */
@@ -138,12 +138,13 @@ function submitReview() {
   fetch("/reviews", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      userId: currentUser.userId,
-      locationId: Number(locationId),
-      rating: selectedRating,
-      review: reviewText.value
-    })
+ body: JSON.stringify({
+  userId: currentUser.userId,
+  username: currentUser.username,
+  locationId: Number(locationId),
+  rating: selectedRating,
+  review: reviewText.value
+})
   }).then(() => {
     reviewText.value = "";
     loadReviews();

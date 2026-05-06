@@ -135,19 +135,37 @@ function scorePlace(place, prefs) {
 app.post("/api/match", (req, res) => {
   const prefs = req.body || {};
 
-  const sql = `
-    SELECT
-      id,
-      name,
-      number_of_reviews,
-      average_rating,
-      food_category,
-      price_range,
-      city,
-      state,
-      website_url
-    FROM locations
-  `;
+const sql = `
+  SELECT
+    l.id,
+    l.name,
+    l.number_of_reviews,
+    l.average_rating,
+    l.food_category,
+    l.price_range,
+    l.city,
+    l.state,
+    l.website_url,
+
+    COALESCE(AVG(r.rating), 0) AS current_average_rating,
+    COUNT(r.id) AS current_review_count
+
+  FROM locations l
+
+  LEFT JOIN reviews r
+    ON l.id = r.location_id
+
+  GROUP BY
+    l.id,
+    l.name,
+    l.number_of_reviews,
+    l.average_rating,
+    l.food_category,
+    l.price_range,
+    l.city,
+    l.state,
+    l.website_url
+`;
 
   db.query(sql, (err, results) => {
     if (err) {
@@ -159,12 +177,12 @@ app.post("/api/match", (req, res) => {
       .map((place) => ({
         ...place,
         matchScore: scorePlace(place, prefs)
-      }))
+      }))  
       .sort((a, b) => b.matchScore - a.matchScore);
 
     const hasAnySelection =
       prefs.likes ||
-      prefs.personality ||
+      prefs.personality ||    
       prefs.culture ||
       prefs.trends ||
       prefs.category ||
@@ -182,8 +200,8 @@ app.post("/api/match", (req, res) => {
       city: place.city,
       state: place.state,
       website: place.website_url,
-      reviews: place.number_of_reviews,
-      rating: place.average_rating,
+     reviews: place.current_review_count,
+rating: Number(place.current_average_rating).toFixed(1),
       matchScore: place.matchScore,
       description: `${place.food_category || "Restaurant"} option in ${place.city || "Chicago"}, ${place.state || "IL"}.`
     }));
@@ -323,7 +341,7 @@ app.post("/login", (req, res) => {
 
 /* ---------------- REVIEWS API ---------------- */
 app.post("/reviews", (req, res) => {
-  const { userId, rating, review } = req.body;
+  const { userId, username, rating, review } = req.body;
   const locationId = req.body.locationId || 1;
 
   if (!userId) {
@@ -335,21 +353,25 @@ app.post("/reviews", (req, res) => {
   }
 
   const sql = `
-    INSERT INTO js_reviews (user_id, location_id, rating, review)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO reviews (user_id, location_id, username, rating, review)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.query(sql, [userId, locationId, rating, review || ""], (err, result) => {
-    if (err) {
-      console.error("Create review error:", err);
-      return res.status(500).json({ error: "Database error while creating review" });
-    }
+  db.query(
+    sql,
+    [userId, locationId, username || "Anonymous", rating, review || ""],
+    (err, result) => {
+      if (err) {
+        console.error("Create review error:", err);
+        return res.status(500).json({ error: "Database error while creating review" });
+      }
 
-    res.json({
-      success: true,
-      reviewId: result.insertId
-    });
-  });
+      res.json({
+        success: true,
+        reviewId: result.insertId
+      });
+    }
+  );
 });
 
 app.get("/reviews", (req, res) => {
@@ -358,21 +380,20 @@ app.get("/reviews", (req, res) => {
 
   const orderBy =
     sort === "highest"
-      ? "r.rating DESC, r.created_at DESC"
-      : "r.created_at DESC";
+      ? "rating DESC, created_at DESC"
+      : "created_at DESC";
 
   const sql = `
     SELECT
-      r.id,
-      r.user_id,
-      r.location_id,
-      r.rating,
-      r.review,
-      r.created_at,
-      u.username
-    FROM js_reviews r
-    JOIN js_users u ON r.user_id = u.id
-    WHERE r.location_id = ?
+      id,
+      user_id,
+      location_id,
+      username,
+      rating,
+      review,
+      created_at
+    FROM reviews
+    WHERE location_id = ?
     ORDER BY ${orderBy}
   `;
 
@@ -391,7 +412,7 @@ app.get("/reviews/average", (req, res) => {
 
   const sql = `
     SELECT AVG(rating) AS average
-    FROM js_reviews
+    FROM reviews
     WHERE location_id = ?
   `;
 
@@ -416,7 +437,7 @@ app.delete("/reviews/:id", (req, res) => {
 
   const checkSql = `
     SELECT id, user_id
-    FROM js_reviews
+    FROM reviews
     WHERE id = ?
     LIMIT 1
   `;
@@ -435,7 +456,7 @@ app.delete("/reviews/:id", (req, res) => {
       return res.status(403).json({ error: "Not allowed to delete this review" });
     }
 
-    db.query("DELETE FROM js_reviews WHERE id = ?", [reviewId], (deleteErr) => {
+    db.query("DELETE FROM reviews WHERE id = ?", [reviewId], (deleteErr) => {
       if (deleteErr) {
         console.error("Delete review error:", deleteErr);
         return res.status(500).json({ error: "Database error while deleting review" });
@@ -445,37 +466,6 @@ app.delete("/reviews/:id", (req, res) => {
     });
   });
 });
-
-
-app.get("/location/:id", (req, res) => {
-  const id = req.params.id;
-
-  const sql = `
-    SELECT 
-      id,
-      name,
-      food_category AS category,
-      city,
-      state
-    FROM locations
-    WHERE id = ?
-    LIMIT 1
-  `;
-
-  db.query(sql, [id], (err, results) => {
-    if (err) {
-      console.error("Location lookup error:", err);
-      return res.status(500).json({ error: "Database error" });
-    }
-
-    if (results.length === 0) {
-      return res.json({ error: "Location not found" });
-    }
-
-    res.json(results[0]);
-  });
-});
-
 /* ---------------- SOCIAL FEED API ---------------- */
 app.get("/posts", (req, res) => {
   const sql = `
