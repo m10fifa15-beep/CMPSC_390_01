@@ -189,7 +189,7 @@ function renderSaved() {
       <div class="savedItem__meta">
         ${escapeHtml(p.category || "")} • ${escapeHtml(p.city || "")}
       </div>
-
+ 
       <div class="muted" style="margin-top:8px;">
         ${escapeHtml(p.description || "")}
       </div>

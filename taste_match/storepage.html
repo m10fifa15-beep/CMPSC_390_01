@@ -121,7 +121,7 @@ function login() {
   .then(res => res.json())
   .then(data => {
     if (data.error) return alert("Login failed");
-
+ 
     currentUser = data;
     localStorage.setItem("currentUser", JSON.stringify(data));
 
