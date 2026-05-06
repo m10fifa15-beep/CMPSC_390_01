@@ -182,7 +182,7 @@ const sql = `
 
     const hasAnySelection =
       prefs.likes ||
-      prefs.personality || 
+      prefs.personality ||  
       prefs.culture ||
       prefs.trends ||
       prefs.category ||
